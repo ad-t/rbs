@@ -22,12 +22,14 @@ const options: ConnectionOptions = {
   migrations: [
     // "src/migration/**/*.ts"
   ],
+  password: process.env.MYSQL_PASSWD,
   port: 3306,
   subscribers: [
     // "src/subscriber/**/*.ts"
   ],
   synchronize: true,
   type: "mysql",
+  username: process.env.MYSQL_USER,
 };
 
 // Seed database

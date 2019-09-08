@@ -6,3 +6,6 @@ dist
 
 # ignore log files
 *.log
+
+# ignore env file
+.env
