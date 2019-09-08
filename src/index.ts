@@ -13,19 +13,21 @@ const app = express();
 const port = process.env.SERVER_PORT;
 
 const options: ConnectionOptions = {
-   database: "development",
-   entities: [
-     Production,
-   ],
-   logging: false,
-   migrations: [
-     // "src/migration/**/*.ts"
-   ],
-   subscribers: [
-     // "src/subscriber/**/*.ts"
-   ],
-   synchronize: true,
-   type: "sqlite",
+  database: "rbs-development",
+  entities: [
+    Production,
+  ],
+  host: "localhost",
+  logging: false,
+  migrations: [
+    // "src/migration/**/*.ts"
+  ],
+  port: 3306,
+  subscribers: [
+    // "src/subscriber/**/*.ts"
+  ],
+  synchronize: true,
+  type: "mysql",
 };
 
 // Seed database
