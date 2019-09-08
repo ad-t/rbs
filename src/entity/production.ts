@@ -1,4 +1,4 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Show} from "./show";
 
 @Entity()
@@ -15,9 +15,11 @@ export class Production {
   @Column({ length: 4 })
   public year: string;
 
-  @Column({ length: 255})
+  @Column({ length: 255 })
   public description: string;
 
-  @Column()
+  // @Column("json")
+  @OneToMany((type) => Show, (show) => show.production, { eager: true, cascade: true })
+  @JoinTable()
   public shows: Show[];
 }

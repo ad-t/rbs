@@ -2,7 +2,13 @@ import dotenv from "dotenv";
 import express from "express";
 
 import "reflect-metadata";
-import {Connection, ConnectionOptions, createConnection} from "typeorm";
+import {
+  Connection,
+  ConnectionOptions,
+  createConnection,
+  getConnection,
+  getRepository
+} from "typeorm";
 import {Production} from "./entity/production";
 import {Show} from "./entity/show";
 
@@ -13,9 +19,10 @@ const app = express();
 const port = process.env.SERVER_PORT;
 
 const options: ConnectionOptions = {
-  database: "rbs-development",
+  database: process.env.MYSQL_DATABASE,
   entities: [
     Production,
+    Show
   ],
   host: "localhost",
   logging: false,
@@ -32,14 +39,21 @@ const options: ConnectionOptions = {
   username: process.env.MYSQL_USER,
 };
 
+// setup
+async function bootstrap() {
+  await createConnection(options);
+  await seedDB();
+}
+
 // Seed database
 async function seedDB() {
   try {
-    const conn: Connection = await createConnection(options);
+    const conn: Connection = await getConnection();
     const prod = new Production();
     prod.title = "test";
     prod.subtitle = "test sub";
     prod.year = "2019";
+    prod.description = "lol";
     const s1 = new Show();
     s1.location = "Science Theatre";
     s1.time = new Date();
@@ -58,17 +72,31 @@ async function seedDB() {
   }
 }
 
-app.get("/", async (req, res) => {
+app.get("/productions", async (req, res) => {
   try {
-    const conn: Connection = await createConnection(options);
-    res.send("yeet");
+    const conn: Connection = await getConnection();
+    const prods = await getRepository(Production).find();
+    res.send(prods);
   } catch (error) {
-    res.send("failed");
+    res.send(error);
   }
 });
 
-app.listen( port, () => {
-  seedDB();
+app.get("/productions/:productionID/shows", async (req, res) => {
+  try {
+    const conn: Connection = await getConnection();
+    const result  = await conn.getRepository(Production).find({
+      relations: ["shows"],
+      where: {id: parseInt(req.params.productionID, 10)},
+    });
+    res.send(result[0].shows);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+app.listen( port, async () => {
+  await bootstrap();
   // tslint:disable-next-line:no-console
   console.log("Seeding database...");
   // tslint:disable-next-line:no-console
