@@ -42,7 +42,7 @@ const options: ConnectionOptions = {
 // setup
 async function bootstrap() {
   await createConnection(options);
-  await seedDB();
+  // await seedDB();
 }
 
 // Seed database
@@ -85,11 +85,10 @@ app.get("/productions", async (req, res) => {
 app.get("/productions/:productionID/shows", async (req, res) => {
   try {
     const conn: Connection = await getConnection();
-    const result  = await conn.getRepository(Production).find({
-      relations: ["shows"],
-      where: {id: parseInt(req.params.productionID, 10)},
-    });
-    res.send(result[0].shows);
+    const result = await conn.getRepository(Show).find({
+        production: {id: parseInt(req.params.productionID, 10)}
+      });
+    res.send(result);
   } catch (error) {
     res.send(error);
   }
