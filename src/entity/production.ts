@@ -18,8 +18,6 @@ export class Production {
   @Column({ length: 255 })
   public description: string;
 
-  // @Column("json")
-  @OneToMany((type) => Show, (show) => show.production, { eager: true, cascade: true })
-  @JoinTable()
+  @OneToMany((type) => Show, (show) => show.production)
   public shows: Show[];
 }
