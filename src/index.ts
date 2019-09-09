@@ -113,7 +113,7 @@ app.get("/productions/:productionID/shows", async (req, res) => {
   }
 });
 
-// purchase seats
+// list seats
 app.get("/productions/:productionID/shows/:showID/seats", async (req, res) => {
   try {
     const conn: Connection = await getConnection();
@@ -122,6 +122,26 @@ app.get("/productions/:productionID/shows/:showID/seats", async (req, res) => {
       show: { id: parseInt(req.params.showID, 10) }
     });
     res.send(seats);
+  } catch (error) {
+    res.send(error);
+  }
+});
+
+// purchase all seats
+app.put("/productions/:productionID/shows/:showID/seats", async (req, res) => {
+  try {
+    const conn: Connection = await getConnection();
+    // extract seats from json message
+    const seatIDs: any = JSON.parse(req.body).seats;
+    // determine whether the seats exist and whether they are all available
+    const seats = await conn.getRepository(Seat).findByIds(seatIDs);
+    // verify that there is the same amount of seats and that they are all available
+    if (seats.length !== seatIDs.length) {
+      const errors = { error: "Invalid Seats" };
+      throw new Error(JSON.stringify(errors));
+    }
+    // TODO: Implement the check for ensuring all seats are still available,
+    // and then updating the records to "purchase" the seats
   } catch (error) {
     res.send(error);
   }
