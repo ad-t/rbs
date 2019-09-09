@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 interface Props {};
 
@@ -42,11 +43,12 @@ export default class Navbar extends React.Component<Props, State> {
           className={"navbar-menu " + (navExpanded ? "is-active" : "")}
         >
           <div className="navbar-start">
-            <a className="navbar-item">Home</a>
-            <a className="navbar-item">Documentation</a>
+            <a className="navbar-item"><Link to="/">Home</Link></a>
+            <a className="navbar-item"><Link to="/aboutus">About Us</Link></a>
+            <a className="navbar-item"><Link to="/">Why RBS</Link></a>
           </div>
         </div>
       </nav>
     );
   }
-}
+};

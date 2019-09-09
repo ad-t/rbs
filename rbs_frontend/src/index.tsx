@@ -1,7 +1,9 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './components/app';
+import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Navbar from './components/navbar';
+import App from './components/app';
+import AboutUs from './components/aboutus';
 import './assets/scss/main.scss';
 import * as serviceWorker from './serviceWorker';
 
@@ -11,9 +13,13 @@ interface State {};
 class Index extends React.Component<Props, State> {
   render() {
     return (
-      <div>
-        <Navbar />
-      </div>
+      <Router>
+        <div>
+          <Navbar />
+          <Route exact path='/' component={App} />
+          <Route path='/aboutus' component={AboutUs} />
+        </div>
+      </Router>
     );
   }
 }
