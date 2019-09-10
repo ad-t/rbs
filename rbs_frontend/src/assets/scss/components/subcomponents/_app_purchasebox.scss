@@ -114,7 +114,7 @@ $PURCHASE_BOX_PADDING: 30px;
         font-weight: 500;
         text-align: center;
         .dollar { font-size: 20px; }
-        .price { font-size: 64px; }
+        .price { font-size: 64px; font-weight: 400; }
         .text { font-size: 20px; }
       }
       .ticket-group {
@@ -124,7 +124,7 @@ $PURCHASE_BOX_PADDING: 30px;
       }
       .ticket-numbers {
         background-color: scale-color($LANDING_LIGHT, $lightness: 60%);
-        padding: 4px;
+        padding: 12px;
         text-align: center;
         span{ padding: 0px 10px; }
         button {

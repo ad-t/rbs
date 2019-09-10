@@ -1,0 +1,26 @@
+#payment-box {
+  border-top: 6px solid $PALETTE_DARK;
+  box-shadow: 0px 15px 35px rgba(0, 0, 0, 0.10), 0px 5px 15px 4px rgba(0, 0, 0, 0.07);
+  background: hsla(360, 100%, 100%, 1);
+  min-height: 200px;
+  width: 100%;
+
+  #confirm-order {
+    color: hsla(360, 0%, 0%, 1);
+    font-size: 32px;
+    font-weight: 500;
+    margin: 20px 50px;
+  }
+
+  #information-box {
+    background: scale-color($LANDING_LIGHT, $lightness: 70%);
+    display: flex;
+    min-height: 200px;
+  }
+
+  #border { border: 2px solid #4A5568;}
+
+  .info-column {
+    flex-grow: 1;
+  }
+}

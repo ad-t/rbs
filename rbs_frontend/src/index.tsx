@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route } from 'react-router-dom';
 import Navbar from './components/navbar';
 import App from './components/app';
 import AboutUs from './components/aboutus';
+import Payment from './components/payment';
 import './assets/scss/main.scss';
 import * as serviceWorker from './serviceWorker';
 
@@ -18,6 +19,7 @@ class Index extends React.Component<Props, State> {
           <Navbar />
           <Route exact path='/' component={App} />
           <Route path='/aboutus' component={AboutUs} />
+          <Route path='/payment' component={Payment} />
         </div>
       </Router>
     );
