@@ -137,6 +137,7 @@ $PURCHASE_BOX_PADDING: 30px;
           height: 32px;
           width: 32px;
           &:hover { background: $LANDING_MIDDLE_LIGHT; }
+          &:disabled { background: hsla(360, 0%, 50%, 1); }
         }
       }
     }

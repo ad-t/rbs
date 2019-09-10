@@ -8,10 +8,44 @@ import React from 'react';
 interface Props {
   selectedDate: number
 };
-interface State {};
+interface State {
+  arcTickets: number,
+  generalTickets: number,
+};
+
+enum TicketType {
+  ArcTicket,
+  GeneralTicket
+}
 
 export default class BuyTickets extends React.Component<Props, State> {
+  state: State = {
+    arcTickets: 0,
+    generalTickets: 0,
+  };
+
+  modifyTicket = (amount: number, type: TicketType) => {
+    // Will modify the number of tickets by an arbitary amount of ticket numbers. This allows for
+    // ticket modifications to be easily reduced to a single function.
+    const { arcTickets, generalTickets } = this.state;
+    if (type === TicketType.ArcTicket) {
+      if (arcTickets + amount >= 0)
+        this.setState({arcTickets: arcTickets + amount});
+
+    } else if (type === TicketType.GeneralTicket) {
+      if (generalTickets + amount >= 0)
+        this.setState({generalTickets: generalTickets + amount});
+    }
+  }
+
+  componentDidUpdate = (prevProps: Props, prevState: State) => {
+    if (this.props.selectedDate !== prevProps.selectedDate) {
+      this.setState({arcTickets: 0, generalTickets: 0});
+    }
+  }
+
   render() {
+    const { arcTickets, generalTickets } = this.state;
     return (
       <div id='buy-tickets' className='animation-slide-from-right'>
         <div className='columns'>
@@ -23,11 +57,18 @@ export default class BuyTickets extends React.Component<Props, State> {
                 <span className='price'>10</span>
                 <span className='text'>/ Person</span>
               </div>
-              <div className='ticket-group'>$10 for groups of 5 or more</div>
+              <div className='ticket-group'><b>$10</b> for groups of 5 or more</div>
               <div className='ticket-numbers'>
-                <button><i className='fas fa-minus'></i></button>
-                <span>0 Tickets</span>
-                <button><i className='fas fa-plus'></i></button>
+                <button
+                  onClick={() => this.modifyTicket(-1, TicketType.ArcTicket)}
+                  disabled={arcTickets === 0}
+                >
+                  <i className='fas fa-minus'></i>
+                </button>
+                <span><b>{arcTickets}</b> Tickets</span>
+                <button onClick={() => this.modifyTicket(1, TicketType.ArcTicket)}>
+                  <i className='fas fa-plus'></i>
+                </button>
               </div>
             </div>
           </div>
@@ -39,11 +80,18 @@ export default class BuyTickets extends React.Component<Props, State> {
                 <span className='price'>12</span>
                 <span className='text'>/ Person</span>
               </div>
-              <div className='ticket-group'>$10 for groups of 5 or more</div>
+              <div className='ticket-group'><b>$10</b> for groups of 5 or more</div>
               <div className='ticket-numbers'>
-                <button><i className='fas fa-minus'></i></button>
-                <span>0 Tickets</span>
-                <button><i className='fas fa-plus'></i></button>
+                <button
+                  onClick={() => this.modifyTicket(-1, TicketType.GeneralTicket)}
+                  disabled={generalTickets === 0}
+                >
+                  <i className='fas fa-minus'></i>
+                </button>
+                <span><b>{generalTickets}</b> Tickets</span>
+                <button onClick={() => this.modifyTicket(1, TicketType.GeneralTicket)}>
+                  <i className='fas fa-plus'></i>
+                </button>
               </div>
             </div>
           </div>

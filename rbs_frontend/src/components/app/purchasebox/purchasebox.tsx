@@ -12,12 +12,16 @@ interface Props {};
 // to the uid of a particular day in the backend. The uid for the date should be restricted to
 // always be >= 0, allowing us to use -1 as a flag for having no dates selected.
 interface State {
-  selectedDate: number
+  selectedDate: number,
+  location: string,
+  showTime: string,
 };
 
 export default class PurchaseBox extends React.Component<Props, State> {
   state: State = {
+    location: 'UNSW Science Threatre',
     selectedDate: -1,
+    showTime: 'Select a date first'
   }
 
   onSelectDate = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -25,7 +29,7 @@ export default class PurchaseBox extends React.Component<Props, State> {
   }
 
   render() {
-    const { selectedDate } = this.state;
+    const { location, selectedDate, showTime } = this.state;
     let displayElm = <Calendar />;
 
     if ( selectedDate >= 0 ) {
@@ -44,11 +48,11 @@ export default class PurchaseBox extends React.Component<Props, State> {
         <div id='info-bar'>
           <div className='info'>
             <span className='icon is-large'><i className='fas fa-3x fa-map-marker'></i></span>
-            <span className='text'>UNSW Science Threatre</span>
+            <span className='text'>{location}</span>
           </div>
           <div className='info'>
             <span className='icon is-large'><i className='far fa-3x fa-clock'></i></span>
-            <span className='text'>7:00 PM Start</span>
+            <span className='text'>{showTime}</span>
           </div>
         </div>
         <div id='date-selector'>
