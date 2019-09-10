@@ -1,98 +1,11 @@
 /*
- * This file will handle all of the styling for the app component and all of its sub component
+ * This file will handle all of the styling for the app component
  */
 
-#purchase-box {
-  background: hsla(360, 100%, 100%, 1);
-  border-top: 6px solid $LANDING_DARK;
-  box-shadow: 0px 6px 6px 4px rgba(0, 0, 0, 0.10), 0px 8px 14px 4px rgba(0, 0, 0, 0.15);
-  width: 100%;
-  height: 80vh;
+@import './subcomponents/app_purchasebox';
+@import './subcomponents/app_upcomingshow';
 
-  /*
-   * Styles the branding which is the 'Book for {revue name}'
-   */
-  #revue-brand {
-    font-family: 'Work Sans';
-    padding: 15px 0px;
-    color: #000000;
-  
-    // Display styles
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    
-    img { width: 172px; }
-    #text-wrapper{
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      #title {
-        font-size: 38px;
-        font-weight: 500;
-        line-height: 40px;
-        padding: 0px 10px;
-      }
-      #subtitle {
-        color: hsla(360, 0%, 50%, 1);
-        font-size: 21px;
-        font-weight: 500;
-        text-align: center;
-      }
-    }
-  }
-
-  /*
-   * Styles the information bar that tells the user the location and start time
-   */
-  #info-bar {
-    background: scale-color($LANDING_LIGHT, $lightness: 70%);
-    padding: 18px 34px;
-
-    // Display styles
-    display: flex;
-    align-items: center;
-    justify-content: space-around;
-
-    .info {
-      // Display styles
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      .text{ font-size: 24px; }
-    }
-  }
-
-  /*
-   * Styles the date selector area
-   */
-  #date-selector {
-    padding: 30px;
-    width: 100%;
-    .select{
-      width: 100%;
-      select{
-        background: scale-color($LANDING_MIDDLE, $lightness: 85%);
-        border: none;
-        width: 100%;
-      }
-    }
-  }
-
-  /*
-   * Styles the calendar icon that informs the user to select a date
-   */
-  #calendar-icon {
-    text-align: center;
-    img{ width: 256px; }
-    #text{
-      font-size: 20px;
-      font-weight: 500;
-      padding: 15px;
-    }
-  }
-}
-
+// Sets the background for the landing page
 .rbs-app-bg {
   @include linearGradient($LANDING_LIGHT, $LANDING_MIDDLE_LIGHT);
 }
