@@ -1,12 +1,19 @@
+/*
+ * This file will handle the selecting of ticket numbers on the purchase box
+ */
 import React from 'react';
 
-interface Props {};
+// The selectedDate uid will correspond to a particular show day in the backend. This way, we are
+// able to link the selected tickets. Also, we can use this uid to grab the ticket price.
+interface Props {
+  selectedDate: number
+};
 interface State {};
 
 export default class BuyTickets extends React.Component<Props, State> {
   render() {
     return (
-      <div id='buy-tickets'>
+      <div id='buy-tickets' className='animation-slide-from-right'>
         <div className='columns'>
           <div className='column'>
             <div className='card ticket-info'>

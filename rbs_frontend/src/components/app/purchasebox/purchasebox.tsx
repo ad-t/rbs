@@ -1,19 +1,39 @@
 /*
  * This file will handle the purchase box element on the landing page.
  */
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import Calendar from './calendar';
 import BuyTicket from './buytickets';
 
 import MrLogo from '../../../assets/img/mr-logo.jpg';
 
 interface Props {};
-interface State {};
+// We have set up the state to accept a selectedDate parameter. This selected date will correspond
+// to the uid of a particular day in the backend. The uid for the date should be restricted to
+// always be >= 0, allowing us to use -1 as a flag for having no dates selected.
+interface State {
+  selectedDate: number
+};
 
 export default class PurchaseBox extends React.Component<Props, State> {
+  state: State = {
+    selectedDate: -1,
+  }
+
+  onSelectDate = (e: ChangeEvent<HTMLSelectElement>) => {
+    this.setState({ selectedDate: parseInt(e.target.value) });
+  }
+
   render() {
+    const { selectedDate } = this.state;
+    let displayElm = <Calendar />;
+
+    if ( selectedDate >= 0 ) {
+      displayElm = <BuyTicket selectedDate={selectedDate} />;
+    }
+
     return (
-      <div id='purchase-box'>
+      <div id='purchase-box' className='animation-slide-from-right'>
         <div id='revue-brand'>
           <img src={MrLogo} />
           <div id='text-wrapper'>
@@ -33,14 +53,14 @@ export default class PurchaseBox extends React.Component<Props, State> {
         </div>
         <div id='date-selector'>
           <div className='select'>
-            <select>
-              <option>Select a date to view the show ...</option>
-              <option>17th April - Wednesday</option>
-              <option>18th April - Thursday</option>
+            <select onChange={this.onSelectDate}>
+              <option value='-1'>Select a date to view the show ...</option>
+              <option value='0'>17th April - Wednesday</option>
+              <option value='1'>18th April - Thursday</option>
             </select>
           </div>
         </div>
-        <BuyTicket />
+        {displayElm}
       </div>
     );
   }

@@ -8,3 +8,15 @@
 @import './components/app';
 
 a, button, div, span, select { font-family: 'Work Sans'; }
+
+.animation-slide-from-right {
+  // Animation of the box sliding in
+  animation-duration: 1.4s;
+  animation-name: slideinfromright;
+}
+
+.animation-slide-from-top {
+  // Animation of the box sliding in
+  animation-duration: 1.4s;
+  animation-name: slideinfromtop;
+}

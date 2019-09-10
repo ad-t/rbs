@@ -1,5 +1,5 @@
 /*
- * This file will handle the landing page.
+ * This file will handle the entire landing page.
  */
 import React from 'react';
 import UpcomingShow from './upcomingshow';
