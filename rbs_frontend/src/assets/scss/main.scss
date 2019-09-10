@@ -1,3 +1,8 @@
-@import "~bulma";
+@import '~bulma';
 
-@import "./components/aboutus";
+@import '../fonts/work_sans/work_sans';
+
+@import './components/mixins';
+@import './components/variables';
+@import './components/aboutus';
+@import './components/app';

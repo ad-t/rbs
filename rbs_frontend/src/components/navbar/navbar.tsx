@@ -43,9 +43,9 @@ export default class Navbar extends React.Component<Props, State> {
           className={"navbar-menu " + (navExpanded ? "is-active" : "")}
         >
           <div className="navbar-start">
-            <a className="navbar-item"><Link to="/">Home</Link></a>
-            <a className="navbar-item"><Link to="/aboutus">About Us</Link></a>
-            <a className="navbar-item"><Link to="/">Why RBS</Link></a>
+            <Link className="navbar-item" to="/">Home</Link>
+            <Link className="navbar-item" to="/aboutus">About Us</Link>
+            <Link className="navbar-item" to="/">Why RBS</Link>
           </div>
         </div>
       </nav>
