@@ -2,8 +2,8 @@
  * This file will handle the landing page.
  */
 import React from 'react';
-import PurchaseBox from './purchasebox';
 import UpcomingShow from './upcomingshow';
+import PurchaseBox from './purchasebox';
 
 interface Props {};
 interface State {};

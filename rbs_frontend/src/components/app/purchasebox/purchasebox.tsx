@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import Calendar from './calendar';
+import BuyTicket from './buytickets';
 
 import MrLogo from '../../../assets/img/mr-logo.jpg';
 
@@ -22,11 +23,11 @@ export default class PurchaseBox extends React.Component<Props, State> {
         </div>
         <div id='info-bar'>
           <div className='info'>
-            <span className='icon is-large'><i className='fas fa-2x fa-map-marker'></i></span>
+            <span className='icon is-large'><i className='fas fa-3x fa-map-marker'></i></span>
             <span className='text'>UNSW Science Threatre</span>
           </div>
           <div className='info'>
-            <span className='icon is-large'><i className='far fa-2x fa-clock'></i></span>
+            <span className='icon is-large'><i className='far fa-3x fa-clock'></i></span>
             <span className='text'>7:00 PM Start</span>
           </div>
         </div>
@@ -39,7 +40,7 @@ export default class PurchaseBox extends React.Component<Props, State> {
             </select>
           </div>
         </div>
-        <Calendar />
+        <BuyTicket />
       </div>
     );
   }
