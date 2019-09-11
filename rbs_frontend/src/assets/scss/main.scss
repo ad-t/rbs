@@ -21,3 +21,12 @@ a, button, div, span, select { font-family: 'Work Sans'; }
   animation-duration: 1.4s;
   animation-name: slideinfromtop;
 }
+
+.rbs-select {
+  width: 100%;
+  select{
+    background: scale-color($LANDING_MIDDLE, $lightness: 85%);
+    border: none;
+    width: 100%;
+  }
+}

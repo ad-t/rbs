@@ -75,14 +75,6 @@ $PURCHASE_BOX_PADDING: 30px;
   #date-selector {
     padding: $PURCHASE_BOX_PADDING;
     width: 100%;
-    .select{
-      width: 100%;
-      select{
-        background: scale-color($LANDING_MIDDLE, $lightness: 85%);
-        border: none;
-        width: 100%;
-      }
-    }
   }
 
   /*

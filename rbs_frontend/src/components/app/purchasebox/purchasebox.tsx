@@ -56,7 +56,7 @@ export default class PurchaseBox extends React.Component<Props, State> {
           </div>
         </div>
         <div id='date-selector'>
-          <div className='select'>
+          <div className='select rbs-select'>
             <select onChange={this.onSelectDate}>
               <option value='-1'>Select a date to view the show ...</option>
               <option value='0'>17th April - Wednesday</option>
