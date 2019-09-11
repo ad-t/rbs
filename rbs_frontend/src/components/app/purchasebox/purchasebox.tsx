@@ -5,6 +5,8 @@ import React, { ChangeEvent } from 'react';
 import Calendar from './calendar';
 import BuyTicket from './buytickets';
 
+import TicketContext from '../../../context/tickets';
+
 import MrLogo from '../../../assets/img/mr-logo.jpg';
 
 interface Props {};
@@ -33,7 +35,10 @@ export default class PurchaseBox extends React.Component<Props, State> {
     let displayElm = <Calendar />;
 
     if ( selectedDate >= 0 ) {
-      displayElm = <BuyTicket selectedDate={selectedDate} />;
+      displayElm =
+        <TicketContext.Consumer>{(tixManager) => (
+          <BuyTicket selectedDate={selectedDate} ticketManager={tixManager} />
+        )}</TicketContext.Consumer>;
     }
 
     return (

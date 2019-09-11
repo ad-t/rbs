@@ -63,6 +63,7 @@ class Index extends React.Component<Props, State> {
   render() {
     return (
       <Router>
+        <Navbar />
         <TicketContext.Provider value={{
           addTicket: this.addTicket,
           getTickets: this.getTicket,
@@ -70,7 +71,6 @@ class Index extends React.Component<Props, State> {
           removeTicket: this.removeTicket,
           removeAllTickets: this.removeAllTickets,
         }}>
-          <Navbar />
           <Route exact path='/' component={App} />
           <Route path='/aboutus' component={AboutUs} />
           <Route path='/payment' component={Payment} />

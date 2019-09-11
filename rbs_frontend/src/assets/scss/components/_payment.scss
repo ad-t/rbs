@@ -30,14 +30,21 @@
     #receipt-table {
       width: 100%;
 
-      #receipt-title { font-weight: 500; }
+      #receipt-title {
+        color: hsla(360, 0%, 0%, 1);
+        font-weight: 500;
+      }
       .receipt-row {
         display: inline-grid;
         grid-template-columns: 1fr 1fr 4fr 1fr;
         width: 100%;
         span:nth-child(4) { text-align: right; }
       }
-    }    
+    }
+    #receipt-total {
+      border-top: 2px solid;
+      text-align: right;
+    }
   }
 
   .info-column {
