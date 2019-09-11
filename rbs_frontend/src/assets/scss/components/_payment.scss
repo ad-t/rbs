@@ -12,9 +12,16 @@
     padding: 20px 50px;
   }
 
+  #need-to-order-tickets {
+    text-align: center;
+    img { width: 192px; }
+    #text { padding: 20px; }
+  }
+
   #information-box {
     background: scale-color($LANDING_LIGHT, $lightness: 70%);
-    display: flex;
+    display: inline-grid;
+    grid-template-columns: 499fr 2fr 499fr;
     min-height: 200px;
   }
 
@@ -45,9 +52,5 @@
       border-top: 2px solid;
       text-align: right;
     }
-  }
-
-  .info-column {
-    flex-grow: 1;
   }
 }

@@ -20,57 +20,78 @@ import TicketContext from './context/tickets';
 // Import assets (e.g. scss)
 import './assets/scss/main.scss';
 import * as serviceWorker from './serviceWorker';
+import { resolve } from 'dns';
 
 interface Props {};
-interface State { tickets: Array<ITicket> };
+interface State {
+  tickets: Array<ITicket>,
+  addTicket(ticket: ITicket): Promise<boolean>,
+  getTickets(): Array<ITicket>,
+  modifyQuantity(uid: number, amount: number): Promise<boolean>,
+  removeTicket(uid: number): Promise<boolean>,
+  removeAllTickets(): Promise<boolean>
+};
 
 class Index extends React.Component<Props, State> {
-  state: State = { tickets: [] }
-
-  addTicket = (ticket: ITicket) => {
+  
+  addTicket = (ticket: ITicket): Promise<boolean> => {
     // Add a ticket object to the ticketing array
-    const { tickets } = this.state;
-    tickets.push(ticket);
-    this.setState({ tickets });
+    return new Promise((resolve, reject) => {
+      const { tickets } = this.state;
+      console.log(tickets);
+      tickets.push(ticket);
+      this.setState({ tickets }, () => resolve(true));
+    });
   }
-
+  
   getTicket = () => {
     return this.state.tickets;
   }
-
-  modifyTicketQuantity = (uid: number, amount: number) => {
-    // Modify the amount of tickets purchased using its uid
-    const { tickets } = this.state;
-    const ticket = tickets.find((ticket) => ticket.uid === uid);
-    // The find function will either return the ticket object or undefined if the uid is incorrect.
-    // If we found a ticket object, we will modify its quantity by the amount parameter. To make
-    // the quantity never drops below 0, we will use the Math.max with 0 as a parameter.
-    if (ticket !== undefined) ticket.quantity = Math.max(ticket.quantity += amount, 0);
-    this.setState({ tickets });
+  
+  modifyTicketQuantity = (uid: number, amount: number): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+      // Modify the amount of tickets purchased using its uid
+      const { tickets } = this.state;
+      const ticket = tickets.find((ticket) => ticket.uid === uid);
+      // The find function will either return the ticket object or undefined if the uid is incorrect.
+      // If we found a ticket object, we will modify its quantity by the amount parameter. To make
+      // the quantity never drops below 0, we will use the Math.max with 0 as a parameter.
+      if (ticket !== undefined) ticket.quantity = Math.max(ticket.quantity += amount, 0);
+      this.setState({ tickets }, () => resolve(true));
+    });
   }
-
-  removeTicket = (uid: number) => {
-    const { tickets } = this.state;
-    const tixIndex = tickets.findIndex((ticket) => ticket.uid === uid);
-    // Find the index of the ticket we want to remove. We will then use the index to remove the
-    // ticket from the array. findIndex will return -1 if it doesn't find the ticket.
-    if (tixIndex >= 0) tickets.splice(tixIndex, 1);
-    this.setState({ tickets });
+  
+  removeTicket = (uid: number): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+      const { tickets } = this.state;
+      const tixIndex = tickets.findIndex((ticket) => ticket.uid === uid);
+      // Find the index of the ticket we want to remove. We will then use the index to remove the
+      // ticket from the array. findIndex will return -1 if it doesn't find the ticket.
+      if (tixIndex >= 0) tickets.splice(tixIndex, 1);
+      this.setState({ tickets }, () => resolve(true));
+    });
   }
-
-  removeAllTickets = () => { this.setState({ tickets: [] }); }
+  
+  removeAllTickets = (): Promise<boolean> => {
+    return new Promise((resolve, reject) => {
+      this.setState({ tickets: [] }, () => resolve(true));
+    });
+  }
+  
+  state: State = {
+    tickets: [],
+    addTicket: this.addTicket,
+    getTickets: this.getTicket,
+    modifyQuantity: this.modifyTicketQuantity,
+    removeTicket: this.removeTicket,
+    removeAllTickets: this.removeAllTickets
+  }
 
   render() {
     return (
       <Router>
         <Navbar />
-        <TicketContext.Provider value={{
-          addTicket: this.addTicket,
-          getTickets: this.getTicket,
-          modifyQuantity: this.modifyTicketQuantity,
-          removeTicket: this.removeTicket,
-          removeAllTickets: this.removeAllTickets,
-        }}>
+        <TicketContext.Provider value={this.state}>
           <Route exact path='/' component={App} />
           <Route path='/aboutus' component={AboutUs} />
           <Route path='/payment' component={Payment} />
