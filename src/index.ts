@@ -3,15 +3,17 @@ import express from "express";
 
 import "reflect-metadata";
 import {
-  Connection,
   ConnectionOptions,
   createConnection,
-  getConnection,
-  getRepository
 } from "typeorm";
-import {Production} from "./entity/production";
-import {Seat} from "./entity/seat";
-import {Show} from "./entity/show";
+
+import { Seat } from "./entity/seat";
+import { Show } from "./entity/show";
+import { Production } from "./entity/production";
+
+import * as ProductionRoutes from "./routes/production";
+import * as ShowRoutes from "./routes/show";
+
 
 // initialise config
 dotenv.config();
@@ -47,105 +49,10 @@ async function bootstrap() {
   // await seedDB();
 }
 
-// Seed database
-async function seedDB() {
-  try {
-    const conn: Connection = await getConnection();
-    const prod = new Production();
-    prod.title = "test";
-    prod.subtitle = "test sub";
-    prod.year = "2019";
-    prod.description = "lol";
-    const s1 = new Show();
-    s1.location = "Science Theatre";
-    s1.time = new Date();
-
-    const se1 = new Seat();
-    se1.show = s1;
-    se1.row = "A";
-    se1.seatNumber = 1;
-
-    const se2 = new Seat();
-    se2.show = s1;
-    se2.row = "A";
-    se2.seatNumber = 2;
-
-    s1.seats = [
-      se1,
-      se2
-    ];
-    await conn.manager.save(s1);
-    await conn.manager.save(se1);
-    await conn.manager.save(se2);
-    const s2 = new Show();
-    s2.location = "Science Theatre";
-    s2.time = new Date();
-    await conn.manager.save(s2);
-    prod.shows = [
-      s1,
-      s2
-    ];
-    await conn.manager.save(prod);
-  } catch (error) {
-    throw Error(`ERROR: Failed to seed database.\n${error}`);
-  }
-}
-
-app.get("/productions", async (req, res) => {
-  try {
-    const conn: Connection = await getConnection();
-    const prods = await getRepository(Production).find();
-    res.send(prods);
-  } catch (error) {
-    res.send(error);
-  }
-});
-
-app.get("/productions/:productionID/shows", async (req, res) => {
-  try {
-    const conn: Connection = await getConnection();
-    const result = await conn.getRepository(Show).find({
-        production: {id: parseInt(req.params.productionID, 10)}
-      });
-    res.send(result);
-  } catch (error) {
-    res.send(error);
-  }
-});
-
-// list seats
-app.get("/productions/:productionID/shows/:showID/seats", async (req, res) => {
-  try {
-    const conn: Connection = await getConnection();
-    // make sure the seat exists
-    const seats = await conn.getRepository(Seat).find({
-      show: { id: parseInt(req.params.showID, 10) }
-    });
-    res.send(seats);
-  } catch (error) {
-    res.send(error);
-  }
-});
-
-// purchase all seats
-app.put("/productions/:productionID/shows/:showID/seats", async (req, res) => {
-  try {
-    const conn: Connection = await getConnection();
-    // extract seats from json message
-    const seatIDs: any = JSON.parse(req.body).seats;
-    // determine whether the seats exist and whether they are all available
-    const seats = await conn.getRepository(Seat).findByIds(seatIDs);
-    // verify that there is the same amount of seats and that they are all available
-    if (seats.length !== seatIDs.length) {
-      const errors = { error: "Invalid Seats" };
-      throw new Error(JSON.stringify(errors));
-    }
-    // TODO: Implement the check for ensuring all seats are still available,
-    // and then updating the records to "purchase" the seats
-  } catch (error) {
-    res.send(error);
-  }
-});
+app.get("/productions/", ProductionRoutes.GetActive);
+app.get("/productions/:id/shows", ProductionRoutes.GetShows);
+app.get("/shows/:id/seats", ShowRoutes.GetSeats);
+app.put("/shows/:id/seats", ShowRoutes.PurchaseSeats);
 
 app.listen( port, async () => {
   await bootstrap();
