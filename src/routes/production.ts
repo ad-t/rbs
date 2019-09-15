@@ -4,7 +4,7 @@ import { Connection, getConnection, getRepository } from "typeorm";
 import { Production } from "../entity/production";
 import { Show } from "../entity/show";
 
-// get active productions 
+// get active productions
 export async function GetActive(req: Request, res: Response): Promise<void> {
   // TODO: the active productions part
   try {

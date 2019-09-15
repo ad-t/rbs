@@ -16,7 +16,8 @@
     "sqlite3": "^4.1.0",
     "tslint": "^5.19.0",
     "typeorm": "^0.2.18",
-    "typescript": "3.5.3"
+    "typescript": "3.5.3",
+    "winston": "^3.2.1"
   },
   "scripts": {
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",

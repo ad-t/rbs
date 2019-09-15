@@ -7,19 +7,23 @@ import {
   createConnection,
 } from "typeorm";
 
+import { Production } from "./entity/production";
 import { Seat } from "./entity/seat";
 import { Show } from "./entity/show";
-import { Production } from "./entity/production";
 
 import * as ProductionRoutes from "./routes/production";
 import * as ShowRoutes from "./routes/show";
 
+// libraries
+import { seedDB } from "./dev";
+import Logger from "./logging";
 
 // initialise config
 dotenv.config();
 
 const app = express();
-const port = process.env.SERVER_PORT;
+const API_PORT = process.env.SERVER_PORT;
+const API_HOST = "http://localhost";
 
 const options: ConnectionOptions = {
   database: process.env.MYSQL_DATABASE,
@@ -45,8 +49,13 @@ const options: ConnectionOptions = {
 
 // setup
 async function bootstrap() {
+  Logger.Init();
+  Logger.Info("Creating database connection...");
   await createConnection(options);
-  // await seedDB();
+  if (false) {
+    Logger.Info("Seeding database...");
+    await seedDB();
+  }
 }
 
 app.get("/productions/", ProductionRoutes.GetActive);
@@ -54,10 +63,7 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
 app.get("/shows/:id/seats", ShowRoutes.GetSeats);
 app.put("/shows/:id/seats", ShowRoutes.PurchaseSeats);
 
-app.listen( port, async () => {
+app.listen(API_PORT, async () => {
   await bootstrap();
-  // tslint:disable-next-line:no-console
-  console.log("Seeding database...");
-  // tslint:disable-next-line:no-console
-  console.log(`Server started at http://localhost:${ port }` );
+  Logger.Info(`Server started at ${API_HOST}:${API_PORT}`);
 });
