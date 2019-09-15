@@ -13,7 +13,7 @@ export class Show {
   @Column()
   public time: Date;
 
-  @ManyToOne((type) => Production, (production) => production.shows)
+  @ManyToOne((type) => Production, (production) => production.shows, { onDelete: "CASCADE" })
   public production: Production;
 
   @OneToMany((type) => Seat, (seat) => seat.show, { cascade: true })

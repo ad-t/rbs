@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { Connection, getConnection, getRepository } from "typeorm";
+import Logger from "../logging";
 
 import { Seat } from "../entity/seat";
 
@@ -13,7 +14,7 @@ export async function GetSeats(req: Request, res: Response) {
     });
     res.send(seats);
   } catch (error) {
-    res.send(error);
+    res.sendStatus(400);
   }
 }
 
@@ -33,6 +34,6 @@ export async function PurchaseSeats(req: Request, res: Response) {
     // TODO: Implement the check for ensuring all seats are still available,
     // and then updating the records to "purchase" the seats
   } catch (error) {
-    res.send(error);
+    res.sendStatus(400);
   }
 }

@@ -29,6 +29,7 @@ dotenv.config();
 const app = express();
 const API_PORT = process.env.SERVER_PORT;
 const API_HOST = "http://localhost";
+app.use(genericLoggingMiddleware);
 
 const swaggerjsdocOptions: any = {
   apis: ["./dist/**/*.js"],
@@ -67,6 +68,11 @@ const options: ConnectionOptions = {
   username: process.env.MYSQL_USER,
 };
 
+function genericLoggingMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
+  Logger.Info(`${res.statusCode} - ${req.path}`);
+  next();
+}
+
 // setup
 async function bootstrap() {
   Logger.Init();
@@ -77,7 +83,7 @@ async function bootstrap() {
     Logger.Info(`API documentation available at ${API_HOST}:${API_PORT}/docs`);
     app.use("/docs", swaggerUi.serve, swaggerUi.setup(specs));
     Logger.Info("Since we're in the development environment, purge the database tables");
-    getConnection().synchronize(true);
+    activeEntities.forEach(async (entity) => await getConnection().getRepository(entity).delete({}));
     Logger.Info("Seeding database...");
     await seedDB();
   }

@@ -9,3 +9,6 @@ dist
 
 # ignore env file
 .env
+
+# ignore mochawesome generated report
+mochawesome-report

@@ -12,12 +12,16 @@
     "@types/node": "^12.7.4",
     "@types/swagger-jsdoc": "^3.0.2",
     "@types/swagger-ui-express": "^3.0.1",
+    "chai": "^4.2.0",
     "cors": "^2.8.5",
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
+    "mocha": "^6.2.0",
+    "mochawesome": "^4.1.0",
     "mysql": "^2.17.1",
     "reflect-metadata": "^0.1.13",
     "sqlite3": "^4.1.0",
+    "supertest": "^4.0.2",
     "swagger-jsdoc": "^3.4.0",
     "swagger-ui-express": "^4.1.0",
     "tslint": "^5.19.0",
@@ -31,6 +35,6 @@
     "prestart": "yarn run build",
     "serve": "node .",
     "watch": "tsc --watch",
-    "test": "echo \"ERROR: No tests specified\" && exit 1"
+    "test": "ls ./tests/*.js | entr ./node_modules/.bin/mocha --reporter mochawesome ./tests/test.js"
   }
 }
