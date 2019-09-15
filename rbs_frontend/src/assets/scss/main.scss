@@ -1,0 +1,32 @@
+@import '~bulma';
+
+@import '../fonts/work_sans/work_sans';
+
+@import './components/mixins';
+@import './components/variables';
+@import './components/aboutus';
+@import './components/app';
+@import './components/payment';
+
+a, button, div, span, select { font-family: 'Work Sans'; }
+
+.animation-slide-from-right {
+  // Animation of the box sliding in
+  animation-duration: 1.4s;
+  animation-name: slideinfromright;
+}
+
+.animation-slide-from-top {
+  // Animation of the box sliding in
+  animation-duration: 1.4s;
+  animation-name: slideinfromtop;
+}
+
+.rbs-select {
+  width: 100%;
+  select{
+    background: scale-color($LANDING_MIDDLE, $lightness: 85%);
+    border: none;
+    width: 100%;
+  }
+}
