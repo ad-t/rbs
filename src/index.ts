@@ -13,7 +13,6 @@ import {
 } from "typeorm";
 
 import { Production } from "./entity/production";
-import { Seat } from "./entity/seat";
 import { Show } from "./entity/show";
 
 import * as ProductionRoutes from "./routes/production";
@@ -47,7 +46,6 @@ const specs = swaggerJsdoc(swaggerjsdocOptions);
 const activeEntities = [
   Production,
   Show,
-  Seat
 ];
 
 const options: ConnectionOptions = {

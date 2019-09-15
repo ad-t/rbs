@@ -1,6 +1,5 @@
 import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Production} from "./production";
-import {Seat} from "./seat";
 
 @Entity()
 export class Show {
@@ -15,7 +14,4 @@ export class Show {
 
   @ManyToOne((type) => Production, (production) => production.shows, { onDelete: "CASCADE" })
   public production: Production;
-
-  @OneToMany((type) => Seat, (seat) => seat.show, { cascade: true })
-  public seats: Seat[];
 }
