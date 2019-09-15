@@ -159,19 +159,6 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
 /**
  * @swagger
  * /shows/{id}/seats:
- *   get:
- *     description: Get the seat listings for a specific show
- *     responses:
- *       200:
- *         description: Information about the seats for a specific show
- *       400:
- *         description: Bad request
- */
-app.get("/shows/:id/seats", ShowRoutes.GetSeats);
-
-/**
- * @swagger
- * /shows/{id}/seats:
  *   put:
  *     description: Purchase seats for a specific show
  *     responses:
