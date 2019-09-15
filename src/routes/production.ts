@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { Connection, getConnection, getRepository } from "typeorm";
+import Logger from "../logging";
 
 import { Production } from "../entity/production";
 import { Show } from "../entity/show";
 
-// get active productions 
+// get active productions
 export async function GetActive(req: Request, res: Response): Promise<void> {
   // TODO: the active productions part
   try {
@@ -12,7 +13,7 @@ export async function GetActive(req: Request, res: Response): Promise<void> {
     const prods = await conn.getRepository(Production).find();
     res.send(prods);
   } catch (error) {
-    res.send(error);
+    res.sendStatus(400);
   }
 }
 
@@ -25,6 +26,6 @@ export async function GetShows(req: Request, res: Response): Promise<void> {
     });
     res.send(result);
   } catch (error) {
-    res.send(error);
+    res.sendStatus(400);
   }
 }

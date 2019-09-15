@@ -18,6 +18,6 @@ export class Production {
   @Column({ length: 255 })
   public description: string;
 
-  @OneToMany((type) => Show, (show) => show.production)
+  @OneToMany((type) => Show, (show) => show.production, { cascade: true })
   public shows: Show[];
 }
