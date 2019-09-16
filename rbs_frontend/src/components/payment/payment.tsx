@@ -1,6 +1,7 @@
 import React from 'react';
 
 import Receipt from './receipt';
+import UserInfo from './userinfo';
 
 import TicketContext from '../../context/tickets';
 
@@ -28,7 +29,7 @@ const InformationBox: React.SFC<{}> = () => {
           )}</TicketContext.Consumer>
         </div>
         <div id='border'></div>
-        <div className='info-column'>d</div>
+        <div className='info-column'><UserInfo /></div>
       </div>
       <div id='info-merchant'>*NOTE: This total does not include the Merchant’s fee. The full total with the merchant’s fee will displayed on the payment button.</div>
     </React.Fragment>

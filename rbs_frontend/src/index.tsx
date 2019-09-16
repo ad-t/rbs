@@ -20,9 +20,9 @@ import TicketContext from './context/tickets';
 // Import assets (e.g. scss)
 import './assets/scss/main.scss';
 import * as serviceWorker from './serviceWorker';
-import { resolve } from 'dns';
 
-interface Props {};
+const SESSION_TIX_ID = 'tickets';
+
 interface State {
   tickets: Array<ITicket>,
   addTicket(ticket: ITicket): Promise<boolean>,
@@ -32,14 +32,35 @@ interface State {
   removeAllTickets(): Promise<boolean>
 };
 
-class Index extends React.Component<Props, State> {
-  
+class Index extends React.Component<{}, State> {
+
+  constructor() {
+    super({});
+
+    // We are going to go through the session storage and see if there are any left over tickets
+    // maybe due to a refresh of the application. If there is, add it to the state.
+    const sessionTickets = localStorage.getItem(SESSION_TIX_ID);
+    let tickets = [];
+    if (sessionTickets !== null) tickets = JSON.parse(sessionTickets);
+
+    this.state = {
+      tickets: tickets,
+      addTicket: this.addTicket,
+      getTickets: this.getTicket,
+      modifyQuantity: this.modifyTicketQuantity,
+      removeTicket: this.removeTicket,
+      removeAllTickets: this.removeAllTickets
+    }
+  }
+
   addTicket = (ticket: ITicket): Promise<boolean> => {
-    // Add a ticket object to the ticketing array
+    // Add a ticket object to the ticketing array.
     return new Promise((resolve, reject) => {
       const { tickets } = this.state;
-      console.log(tickets);
       tickets.push(ticket);
+      // We also add the tickets to the session storage. Note that because the session storage only
+      // takes in text, we have to convert it to a json string
+      localStorage.setItem(SESSION_TIX_ID, JSON.stringify(tickets));
       this.setState({ tickets }, () => resolve(true));
     });
   }
@@ -57,6 +78,7 @@ class Index extends React.Component<Props, State> {
       // If we found a ticket object, we will modify its quantity by the amount parameter. To make
       // the quantity never drops below 0, we will use the Math.max with 0 as a parameter.
       if (ticket !== undefined) ticket.quantity = Math.max(ticket.quantity += amount, 0);
+      localStorage.setItem(SESSION_TIX_ID, JSON.stringify(tickets));
       this.setState({ tickets }, () => resolve(true));
     });
   }
@@ -68,23 +90,16 @@ class Index extends React.Component<Props, State> {
       // Find the index of the ticket we want to remove. We will then use the index to remove the
       // ticket from the array. findIndex will return -1 if it doesn't find the ticket.
       if (tixIndex >= 0) tickets.splice(tixIndex, 1);
+      localStorage.setItem(SESSION_TIX_ID, JSON.stringify(tickets));
       this.setState({ tickets }, () => resolve(true));
     });
   }
   
   removeAllTickets = (): Promise<boolean> => {
     return new Promise((resolve, reject) => {
+      localStorage.setItem(SESSION_TIX_ID, JSON.stringify([]));
       this.setState({ tickets: [] }, () => resolve(true));
     });
-  }
-  
-  state: State = {
-    tickets: [],
-    addTicket: this.addTicket,
-    getTickets: this.getTicket,
-    modifyQuantity: this.modifyTicketQuantity,
-    removeTicket: this.removeTicket,
-    removeAllTickets: this.removeAllTickets
   }
 
   render() {

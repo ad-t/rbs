@@ -28,11 +28,11 @@
   #border { border: 2px solid #4A5568;}
 
   #info-merchant {
-    padding: 20px 50px;
+    padding: 20px;
   }
 
   #receipt-wrapper {
-    padding: 20px 50px;
+    padding: 20px;
 
     #receipt-table {
       width: 100%;
@@ -53,4 +53,19 @@
       text-align: right;
     }
   }
+
+  #user-info {
+    padding: 20px;
+  }
+}
+
+.btn-payment {
+  display: flex;
+  justify-content: space-between;
+  background: $LANDING_DARK;
+  color: hsla(360, 100%, 100%, 1);
+  font-size: 1em;
+  margin-top: 10px;
+  width: 100%;
+  &:hover { background: $LANDING_MIDDLE_LIGHT; }
 }
