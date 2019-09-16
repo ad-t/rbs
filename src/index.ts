@@ -20,6 +20,7 @@ import * as ShowRoutes from "./routes/show";
 
 // libraries
 import { seedDB } from "./dev";
+import { Order } from "./entity/order";
 import Logger from "./logging";
 
 // initialise config
@@ -46,6 +47,7 @@ const specs = swaggerJsdoc(swaggerjsdocOptions);
 const activeEntities = [
   Production,
   Show,
+  Order
 ];
 
 const options: ConnectionOptions = {

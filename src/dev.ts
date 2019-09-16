@@ -14,10 +14,14 @@ export async function seedDB() {
     const s1 = new Show();
     s1.location = "Science Theatre";
     s1.time = new Date();
+    s1.totalSeats = 150;
+    s1.seatPrice = 12.00;
     await conn.manager.save(s1);
     const s2 = new Show();
     s2.location = "Science Theatre";
     s2.time = new Date();
+    s2.totalSeats = 150;
+    s2.seatPrice = 15.00;
     await conn.manager.save(s2);
     prod.shows = [
       s1,
