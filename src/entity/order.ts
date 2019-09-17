@@ -18,7 +18,7 @@ export class Order {
   @Column({length: 20})
   public phone: string;
 
-  @ManyToOne((type) => Show, (show) => show.orders, {nullable: false})
+  @ManyToOne((type) => Show, (show) => show.orders, {onDelete: "SET NULL"})
   public show: Show;
 
   @Column()
@@ -30,6 +30,6 @@ export class Order {
   @Column({default: false})
   public paid: boolean;
 
-  @Column()
+  @Column({nullable: true})
   public paidAt: Date;
 }
