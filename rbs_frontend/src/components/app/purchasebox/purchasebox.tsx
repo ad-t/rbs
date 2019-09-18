@@ -6,6 +6,7 @@ import Calendar from './calendar';
 import BuyTicket from './buytickets';
 
 import MrLogo from '../../../assets/img/mr-logo.jpg';
+import LrLogo from '../../../assets/img/lr-logo.png';
 
 interface Props {};
 // We have set up the state to accept a selectedDate parameter. This selected date will correspond
@@ -39,9 +40,9 @@ export default class PurchaseBox extends React.Component<Props, State> {
     return (
       <div id='purchase-box' className='animation-slide-from-right'>
         <div id='revue-brand'>
-          <img src={MrLogo} />
+          <div id='logo-wrapper'><img src={LrLogo} /></div>
           <div id='text-wrapper'>
-            <span id='title'>BOOK FOR MED REVUE</span>
+            <span id='title'>BOOK FOR LAW REVUE</span>
             <span id='subtitle'>17th - 20th April</span>
           </div>
         </div>

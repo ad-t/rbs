@@ -3,24 +3,29 @@ import React from 'react';
 import { ITicket } from '../../../types/tickets';
 import TicketContext from '../../../context/tickets';
 
+enum Merchant {
+  PAYPAL,
+  STRIPE
+}
+
 interface BtnProps {
   tickets: Array<ITicket>;
   paymentPlatform: string,
   paymentIcon: string,
   takePercentage: number,
-  takeBase: number
+  takeBase: number,
+  onClick(merchant: Merchant): void
 };
 
 /*
- * This component is here to help render out the payment buttons
- * The component takes in the following properties:
- * tickets: Array<ITickets>, The array of tickets purchased
- * paymentPlatform: string, The name of the payment platform you are using
- * paymentIcon: string, The className for the icon of the payment platform
- * takePercentage: number, the percentage of the final cost it will take
- * takeBase: number, the base fee
- * 
+ * This component is here to help render out the payment buttons.
  * The final cost will be determined by finalCost + (finalCost * takePercentage) + takeBase
+ * 
+ * @param {tickets} Array<ITickets>, The array of tickets purchased
+ * @param {paymentPlatform} string, The name of the payment platform you are using
+ * @param {paymentIcon} string, The className for the icon of the payment platform
+ * @param {takePercentage} number, the percentage of the final cost it will take
+ * @param {takeBase} number, the base fee
  */
 const BtnPayment: React.SFC<BtnProps> = (props) => {
   const { tickets, paymentPlatform, paymentIcon, takePercentage, takeBase } = props;
@@ -30,10 +35,10 @@ const BtnPayment: React.SFC<BtnProps> = (props) => {
   }
   finalCost += (finalCost * takePercentage + takeBase);
   return (
-    <div className='btn-payment button is-rounded'>
+    <button className='btn-payment button is-rounded'>
       <div className='text'><i className={paymentIcon}></i> Pay with {paymentPlatform}</div>
       <div className='amount'>${(finalCost + 0.005).toFixed(2)}</div>
-    </div>
+    </button>
   );
 }
 
@@ -41,6 +46,10 @@ interface Props {};
 interface State {};
 
 export default class UserInfo extends React.Component<Props, State> {
+  makePurchase = (merchant: Merchant) => {
+    console.log(merchant);
+  }
+
   render() {
     return (
       <div id='user-info'>
@@ -71,6 +80,7 @@ export default class UserInfo extends React.Component<Props, State> {
                 paymentIcon={'fab fa-cc-paypal'}
                 takePercentage={0.026}
                 takeBase={0.3}
+                onClick={() => this.makePurchase(Merchant.PAYPAL)}
               />
               <BtnPayment
                 tickets={tixManager !== null ? tixManager.getTickets() : []}

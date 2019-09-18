@@ -10,22 +10,27 @@ $PURCHASE_BOX_PADDING: 30px;
   background: hsla(360, 100%, 100%, 1);
   border-top: 6px solid $LANDING_DARK;
   box-shadow: 0px 15px 35px rgba(0, 0, 0, 0.10), 0px 5px 15px 4px rgba(0, 0, 0, 0.07);
+  padding: 15px 0px;
   width: 100%;
-  height: 80vh;
 
   /*
    * Styles the branding which is the 'Book for {revue name}'
    */
   #revue-brand {
-    padding: 15px 0px;
     color: #000000;
+    padding: 0px 20px;
+    margin-bottom: 15px;
   
     // Display styles
     display: flex;
     align-items: center;
     justify-content: center;
-    
-    img { width: 172px; }
+    #logo-wrapper {
+      background-color: $LANDING_DARK;
+      border-radius: 100%;
+      padding: 16px;
+      img { width: 64px; }
+    }
     #text-wrapper{
       display: flex;
       flex-direction: column;
