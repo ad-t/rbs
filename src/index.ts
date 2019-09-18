@@ -14,6 +14,7 @@ import {
 
 import { Production } from "./entity/production";
 import { Show } from "./entity/show";
+import { Order } from "./entity/order";
 
 import * as ProductionRoutes from "./routes/production";
 import * as ShowRoutes from "./routes/show";
@@ -21,7 +22,6 @@ import * as ShowRoutes from "./routes/show";
 // libraries
 import bodyParser = require("body-parser");
 import { seedDB } from "./dev";
-import { Order } from "./entity/order";
 import Logger from "./logging";
 
 // initialise config
@@ -206,5 +206,7 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
  *         description: Bad request
  *       404:
  *         description: No show with given ID
+ *       409:
+ *         description: Not enough available seats to fufil request
  */
 app.post("/shows/:id/seats", ShowRoutes.ReserveSeats);
