@@ -66,6 +66,6 @@
   color: hsla(360, 100%, 100%, 1);
   font-size: 1em;
   margin-top: 10px;
-  width: 100%;
   &:hover { background: $LANDING_MIDDLE_LIGHT; }
+  &:first-child { margin-top: 20px; }
 }
