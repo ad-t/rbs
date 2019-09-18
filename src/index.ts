@@ -12,9 +12,9 @@ import {
   getRepository,
 } from "typeorm";
 
+import { Order } from "./entity/order";
 import { Production } from "./entity/production";
 import { Show } from "./entity/show";
-import { Order } from "./entity/order";
 
 import * as ProductionRoutes from "./routes/production";
 import * as ShowRoutes from "./routes/show";
@@ -156,6 +156,12 @@ app.get("/productions/", ProductionRoutes.GetActive);
  * /productions/{id}/shows:
  *   get:
  *     description: List all the shows for an active production
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: integer
+ *         required: true
+ *         description: show id
  *     responses:
  *       200:
  *         description: Information about the showings of a specific production
