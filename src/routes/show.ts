@@ -24,7 +24,7 @@ export async function ReserveSeats(req: Request, res: Response): Promise<void> {
       }
       if (typeof numSeats !== "number" || (!Number.isInteger(numSeats)) ||
           numSeats <= 0) {
-        throw new Error("invalid num_seats");
+        throw new Error("invalid numSeats");
       }
     } catch (err) {
       res.status(400).json({error: err.toString()});
