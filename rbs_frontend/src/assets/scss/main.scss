@@ -39,3 +39,13 @@ a, button, div, span, select { font-family: 'Work Sans'; }
   padding: 5px 10px;
   width: 100%;
 }
+
+.rbs-form-error-wrapper {
+  height: 24px;
+  .rbs-form-error {
+    animation-duration: 0.5s;
+    animation-name: showerror;
+    color: hsla(360, 100%, 50%, 100%);
+    &:before { content: '*'; }
+  }
+}

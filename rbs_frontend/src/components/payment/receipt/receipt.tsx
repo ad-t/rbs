@@ -11,10 +11,11 @@ export default class Receipt extends React.Component<Props, State> {
     const receiptElm = [];
     let totalPreMerchant = 0.0;
 
-    for (let ticket of tickets) {
+    for (let i = 0; i < tickets.length; ++i) {
+      const ticket = tickets[i];
       totalPreMerchant += (ticket.quantity * ticket.cost);
       receiptElm.push(
-        <div className='receipt-row'>
+        <div key={i} className='receipt-row'>
           <span>{ticket.quantity}</span>
           <span>${ticket.cost}</span>
           <span>{ticket.description}</span>

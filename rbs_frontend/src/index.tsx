@@ -34,8 +34,8 @@ interface State {
 
 class Index extends React.Component<{}, State> {
 
-  constructor() {
-    super({});
+  constructor(props: {}) {
+    super(props);
 
     // We are going to go through the session storage and see if there are any left over tickets
     // maybe due to a refresh of the application. If there is, add it to the state.
