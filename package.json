@@ -12,6 +12,7 @@
     "@types/node": "^12.7.4",
     "@types/swagger-jsdoc": "^3.0.2",
     "@types/swagger-ui-express": "^3.0.1",
+    "@types/validator": "^10.11.3",
     "chai": "^4.2.0",
     "cors": "^2.8.5",
     "dotenv": "^8.1.0",
@@ -27,6 +28,7 @@
     "tslint": "^5.19.0",
     "typeorm": "^0.2.18",
     "typescript": "3.5.3",
+    "validator": "^11.1.0",
     "winston": "^3.2.1"
   },
   "scripts": {
