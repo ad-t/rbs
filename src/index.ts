@@ -16,6 +16,7 @@ import { Order } from "./entity/order";
 import { Production } from "./entity/production";
 import { Show } from "./entity/show";
 
+import * as OrderRoutes from "./routes/order";
 import * as ProductionRoutes from "./routes/production";
 import * as ShowRoutes from "./routes/show";
 
@@ -70,7 +71,13 @@ const options: ConnectionOptions = {
 };
 
 function genericLoggingMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
-  next();
+  try {
+    next();
+  } catch (e) {
+    Logger.Error(e.toString());
+    Logger.Error(e.stack);
+    res.status(500).json({error: "internal server error"});
+  }
   Logger.Info(`${res.statusCode} - ${req.path}`);
 }
 
@@ -199,12 +206,16 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
  *           properties:
  *             name:
  *               type: string
+ *               example: John Smith
  *             email:
  *               type: string
+ *               example: john@example.com
  *             phone:
  *               type: string
+ *               example: 0412345678
  *             numSeats:
  *               type: integer
+ *               example: 1
  *     responses:
  *       201:
  *         description: Seats have been reserved successfully
@@ -216,3 +227,24 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
  *         description: Not enough available seats to fufil request
  */
 app.post("/shows/:id/seats", ShowRoutes.ReserveSeats);
+
+/**
+ * @swagger
+ * /orders/{id}:
+ *   get:
+ *     summary: Get summary of a reserved order.
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         required: true
+ *         description: order uuid
+ *     responses:
+ *       200:
+ *         description: Retrieved order
+ *       404:
+ *         description: Order with ID not found
+ */
+app.get("/orders/:id", OrderRoutes.GetOrder);
