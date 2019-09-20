@@ -269,3 +269,24 @@ app.get("/orders/:id", OrderRoutes.GetOrder);
  *         description: Order with ID not found
  */
 app.post("/orders/:id/paypal-setup", OrderRoutes.SetupPaypal);
+
+/**
+ * @swagger
+ * /orders/{id}/paypal-capture:
+ *   post:
+ *     summary: Capture a paypal order after user has approved
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         required: true
+ *         description: order uuid (not paypal order id)
+ *     responses:
+ *       200:
+ *         description: order has been captured
+ *       404:
+ *         description: Order with ID not found
+ */
+app.post("/orders/:id/paypal-capture", OrderRoutes.PaypalCaptureOrder);

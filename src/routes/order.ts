@@ -85,7 +85,16 @@ export async function SetupPaypal(req: Request, res: Response) {
     Logger.Info(JSON.stringify(paypalOrder));
     res.json(paypalOrder);
   } catch (err) {
-    Logger.Error(err);
+    Logger.Error(err.stack);
+    res.status(500).json({error: "Internal server error"});
+  }
+}
+
+export async function PaypalCaptureOrder(req: Request, res: Response) {
+  try {
+    throw new Error("test");
+  } catch (err) {
+    Logger.Error(err.stack);
     res.status(500).json({error: "Internal server error"});
   }
 }
