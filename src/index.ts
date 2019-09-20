@@ -12,6 +12,7 @@ import {
   getRepository,
 } from "typeorm";
 
+import { Order } from "./entity/order";
 import { Production } from "./entity/production";
 import { Show } from "./entity/show";
 
@@ -19,6 +20,7 @@ import * as ProductionRoutes from "./routes/production";
 import * as ShowRoutes from "./routes/show";
 
 // libraries
+import bodyParser = require("body-parser");
 import { seedDB } from "./dev";
 import Logger from "./logging";
 
@@ -46,6 +48,7 @@ const specs = swaggerJsdoc(swaggerjsdocOptions);
 const activeEntities = [
   Production,
   Show,
+  Order
 ];
 
 const options: ConnectionOptions = {
@@ -67,25 +70,34 @@ const options: ConnectionOptions = {
 };
 
 function genericLoggingMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
-  Logger.Info(`${res.statusCode} - ${req.path}`);
   next();
+  Logger.Info(`${res.statusCode} - ${req.path}`);
 }
 
 // setup
 async function bootstrap() {
-  Logger.Init();
   Logger.Info("Creating database connection...");
   await createConnection(options);
   if (process.env.NODE_ENV === "development") {
-    app.use(cors());
-    Logger.Info(`API documentation available at ${API_HOST}:${API_PORT}/docs`);
-    app.use("/docs", swaggerUi.serve, swaggerUi.setup(specs));
     Logger.Info("Since we're in the development environment, purge the database tables");
     activeEntities.forEach(async (entity) => await getConnection().getRepository(entity).delete({}));
     Logger.Info("Seeding database...");
     await seedDB();
   }
 }
+
+if (process.env.NODE_ENV === "development") {
+  Logger.Init();
+  app.use(cors());
+  app.use(bodyParser.json());
+  Logger.Info(`API documentation available at ${API_HOST}:${API_PORT}/docs`);
+  app.use("/docs", swaggerUi.serve, swaggerUi.setup(specs));
+}
+
+app.listen(API_PORT, async () => {
+  await bootstrap();
+  Logger.Info(`Server started at ${API_HOST}:${API_PORT}`);
+});
 
 /**
  * @swagger
@@ -144,6 +156,12 @@ app.get("/productions/", ProductionRoutes.GetActive);
  * /productions/{id}/shows:
  *   get:
  *     description: List all the shows for an active production
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: integer
+ *         required: true
+ *         description: show id
  *     responses:
  *       200:
  *         description: Information about the showings of a specific production
@@ -159,17 +177,42 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
 /**
  * @swagger
  * /shows/{id}/seats:
- *   put:
- *     description: Purchase seats for a specific show
+ *   post:
+ *     summary: Reserve seats for a specific show
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: integer
+ *         required: true
+ *         description: show id
+ *       - in: body
+ *         name: reservation
+ *         schema:
+ *           type: object
+ *           required:
+ *             - name
+ *             - email
+ *             - phone
+ *             - numSeats
+ *           properties:
+ *             name:
+ *               type: string
+ *             email:
+ *               type: string
+ *             phone:
+ *               type: string
+ *             numSeats:
+ *               type: integer
  *     responses:
- *       200:
- *         description: Seats have been purchases successfully
+ *       201:
+ *         description: Seats have been reserved successfully
  *       400:
  *         description: Bad request
+ *       404:
+ *         description: No show with given ID
+ *       409:
+ *         description: Not enough available seats to fufil request
  */
-app.put("/shows/:id/seats", ShowRoutes.PurchaseSeats);
-
-app.listen(API_PORT, async () => {
-  await bootstrap();
-  Logger.Info(`Server started at ${API_HOST}:${API_PORT}`);
-});
+app.post("/shows/:id/seats", ShowRoutes.ReserveSeats);
