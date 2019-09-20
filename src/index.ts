@@ -248,3 +248,24 @@ app.post("/shows/:id/seats", ShowRoutes.ReserveSeats);
  *         description: Order with ID not found
  */
 app.get("/orders/:id", OrderRoutes.GetOrder);
+
+/**
+ * @swagger
+ * /orders/{id}/paypal-setup:
+ *   post:
+ *     summary: Setup order with paypal
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         required: true
+ *         description: order uuid
+ *     responses:
+ *       200:
+ *         description: Order has been setup
+ *       404:
+ *         description: Order with ID not found
+ */
+app.post("/orders/:id/paypal-setup", OrderRoutes.SetupPaypal);
