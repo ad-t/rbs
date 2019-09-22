@@ -23,6 +23,7 @@ import * as ShowRoutes from "./routes/show";
 // libraries
 import bodyParser = require("body-parser");
 import { seedDB } from "./dev";
+import { PaypalOrder } from "./entity/paypal_order";
 import Logger from "./logging";
 
 // initialise config
@@ -49,7 +50,8 @@ const specs = swaggerJsdoc(swaggerjsdocOptions);
 const activeEntities = [
   Production,
   Show,
-  Order
+  Order,
+  PaypalOrder
 ];
 
 const options: ConnectionOptions = {
