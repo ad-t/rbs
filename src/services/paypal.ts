@@ -46,7 +46,7 @@ export function orderCreateRequestBody(
       user_action: "PAY_NOW"
     },
     purchase_units: [{
-      custom_id: orderID,
+      invoice_id: orderID,
       description: `Tickets for ${title} ${year}`,
       soft_descriptor: "RBS Revue Tickets", // credit card statement
       amount: {

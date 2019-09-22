@@ -34,6 +34,6 @@ export class Order {
   @Column({nullable: true})
   public paidAt: Date;
 
-  @OneToOne((type) => PaypalOrder, (po) => po.order)
+  @OneToOne((type) => PaypalOrder, (po) => po.order, {cascade: true})
   public paypal: PaypalOrder;
 }
