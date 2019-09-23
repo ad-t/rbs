@@ -8,7 +8,7 @@ export class TicketType {
   @Column({ length: 100 })
   public description: string;
 
-  @Column()
+  @Column({ type: "decimal", precision: 13, scale: 2})
   public price: number;
 
   @Column()
