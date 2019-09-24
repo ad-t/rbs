@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+
+<body>
+  <p>Hi {{name}},</p>
+  <p>
+    Thank you for purchasing tickets to {{production.name}}. The event details as well as
+    tickets are available below.
+  </p>
+
+  <h3>Venue and Time</h3>
+  <p>
+
+  </p>
+
+  <h3>Your Tickets</h3>
+  {{#each ticket}}
+  {{this.seat}}
+  {{/each}}
+
+  <hr />
+
+  <h3>Ticket Info</h3>
+  <ul>
+    <li>
+      Doors will open at 7:30pm and the show will start at 8:00pm sharp. Doors will close after
+      8:00pm, after which you can only enter during intermission.
+    </li>
+    <li>
+      Please print out each of the tickets found at the links above, or display the link on your
+      phone or other device. This email, Paypal receipts or Stripe receipts are not substitutes 
+      for tickets.
+    </li>
+    <li>
+      Members of a group booking must present each ticket individually.
+    </li>
+    <li>
+      You can email the above seat links to other members of the group booking to facilitate
+      the admissions process.
+    </li>
+    <li>
+      Any questions, concerns or issues regarding your tickets can be directed to
+      {{production.email}}.
+    </li>
+  </ul>
+
+
+  <h3>Getting There</h3>
+
+  <p>
+    Enter through Anzac Parade Gate and follow the University Mall. The Science Theatre is located 
+    on the left, opposite the Red Centre.
+
+    Alternatively, free on-campus parking is available after 7:30pm. Parking stations are located 
+    near Gate 14 (Barker Street) and Gate 2 (High Street). Alternatively, street parking is 
+    available after 6pm or next to NIDA (Anzac Parade) after 6:30pm.
+
+    For dropping off patrons and handicapped parking, please enter through Gate 2, High St. Turn 
+    left at the Io Myers Theatre, then make a first right, and then right again onto Union Road.
+    Handicapped patrons may park here in designated bays.
+  </p>
+
+  <p>We hope you enjoy the show!</p>
+</body>
+
+</html>

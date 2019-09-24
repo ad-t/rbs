@@ -16,6 +16,9 @@ export class Production {
   public year: number;
 
   @Column({ length: 255 })
+  public email: string;
+
+  @Column({ length: 255 })
   public description: string;
 
   @Column({ length: 100})
