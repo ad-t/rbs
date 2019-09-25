@@ -1,4 +1,5 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
+import { Show } from "./show";
 
 @Entity()
 export class TicketType {
@@ -13,4 +14,7 @@ export class TicketType {
 
   @Column()
   public minPurchaseAmount: number;
+
+  @ManyToOne((type) => Show, (show) => show.ticketTypes)
+  public show: Show;
 }
