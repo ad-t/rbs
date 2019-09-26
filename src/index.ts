@@ -73,13 +73,7 @@ const options: ConnectionOptions = {
 };
 
 function genericLoggingMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
-  try {
-    next();
-  } catch (e) {
-    Logger.Error(e.toString());
-    Logger.Error(e.stack);
-    res.status(500).json({error: "internal server error"});
-  }
+  next();
   Logger.Info(`${res.statusCode} - ${req.path}`);
 }
 
