@@ -1,0 +1,6 @@
+.btn-rbs-modifier {
+  background-color: $PRIMARY_DARKEST;
+  &:disabled {
+    background-color: $GREY_200;
+  }
+}

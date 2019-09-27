@@ -1,41 +1,4 @@
-@import '~bulma';
+// Tachyon is our atomic css framework to perform most of the styling
+@import "~tachyons/css/tachyons.min.css";
 
-@import '../fonts/work_sans/work_sans';
-
-@import './components/mixins';
-@import './components/variables';
-@import './components/aboutus';
-@import './components/app';
-@import './components/payment';
-
-a, button, div, span, select { font-family: 'Work Sans'; }
-
-.animation-slide-from-right {
-  // Animation of the box sliding in
-  animation-duration: 1.4s;
-  animation-name: slideinfromright;
-}
-
-.animation-slide-from-top {
-  // Animation of the box sliding in
-  animation-duration: 1.4s;
-  animation-name: slideinfromtop;
-}
-
-.rbs-select {
-  width: 100%;
-  select{
-    background: scale-color($LANDING_MIDDLE, $lightness: 85%);
-    border: none;
-    width: 100%;
-  }
-}
-
-.rbs-input {
-  background-color: #CBD5E0;
-  border: none;
-  border-radius: 5px;
-  font-family: 'Work Sans';
-  padding: 5px 10px;
-  width: 100%;
-}
+@import "./Components/TicketingSystem";
