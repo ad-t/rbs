@@ -13,15 +13,14 @@ function environment() {
   const clientSecret =
       process.env.PAYPAL_CLIENT_SECRET || "PAYPAL-SANDBOX-CLIENT-SECRET";
 
-  if (process.env.PAYPAL_ENV === "live") {
+  if (process.env.NODE_ENV === "production") {
     return new paypal.core.LiveEnvironment(clientId, clientSecret);
   }
   return new paypal.core.SandboxEnvironment(clientId, clientSecret);
 }
 
 export function paypalFee(subtotal: currency): currency {
-  // TODO update with actual transaction fee
-  return subtotal.multiply(0.1);
+  return subtotal.multiply(0.026).add(0.30);
 }
 
 export function orderCreateRequestBody(

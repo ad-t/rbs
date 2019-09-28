@@ -27,23 +27,14 @@ export async function SetupPaypal(req: Request, res: Response) {
     const conn = getConnection();
     const order: Order = await conn.getRepository(Order).findOne(
       {id: req.params.id},
-      {join: {
-        alias: "order",
-        innerJoinAndSelect: {
-          show: "order.show",
-          production: "show.production"
-        },
-        leftJoinAndSelect: {
-          paypal: "order.paypal"
-        }
-      }}
+      {relations: ["show", "show.production", "paypal"]}
     );
     if (!order) {
       res.status(404).json({error: `No order found with id ${req.params.id}`});
       return;
     }
     if (order.paid) {
-      res.status(409).json({error: "Order is already paid"});
+      res.status(409).json({error: "Order has already been paid"});
       return;
     }
     // If paypal has already been set up for this order
