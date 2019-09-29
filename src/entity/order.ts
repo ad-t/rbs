@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
-import { PaypalOrder } from "./paypal_order";
+import { Payment } from "./payment";
 import { Show } from "./show";
 
 @Entity()
@@ -34,6 +34,6 @@ export class Order {
   @Column({nullable: true})
   public paidAt: Date;
 
-  @OneToOne((type) => PaypalOrder, (po) => po.order, {cascade: true})
-  public paypal: PaypalOrder;
+  @OneToOne((type) => Payment, (payment) => payment.order, {cascade: true})
+  public payment: Payment;
 }

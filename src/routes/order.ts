@@ -3,7 +3,8 @@ import currency = require("currency.js");
 import {Request, Response} from "express";
 import { getConnection } from "typeorm";
 import { Order } from "../entity/order";
-import { PaypalOrder } from "../entity/paypal_order";
+import { PaymentMethod } from "../entity/payment";
+import { Payment } from "../entity/payment";
 import Logger from "../logging";
 import { orderCreateRequestBody, paypalClient, paypalFee } from "../services/paypal";
 
@@ -27,7 +28,7 @@ export async function SetupPaypal(req: Request, res: Response) {
     const conn = getConnection();
     const order: Order = await conn.getRepository(Order).findOne(
       {id: req.params.id},
-      {relations: ["show", "show.production", "paypal"]}
+      {relations: ["show", "show.production", "payment"]}
     );
     if (!order) {
       res.status(404).json({error: `No order found with id ${req.params.id}`});
@@ -37,9 +38,11 @@ export async function SetupPaypal(req: Request, res: Response) {
       res.status(409).json({error: "Order has already been paid"});
       return;
     }
-    // If paypal has already been set up for this order
-    if (order.paypal) {
-      res.json({paypalOrderID: order.paypal.id});
+
+    // If paypal has already been set up for this order,
+    // return existing paypal id
+    if (order.payment && order.payment.method === PaymentMethod.PAYPAL) {
+      res.json({paypalOrderID: order.payment.transactionID});
       return;
     }
     const show = order.show;
@@ -64,14 +67,14 @@ export async function SetupPaypal(req: Request, res: Response) {
     Logger.Info(JSON.stringify(paypalResponse));
 
     // Save paypal details
-    const paypalOrder = new PaypalOrder();
-    paypalOrder.totalPrice = (totalPrice.format() as any);
-    paypalOrder.id = paypalResponse.result.id;
-    paypalOrder.captureID = null;
-    paypalOrder.order = order;
-    await conn.getRepository(PaypalOrder).save(paypalOrder);
+    const payment = (order.payment) ? order.payment : new Payment();
+    payment.order = order;
+    payment.method = PaymentMethod.PAYPAL;
+    payment.totalPrice = (totalPrice.format() as any);
+    payment.transactionID = paypalResponse.result.id;
+    await conn.getRepository(Payment).save(payment);
 
-    res.json({paypalOrderID: paypalOrder.id});
+    res.json({paypalOrderID: payment.transactionID});
   } catch (err) {
     Logger.Error(err.stack);
     res.status(500).json({error: "Internal server error"});
@@ -84,27 +87,31 @@ export async function PaypalCaptureOrder(req: Request, res: Response) {
     const repo = conn.getRepository(Order);
     // get order and paypalorder
     const order: Order = await repo.findOne(
-      req.params.id,
-      {
-        join: {alias: "order", innerJoinAndSelect: {paypal: "order.paypal"}}
-      }
+      req.params.id, {relations: ["payment"]}
     );
+    repo.findOne();
     if (!order) {
       res.status(404).json({error: "order not found (or paypal ID has not yet been set up)"});
+      return;
     }
     if (order.paid) {
-      res.status(409).json({error: "order has already been paid"});
+      res.status(422).json({error: "order has already been paid"});
+      return;
+    }
+    if ((!order.payment) || order.payment.method !== PaymentMethod.PAYPAL) {
+      res.status(422).json({error: "order has not been set up for paypal"});
+      return;
     }
 
     // Call paypal API to capture order
     // https://developer.paypal.com/docs/checkout/reference/server-integration/capture-transaction/#on-the-server
-    const request = new paypal.orders.OrdersCaptureRequest(order.paypal.id);
+    const request = new paypal.orders.OrdersCaptureRequest(order.payment.transactionID);
     request.requestBody({});
     const capture = await paypalClient().execute(request);
     Logger.Info(JSON.stringify(capture));
     const captureID = capture.result.purchase_units[0].payments.captures[0].id;
 
-    order.paypal.captureID = captureID;
+    order.payment.captureID = captureID;
     order.paid = true;
     order.paidAt = new Date();
     await repo.save(order);

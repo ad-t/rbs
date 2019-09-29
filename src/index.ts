@@ -23,7 +23,7 @@ import * as ShowRoutes from "./routes/show";
 // libraries
 import bodyParser = require("body-parser");
 import { seedDB } from "./dev";
-import { PaypalOrder } from "./entity/paypal_order";
+import { Payment } from "./entity/payment";
 import Logger from "./logging";
 
 // initialise config
@@ -51,7 +51,7 @@ const activeEntities = [
   Production,
   Show,
   Order,
-  PaypalOrder
+  Payment
 ];
 
 const options: ConnectionOptions = {
