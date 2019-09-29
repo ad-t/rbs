@@ -1,17 +1,12 @@
-import { ITicketType } from "./api";
-
 /*
  * The interfaces for the tickets. This will be used by the TicketContext which is defined in the
  * tickets.tsx file under context.
  */
-
- // For a ticket interface. The uid will correspond to the ticket uid in the backend. The uid is
- // what really is used to tell the backend what tickets are bought. Cost and description are just
- // variables to remember their attributes and have no real affect on the backend.
 export interface ITicket {
-  uid: number,
+  id: number,
   cost: number,
   description: string,
+  minPurchase: number,
   quantity: number
 };
 

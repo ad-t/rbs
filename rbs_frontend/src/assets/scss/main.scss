@@ -1,4 +1,55 @@
 // Tachyon is our atomic css framework to perform most of the styling
 @import "~tachyons/css/tachyons.min.css";
 
-@import "./Components/TicketingSystem";
+// The font we want to use
+@import '../fonts/work_sans/work_sans';
+
+// Import variables
+@import './Utility/Variables';
+
+// Import our component styling
+@import "./components/Navbar";
+@import "./components/TicketingSystem";
+
+// Global styling that is not specific to any
+html, body {
+  font-family: 'Work Sans';
+}
+
+.rbs-circled-number {
+  border: 3px solid black;
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75em;
+  font-weight: bold;
+  height: 32px;
+  width: 32px;
+}
+
+.rbs-btn {
+  background-color: $PRIMARY_LIGHT;
+  box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  color: #FFFFFF;
+  outline: none;
+  &:disabled {
+    background-color: $GREY_400;
+  }
+  &:active:not(:disabled) {
+    background-color: $PRIMARY_DARK;
+  }
+}
+
+.rbs-flex-grow-1 {
+  flex-grow: 1;
+}
+
+.rbs-sticky-top {
+  position: sticky;
+  top: 0px;
+}
+
+.bg-primary {
+  background-color: $PRIMARY_DARK;
+}

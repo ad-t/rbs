@@ -1,0 +1,16 @@
+.rbs-hamburger {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  padding: 0;
+}
+
+.rbs-mobile-menu {
+  max-height: 100px;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out;
+  &[hidden] {
+    display: block;
+    max-height: 0px;
+  }
+}

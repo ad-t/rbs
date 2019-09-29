@@ -8,6 +8,7 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route } from 'react-router-dom';
 
 // Import subcomponents
+import Navbar from './components/Navbar';
 import TicketingSystem from './components/TicketingSystem';
 
 // Import assets (e.g. scss)
@@ -19,13 +20,14 @@ interface State {
 
 class Index extends React.Component<{}, State> {
 
-  constructor() {
-    super({});
+  constructor(props: React.Props<{}>) {
+    super(props);
   }
 
   render() {
     return (
-      <div>
+      <div className="flex flex-column vh-100">
+        <Navbar />
         <TicketingSystem />
       </div>
     );

@@ -1,6 +1,13 @@
 .btn-rbs-modifier {
-  background-color: $PRIMARY_DARKEST;
+  background-color: $PRIMARY_LIGHT;
+  color: #FFFFFF;
+  width: 32px;
+  height: 32px;
+  outline: none;
   &:disabled {
-    background-color: $GREY_200;
+    background-color: $GREY_400;
+  }
+  &:active:not(:disabled) {
+    background-color: $PRIMARY_DARK;
   }
 }
