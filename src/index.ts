@@ -16,12 +16,14 @@ import { Order } from "./entity/order";
 import { Production } from "./entity/production";
 import { Show } from "./entity/show";
 
+import * as OrderRoutes from "./routes/order";
 import * as ProductionRoutes from "./routes/production";
 import * as ShowRoutes from "./routes/show";
 
 // libraries
 import bodyParser = require("body-parser");
 import { seedDB } from "./dev";
+import { Payment } from "./entity/payment";
 import Logger from "./logging";
 
 // initialise config
@@ -48,7 +50,8 @@ const specs = swaggerJsdoc(swaggerjsdocOptions);
 const activeEntities = [
   Production,
   Show,
-  Order
+  Order,
+  Payment
 ];
 
 const options: ConnectionOptions = {
@@ -199,12 +202,16 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
  *           properties:
  *             name:
  *               type: string
+ *               example: John Smith
  *             email:
  *               type: string
+ *               example: john@example.com
  *             phone:
  *               type: string
+ *               example: 0412345678
  *             numSeats:
  *               type: integer
+ *               example: 1
  *     responses:
  *       201:
  *         description: Seats have been reserved successfully
@@ -216,3 +223,66 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
  *         description: Not enough available seats to fufil request
  */
 app.post("/shows/:id/seats", ShowRoutes.ReserveSeats);
+
+/**
+ * @swagger
+ * /orders/{id}:
+ *   get:
+ *     summary: Get summary of a reserved order.
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         required: true
+ *         description: order uuid
+ *     responses:
+ *       200:
+ *         description: Retrieved order
+ *       404:
+ *         description: Order with ID not found
+ */
+app.get("/orders/:id", OrderRoutes.GetOrder);
+
+/**
+ * @swagger
+ * /orders/{id}/paypal-setup:
+ *   post:
+ *     summary: Setup order with paypal
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         required: true
+ *         description: order uuid
+ *     responses:
+ *       200:
+ *         description: Order has been setup
+ *       404:
+ *         description: Order with ID not found
+ */
+app.post("/orders/:id/paypal-setup", OrderRoutes.SetupPaypal);
+
+/**
+ * @swagger
+ * /orders/{id}/paypal-capture:
+ *   post:
+ *     summary: Capture a paypal order after user has approved
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         required: true
+ *         description: order uuid (not paypal order id)
+ *     responses:
+ *       200:
+ *         description: order has been captured
+ *       404:
+ *         description: Order with ID not found
+ */
+app.post("/orders/:id/paypal-capture", OrderRoutes.PaypalCaptureOrder);
