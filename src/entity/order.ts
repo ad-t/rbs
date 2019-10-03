@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Payment } from "./payment";
 import { Show } from "./show";
 
 @Entity()
@@ -32,4 +33,7 @@ export class Order {
 
   @Column({nullable: true})
   public paidAt: Date;
+
+  @OneToOne((type) => Payment, (payment) => payment.order, {cascade: true})
+  public payment: Payment;
 }
