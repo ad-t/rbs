@@ -1,9 +1,24 @@
 import {Request, Response} from "express";
-import {Connection, getConnection, getRepository} from "typeorm";
+import {Connection, getConnection} from "typeorm";
 import isEmail from "validator/lib/isEmail";
 import { Order } from "../entity/order";
 import { Show } from "../entity/show";
 import Logger from "../logging";
+
+export async function GetShow(req: Request, res: Response) {
+  try {
+    const conn = getConnection();
+    const show: Show = await conn.getRepository(Show).findOne(
+      req.params.id, {relations: ["production", "ticketTypes"]});
+    if (!show) {
+      res.status(404).json({error: `no show found with id ${req.params.id}`});
+    }
+    res.json(show);
+  } catch (err) {
+    Logger.Error(err.stack);
+    res.status(500).json({error: "Internal server error"});
+  }
+}
 
 export async function ReserveSeats(req: Request, res: Response): Promise<void> {
   try {

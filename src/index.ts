@@ -181,6 +181,25 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
 
 /**
  * @swagger
+ * /shows/{id}:
+ *   get:
+ *     summary: Get show info and ticket types
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: integer
+ *         required: true
+ *         description: show id
+ *     responses:
+ *       200:
+ *         description: Information about the show and ticket types
+ *       404:
+ *         description: Show not found
+ */
+app.get("/shows/:id", ShowRoutes.GetShow);
+
+/**
+ * @swagger
  * /shows/{id}/seats:
  *   post:
  *     summary: Reserve seats for a specific show
