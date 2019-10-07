@@ -24,6 +24,7 @@ import * as ShowRoutes from "./routes/show";
 import bodyParser = require("body-parser");
 import { seedDB } from "./dev";
 import { Payment } from "./entity/payment";
+import { TicketType } from "./entity/ticket_type";
 import Logger from "./logging";
 
 // initialise config
@@ -51,7 +52,8 @@ const activeEntities = [
   Production,
   Show,
   Order,
-  Payment
+  Payment,
+  TicketType
 ];
 
 const options: ConnectionOptions = {
