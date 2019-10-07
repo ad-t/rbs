@@ -15,6 +15,6 @@ export class TicketType {
   @Column()
   public minPurchaseAmount: number;
 
-  @ManyToOne((type) => Show, (show) => show.ticketTypes)
+  @ManyToOne((type) => Show, (show) => show.ticketTypes, {onDelete: "SET NULL"})
   public show: Show;
 }

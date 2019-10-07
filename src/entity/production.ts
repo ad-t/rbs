@@ -12,6 +12,7 @@ export class Production {
   @Column({ length: 100 })
   public subtitle: string;
 
+  @Column()
   public year: number;
 
   @Column({ length: 255 })

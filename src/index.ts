@@ -192,6 +192,7 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
  *         type: integer
  *         required: true
  *         description: show id
+ *         example: 1
  *       - in: body
  *         name: reservation
  *         schema:
@@ -201,6 +202,7 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
  *             - email
  *             - phone
  *             - numSeats
+ *             - ticketType
  *           properties:
  *             name:
  *               type: string
@@ -212,6 +214,9 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
  *               type: string
  *               example: 0412345678
  *             numSeats:
+ *               type: integer
+ *               example: 1
+ *             ticketType:
  *               type: integer
  *               example: 1
  *     responses:

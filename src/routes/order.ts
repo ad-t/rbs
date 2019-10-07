@@ -11,7 +11,8 @@ import { orderCreateRequestBody, paypalClient, paypalFee } from "../services/pay
 export async function GetOrder(req: Request, res: Response): Promise<void> {
   try {
     const conn = getConnection();
-    const order: Order = await conn.getRepository(Order).findOne({id: req.params.id}, {relations: ["show"]});
+    const order: Order = await conn.getRepository(Order).findOne(
+      req.params.id, {relations: ["show", "ticketType"]});
     if (!order) {
       res.status(404).json({error: `No order found with id ${req.params.id}`});
       return;
@@ -28,7 +29,7 @@ export async function SetupPaypal(req: Request, res: Response) {
     const conn = getConnection();
     const order: Order = await conn.getRepository(Order).findOne(
       {id: req.params.id},
-      {relations: ["show", "show.production", "payment"]}
+      {relations: ["show", "show.production", "payment", "ticketType"]}
     );
     if (!order) {
       res.status(404).json({error: `No order found with id ${req.params.id}`});
@@ -49,7 +50,7 @@ export async function SetupPaypal(req: Request, res: Response) {
     const prod = show.production;
 
     const subtotal = AUD(order.subtotalPrice);
-    const unitPrice = AUD(show.seatPrice);
+    const unitPrice = AUD(order.ticketType.price);
     const fee = paypalFee(subtotal);
     const totalPrice = subtotal.add(fee);
 
@@ -57,7 +58,7 @@ export async function SetupPaypal(req: Request, res: Response) {
     const request = new paypal.orders.OrdersCreateRequest();
     request.prefer("return=representation");
     const details = orderCreateRequestBody(
-      order.id, prod.title, prod.year, prod.subtitle, show.time, subtotal,
+      order.id, prod.title, prod.year.toString(), prod.subtitle, show.time, subtotal,
       unitPrice, order.numSeats);
     request.requestBody(details);
     Logger.Info(JSON.stringify(details));

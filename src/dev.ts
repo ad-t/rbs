@@ -41,9 +41,9 @@ export async function seedDB() {
 
       const tt2 = new TicketType();
       tt2.id = i * 2 + 2;
-      tt2.description = "Single";
-      tt2.price = 15.00;
-      tt2.minPurchaseAmount = 1;
+      tt2.description = "Group";
+      tt2.price = 12.00;
+      tt2.minPurchaseAmount = 5;
       tt2.show = show;
 
       conn.manager.save(tt1);
