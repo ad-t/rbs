@@ -24,6 +24,7 @@ import * as ShowRoutes from "./routes/show";
 import bodyParser = require("body-parser");
 import { seedDB } from "./dev";
 import { Payment } from "./entity/payment";
+import { TicketType } from "./entity/ticket_type";
 import Logger from "./logging";
 
 // initialise config
@@ -51,7 +52,8 @@ const activeEntities = [
   Production,
   Show,
   Order,
-  Payment
+  Payment,
+  TicketType
 ];
 
 const options: ConnectionOptions = {
@@ -179,6 +181,25 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
 
 /**
  * @swagger
+ * /shows/{id}:
+ *   get:
+ *     summary: Get show info and ticket types
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: integer
+ *         required: true
+ *         description: show id
+ *     responses:
+ *       200:
+ *         description: Information about the show and ticket types
+ *       404:
+ *         description: Show not found
+ */
+app.get("/shows/:id", ShowRoutes.GetShow);
+
+/**
+ * @swagger
  * /shows/{id}/seats:
  *   post:
  *     summary: Reserve seats for a specific show
@@ -190,6 +211,7 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
  *         type: integer
  *         required: true
  *         description: show id
+ *         example: 1
  *       - in: body
  *         name: reservation
  *         schema:
@@ -199,6 +221,7 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
  *             - email
  *             - phone
  *             - numSeats
+ *             - ticketType
  *           properties:
  *             name:
  *               type: string
@@ -210,6 +233,9 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
  *               type: string
  *               example: 0412345678
  *             numSeats:
+ *               type: integer
+ *               example: 1
+ *             ticketType:
  *               type: integer
  *               example: 1
  *     responses:
