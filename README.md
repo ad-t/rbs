@@ -1,4 +1,5 @@
 # Revue Booking System (RBS)
+[![Build Status](https://travis-ci.com/ad-t/rbs.svg?token=abdenR5omSSKhjLTgyN7&branch=master)](https://travis-ci.com/ad-t/rbs)
 
 ## .env
 Required fields:
