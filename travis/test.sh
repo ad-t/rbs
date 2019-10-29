@@ -1,5 +1,8 @@
 #!/bin/sh
 
+# install dependencies
+yarn install
+
 # check if it builds correctly
 yarn build
 
