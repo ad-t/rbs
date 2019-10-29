@@ -1,6 +1,6 @@
 language: node_js
 script:
-  - yarn ci_test
+  - ./travis/test.sh
 node_js:
   - "stable"
 cache: 
