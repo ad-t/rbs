@@ -6,6 +6,11 @@ import { Show } from "../entity/show";
 import Logger from "../logging";
 
 export async function GetShow(req: Request, res: Response) {
+  if (!/^\d+$/.test(req.params.id)) {
+    res.sendStatus(400);
+    return;
+  }
+
   try {
     const conn = getConnection();
     const show: Show = await conn.getRepository(Show).findOne(

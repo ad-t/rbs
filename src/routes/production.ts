@@ -19,10 +19,23 @@ export async function GetActive(req: Request, res: Response): Promise<void> {
 
 // get all shows corresponding to a production
 export async function GetShows(req: Request, res: Response): Promise<void> {
+  if (!/^\d+$/.test(req.params.id)) {
+    res.sendStatus(400);
+    return;
+  }
+
+  const id = parseInt(req.params.id, 10);
+
   try {
     const conn: Connection = await getConnection();
+    const prods = await conn.getRepository(Production).findOne({ id });
+    if (!prods) {
+      res.sendStatus(404);
+      return;
+    }
+
     const result = await conn.getRepository(Show).find({
-      production: { id: parseInt(req.params.id, 10) }
+      production: { id }
     });
     res.send(result);
   } catch (error) {
