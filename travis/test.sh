@@ -3,6 +3,16 @@
 # install dependencies
 yarn install
 
+# create a dotenv file that interacts with the travis ci instance of mysql
+echo "
+MYSQL_DATABASE=travis_ci_rbs
+MYSQL_USER=travis
+MYSQL_PASSWD=
+NODE_ENV=development
+SERVER_PORT=8080
+EOF 
+" > .env
+
 # check if it builds correctly
 yarn build
 
