@@ -12,3 +12,7 @@ dist
 
 # ignore mochawesome generated report
 mochawesome-report
+
+# ignore template env
+old.env
+
