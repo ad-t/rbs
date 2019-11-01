@@ -18,8 +18,5 @@ yarn serve &
 # wait for some time for the server to start
 sleep 10
 
-# run the tests
+# run the tests and travis will clean the rest up
 yarn ci_test
-
-# once complete, clean up the running server
-killall yarn
