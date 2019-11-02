@@ -1,0 +1,12 @@
+before_install:
+  - mysql -e 'CREATE DATABASE IF NOT EXISTS travis_ci_rbs;'
+services:
+  - mysql
+language: node_js
+script:
+  - ./travis/test.sh
+node_js:
+  - "stable"
+cache: 
+  directories:
+    - "node_modules"

@@ -40,6 +40,7 @@
     "prestart": "yarn run build",
     "serve": "node .",
     "watch": "tsc --watch",
-    "test": "ls ./tests/*.js | entr ./node_modules/.bin/mocha --reporter mochawesome ./tests/test.js"
+    "test": "ls ./tests/*.js | entr ./node_modules/.bin/mocha --reporter mochawesome ./tests/test.js",
+    "ci_test": "./node_modules/.bin/mocha ./tests/test.js"
   }
 }
