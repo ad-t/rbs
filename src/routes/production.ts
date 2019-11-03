@@ -10,7 +10,7 @@ export async function GetActive(req: Request, res: Response): Promise<void> {
   // TODO: the active productions part
   try {
     const conn: Connection = await getConnection();
-    const prods = await conn.getRepository(Production).find();
+    const prods = await conn.getRepository(Production).find({relations: ["shows"]});
     res.send(prods);
   } catch (error) {
     res.sendStatus(400);
