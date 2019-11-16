@@ -13,7 +13,7 @@ describe("productions", () => {
             .end( function (err, res) {
               expect(res.body).to.be.an('array').that.is.not.empty;
               for (const production of res.body) {
-                for (const prop of ["id", "title", "subtitle", "year", "description", "location"]) {
+                for (const prop of ["id", "title", "subtitle", "year", "description", "location", "shows"]) {
                   expect(production).to.have.property(prop);
                 }
               }
