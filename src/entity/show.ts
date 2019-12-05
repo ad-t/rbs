@@ -1,14 +1,12 @@
 import {Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import { Order } from "./order";
 import {Production} from "./production";
+import { TicketType } from "./ticket_type";
 
 @Entity()
 export class Show {
   @PrimaryGeneratedColumn()
   public id: number;
-
-  @Column({ length: 100 })
-  public location: string;
 
   @Column()
   public time: Date;
@@ -22,10 +20,10 @@ export class Show {
   @Column({default: 0})
   public reservedSeats: number;
 
-  @Column({type: "decimal", precision: 13, scale: 2})
-  public seatPrice: number;
-
   // Don't automatically fetch orders
   @OneToMany((type) => Order, (order) => order.show)
   public orders: Promise<Order[]>;
+
+  @OneToMany((type) => TicketType, (tt) => tt.show)
+  public ticketTypes: TicketType[];
 }

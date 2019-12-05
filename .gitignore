@@ -36,3 +36,7 @@ yarn-error.log*
 # confidential files
 mr20-bg.jpg
 mr20-bg2.jpg
+
+# ignore template env
+old.env
+

@@ -16,12 +16,15 @@ import { Order } from "./entity/order";
 import { Production } from "./entity/production";
 import { Show } from "./entity/show";
 
+import * as OrderRoutes from "./routes/order";
 import * as ProductionRoutes from "./routes/production";
 import * as ShowRoutes from "./routes/show";
 
 // libraries
 import bodyParser = require("body-parser");
 import { seedDB } from "./dev";
+import { Payment } from "./entity/payment";
+import { TicketType } from "./entity/ticket_type";
 import Logger from "./logging";
 
 // initialise config
@@ -48,7 +51,9 @@ const specs = swaggerJsdoc(swaggerjsdocOptions);
 const activeEntities = [
   Production,
   Show,
-  Order
+  Order,
+  Payment,
+  TicketType
 ];
 
 const options: ConnectionOptions = {
@@ -176,6 +181,25 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
 
 /**
  * @swagger
+ * /shows/{id}:
+ *   get:
+ *     summary: Get show info and ticket types
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: integer
+ *         required: true
+ *         description: show id
+ *     responses:
+ *       200:
+ *         description: Information about the show and ticket types
+ *       404:
+ *         description: Show not found
+ */
+app.get("/shows/:id", ShowRoutes.GetShow);
+
+/**
+ * @swagger
  * /shows/{id}/seats:
  *   post:
  *     summary: Reserve seats for a specific show
@@ -187,6 +211,7 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
  *         type: integer
  *         required: true
  *         description: show id
+ *         example: 1
  *       - in: body
  *         name: reservation
  *         schema:
@@ -196,15 +221,23 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
  *             - email
  *             - phone
  *             - numSeats
+ *             - ticketType
  *           properties:
  *             name:
  *               type: string
+ *               example: John Smith
  *             email:
  *               type: string
+ *               example: john@example.com
  *             phone:
  *               type: string
+ *               example: 0412345678
  *             numSeats:
  *               type: integer
+ *               example: 1
+ *             ticketType:
+ *               type: integer
+ *               example: 1
  *     responses:
  *       201:
  *         description: Seats have been reserved successfully
@@ -216,3 +249,66 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
  *         description: Not enough available seats to fufil request
  */
 app.post("/shows/:id/seats", ShowRoutes.ReserveSeats);
+
+/**
+ * @swagger
+ * /orders/{id}:
+ *   get:
+ *     summary: Get summary of a reserved order.
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         required: true
+ *         description: order uuid
+ *     responses:
+ *       200:
+ *         description: Retrieved order
+ *       404:
+ *         description: Order with ID not found
+ */
+app.get("/orders/:id", OrderRoutes.GetOrder);
+
+/**
+ * @swagger
+ * /orders/{id}/paypal-setup:
+ *   post:
+ *     summary: Setup order with paypal
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         required: true
+ *         description: order uuid
+ *     responses:
+ *       200:
+ *         description: Order has been setup
+ *       404:
+ *         description: Order with ID not found
+ */
+app.post("/orders/:id/paypal-setup", OrderRoutes.SetupPaypal);
+
+/**
+ * @swagger
+ * /orders/{id}/paypal-capture:
+ *   post:
+ *     summary: Capture a paypal order after user has approved
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         required: true
+ *         description: order uuid (not paypal order id)
+ *     responses:
+ *       200:
+ *         description: order has been captured
+ *       404:
+ *         description: Order with ID not found
+ */
+app.post("/orders/:id/paypal-capture", OrderRoutes.PaypalCaptureOrder);

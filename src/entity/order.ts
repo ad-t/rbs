@@ -1,5 +1,7 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Payment } from "./payment";
 import { Show } from "./show";
+import { TicketType } from "./ticket_type";
 
 @Entity()
 export class Order {
@@ -32,4 +34,10 @@ export class Order {
 
   @Column({nullable: true})
   public paidAt: Date;
+
+  @OneToOne((type) => Payment, (payment) => payment.order, {cascade: true})
+  public payment: Payment;
+
+  @ManyToOne((type) => TicketType, {onDelete: "SET NULL"})
+  public ticketType: TicketType;
 }

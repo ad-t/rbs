@@ -12,11 +12,17 @@ export class Production {
   @Column({ length: 100 })
   public subtitle: string;
 
-  @Column({ length: 4 })
-  public year: string;
+  @Column()
+  public year: number;
 
   @Column({ length: 255 })
   public description: string;
+
+  @Column({ length: 100})
+  public location: string;
+
+  @Column({ length: 300 })
+  public showImage: string;
 
   @OneToMany((type) => Show, (show) => show.production, { cascade: true })
   public shows: Show[];
