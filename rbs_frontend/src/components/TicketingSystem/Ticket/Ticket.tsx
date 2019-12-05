@@ -2,6 +2,7 @@
  * This file will handle the entire landing page.
  */
 import React from 'react';
+import { Button } from 'semantic-ui-react';
 
 // Import icons
 import { FaPlus, FaMinus } from 'react-icons/fa';
@@ -39,20 +40,26 @@ export default class Ticket extends React.Component<{
     const { ticketSales } = this.state;
 
     return (
-      <div className="flex items-center mv3">
-        <div className="w-10 mr3">${cost}</div>
-        <div className="w-70">{description}</div>
-        <div className="flex items-center justify-between w-25">
-          <button
-            className="btn-rbs-modifier bn flex items-center justify-center br-100"
+      <div className="ticket-item">
+        <div className="cost">${cost}</div>
+        <div className="desc">{description}</div>
+        <div className="controls">
+          <Button
+            className="decrement"
+            circular
             disabled={ticketSales <= 0}
             onClick={() => this.modifyTicket(-1)}
-          ><FaMinus /></button>
-          <div className="f4 pa1" style={{width: 22}}>{ticketSales}</div>
-          <button
-            className="btn-rbs-modifier bn flex items-center justify-center br-100"
+            icon="minus"
+            negative
+          ></Button>
+          <div className="ticket-numbers">{ticketSales}</div>
+          <Button
+            className="increment"
+            circular
             onClick={() => this.modifyTicket(1)}
-          ><FaPlus /></button>
+            icon="plus"
+            positive
+          ></Button>
         </div>
       </div>
     );

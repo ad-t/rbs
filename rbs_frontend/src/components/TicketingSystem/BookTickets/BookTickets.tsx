@@ -2,6 +2,7 @@
  * This file will handle the entire landing page.
  */
 import React from 'react';
+import { Button } from 'semantic-ui-react';
 
 // Import our custom element
 import Ticket from '../Ticket';
@@ -77,18 +78,12 @@ export default class BookTickets extends React.Component<{}, TSState> {
     }
 
     return (
-      <div className="rbs-flex-grow-1 flex flex-column pv2 ph3">
-        <div className="flex items-center mv3 pl5">
-          <span className="rbs-circled-number mr2">1</span>
-          <span className="b f3 lh-title">BOOK TICKETS</span>
+      <div>
+        <div className="tickets-list">
+          {ticketElms}
         </div>
-        <div className="rbs-flex-grow-1 flex flex-column justify-between">
-          <div>
-            {ticketElms}
-          </div>
-          <div>
-            <button className="rbs-btn b bn mb2 pa2 w-100">PURCHASE TICKETS</button>
-          </div>
+        <div className="btn-controls">
+          <Button primary>PURCHASE TICKETS</Button>
         </div>
       </div>
     );

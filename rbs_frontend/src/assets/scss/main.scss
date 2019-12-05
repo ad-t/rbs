@@ -1,5 +1,5 @@
-// Tachyon is our atomic css framework to perform most of the styling
-@import '~tachyons/css/tachyons.min.css';
+// Semantic UI theming
+@import '~semantic-ui-css/semantic.min.css';
 
 // The font we want to use
 @import '../fonts/work_sans/work_sans';
@@ -16,6 +16,12 @@
 // Global styling that is not specific to any
 html, body {
   font-family: 'Work Sans';
+  padding: 0px;
+  margin: 0px;
+}
+
+#root {
+  height: 100vh;
 }
 
 .rbs-circled-number {

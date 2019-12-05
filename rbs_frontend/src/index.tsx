@@ -10,10 +10,8 @@ import ReactDOM from 'react-dom';
 import { ITicket } from './types/tickets';
 
 // Import subcomponents
-import Navbar from './components/Navbar';
 import LandingPage from './components/LandingPage';
-import BookTickets from './components/TicketingSystem/BookTickets';
-import Invoice from './components/TicketingSystem/Invoice';
+import TicketingSystem from './components/TicketingSystem';
 
 // Import assets (e.g. scss)
 import './assets/scss/main.scss';
@@ -30,9 +28,9 @@ class Index extends React.Component<{}, State> {
 
   render() {
     return (
-      <div className="flex vh-100">
-        <LandingPage />
-      </div>
+      <React.Fragment>
+        <TicketingSystem />
+      </React.Fragment>
     );
   }
 }
