@@ -3,9 +3,9 @@
   background-position: center;
 
   .button-group {
-    padding-bottom: 3em;
+    padding-bottom: 2.5em;
     .btn-landing {
-      background-color: $PRIMARY_LIGHT;
+      background-color: $PRIMARY_DARK;
       border: $PRIMARY_DARK 0px solid;
       @include box-shadow(2px, 4px, 3px, rgba(0, 0, 0, 0.2));
       color: white;

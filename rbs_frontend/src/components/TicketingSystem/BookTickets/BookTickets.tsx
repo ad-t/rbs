@@ -78,7 +78,7 @@ export default class BookTickets extends React.Component<{}, TSState> {
 
     return (
       <div className="rbs-flex-grow-1 flex flex-column pv2 ph3">
-        <div className="flex items-center mv3">
+        <div className="flex items-center mv3 pl5">
           <span className="rbs-circled-number mr2">1</span>
           <span className="b f3 lh-title">BOOK TICKETS</span>
         </div>

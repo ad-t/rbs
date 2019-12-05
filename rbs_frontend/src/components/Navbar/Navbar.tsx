@@ -4,8 +4,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import { FaBars } from 'react-icons/fa';
-
 export default class Navbar extends React.Component<{}, {}> {
   state = { ticketSales: 0, expanded: false };
 

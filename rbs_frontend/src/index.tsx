@@ -5,7 +5,6 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 // Import interfaces
 import { ITicket } from './types/tickets';
@@ -32,14 +31,7 @@ class Index extends React.Component<{}, State> {
   render() {
     return (
       <div className="flex vh-100">
-        <Router>
-          <Navbar />
-          <Switch>
-            <Route path="/">
-              <LandingPage />
-            </Route>
-          </Switch>
-        </Router>
+        <LandingPage />
       </div>
     );
   }
