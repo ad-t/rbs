@@ -1,15 +1,17 @@
 // Tachyon is our atomic css framework to perform most of the styling
-@import "~tachyons/css/tachyons.min.css";
+@import '~tachyons/css/tachyons.min.css';
 
 // The font we want to use
 @import '../fonts/work_sans/work_sans';
 
 // Import variables
+@import './Utility/Mixins';
 @import './Utility/Variables';
 
 // Import our component styling
-@import "./Components/Navbar";
-@import "./Components/TicketingSystem";
+@import './Components/Navbar';
+@import './Components/TicketingSystem';
+@import './Components/LandingPage';
 
 // Global styling that is not specific to any
 html, body {

@@ -9,6 +9,6 @@ import React from 'react';
 
 import { ITicketManager } from '../types/tickets';
 
-const TicketContext = React.createContext<ITicketManager | null>(null);
+const TicketContext = React.createContext<ITicketManager>({} as ITicketManager);
 
-export  default TicketContext;
+export default TicketContext;

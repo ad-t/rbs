@@ -2,6 +2,7 @@
  * This file will handle the entire landing page.
  */
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import { FaBars } from 'react-icons/fa';
 
@@ -18,21 +19,27 @@ export default class Navbar extends React.Component<{}, {}> {
     const { expanded } = this.state;
 
     return (
-      <div className="rbs-sticky-top bg-primary w-100 ph3 pv3 pv4-l">
-        <nav className="f6 fw6 ttu tracked dn db-l">
-          <a className="link dim white dib mr3" href="#">Home</a>
-          <a className="link dim white dib mr3" href="#">Tickets</a>
-          <a className="link dim white dib mr3" href="#">About Us</a>
-        </nav>
-        <button className="rbs-hamburger flex link white dn-l" onClick={this.toggleNavbar}>
-          <FaBars />
-        </button>
-        <nav className="rbs-mobile-menu f6 fw6 ttu tracked" hidden={!expanded}>
-          <a className="link dim white db pv1 mv1" href="#">Home</a>
-          <a className="link dim white db pv1 mb1" href="#">Tickets</a>
-          <a className="link dim white db pv1 mb1" href="#">About Us</a>
-        </nav>
-      </div>
+      <React.Fragment>
+        <div>
+          <button
+            className="rbs-hamburger absolute top-0 bg-primary flex link white"
+            onClick={this.toggleNavbar}
+            data-toggled={expanded}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
+          </button>
+        </div>
+        <div className="navigation-menu absolute left-0 h-100 w-75" hidden={!expanded}>
+          <div className="flex flex-column">
+            <Link className="no-underline mb3" to="/">Home</Link>
+            <Link className="no-underline mb3" to="/">Ticketing</Link>
+            <Link className="no-underline mb3" to="/">About Us</Link>
+          </div>
+        </div>
+        <div className="navigation-overlay absolute w-100 h-100" hidden={!expanded}></div>
+      </React.Fragment>
     );
   }
 };

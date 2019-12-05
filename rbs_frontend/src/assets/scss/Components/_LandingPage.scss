@@ -1,0 +1,22 @@
+.landing-page {
+  background-image: url('../../img/mr20-bg2.jpg');
+  background-position: center;
+
+  .button-group {
+    padding-bottom: 3em;
+    .btn-landing {
+      background-color: $PRIMARY_LIGHT;
+      border: $PRIMARY_DARK 0px solid;
+      @include box-shadow(2px, 4px, 3px, rgba(0, 0, 0, 0.2));
+      color: white;
+      margin-bottom: 1em;
+      padding: 0.7em;
+      width: 75%;
+
+      &.secondary {
+        background-color: $PRIMARY_LIGHTEST;
+        color: black;
+      }
+    }
+  }
+}

@@ -4,16 +4,16 @@
 import React from 'react';
 
 // Import our custom element
-import Ticket from './Ticket';
+import Ticket from '../Ticket';
 
 // Import our interface
-import { ITicket } from '../../types/tickets';
+import { ITicket } from '../../../types/tickets';
 
 interface TSState {
   tickets: Array<ITicket>
 };
 
-export default class TicketingSystem extends React.Component<{}, TSState> {
+export default class BookTickets extends React.Component<{}, TSState> {
   state = {
     tickets: []
   }

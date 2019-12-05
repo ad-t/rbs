@@ -5,30 +5,41 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+
+// Import interfaces
+import { ITicket } from './types/tickets';
 
 // Import subcomponents
 import Navbar from './components/Navbar';
-import TicketingSystem from './components/TicketingSystem';
+import LandingPage from './components/LandingPage';
+import BookTickets from './components/TicketingSystem/BookTickets';
+import Invoice from './components/TicketingSystem/Invoice';
 
 // Import assets (e.g. scss)
 import './assets/scss/main.scss';
 import * as serviceWorker from './serviceWorker';
 
 interface State {
+  tickets: Array<ITicket>;
 };
 
 class Index extends React.Component<{}, State> {
-
-  constructor(props: React.Props<{}>) {
-    super(props);
+  state: State = {
+    tickets: [],
   }
 
   render() {
     return (
-      <div className="flex flex-column vh-100">
-        <Navbar />
-        <TicketingSystem />
+      <div className="flex vh-100">
+        <Router>
+          <Navbar />
+          <Switch>
+            <Route path="/">
+              <LandingPage />
+            </Route>
+          </Switch>
+        </Router>
       </div>
     );
   }

@@ -48,7 +48,7 @@ export default class Ticket extends React.Component<{
             disabled={ticketSales <= 0}
             onClick={() => this.modifyTicket(-1)}
           ><FaMinus /></button>
-          <div className="f4 pa1">{ticketSales}</div>
+          <div className="f4 pa1" style={{width: 22}}>{ticketSales}</div>
           <button
             className="btn-rbs-modifier bn flex items-center justify-center br-100"
             onClick={() => this.modifyTicket(1)}
