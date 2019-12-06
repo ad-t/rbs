@@ -4,9 +4,9 @@
  */
 export interface ITicket {
   id: number,
-  cost: number,
+  price: number,
   description: string,
-  minPurchase: number,
+  minPurchaseAmount: number,
   quantity: number
 };
 

@@ -10,11 +10,14 @@ import Ticket from '../Ticket';
 // Import our interface
 import { ITicket } from '../../../types/tickets';
 
-interface TSState {
+interface Prop {
+  selectedShow: number
+}
+interface State {
   tickets: Array<ITicket>
 };
 
-export default class BookTickets extends React.Component<{}, TSState> {
+export default class BookTickets extends React.Component<Prop, State> {
   state = {
     tickets: []
   }
@@ -23,42 +26,14 @@ export default class BookTickets extends React.Component<{}, TSState> {
     this.loadTickets();
   }
 
-  loadTickets = () => {
-    /*
-      TODO: add the ability to read from the backend the ticketing information
-    */
-    const tickets = [
-     {
-      id: 1,
-      cost: 10,
-      description: 'ARC - INDIVIDUAL',
-      minPurchase: 0,
-      quantity: 0
-     },
-     {
-      id: 2,
-      cost: 10,
-      description: 'ARC - GROUP',
-      minPurchase: 5,
-      quantity: 0
-    },
-    {
-      id: 3,
-      cost: 12,
-      description: 'GENERAL - INDIVIDUAL',
-      minPurchase: 0,
-      quantity: 0
-    },
-    {
-      id: 4,
-      cost: 10,
-      description: 'GENERAL - GROUP',
-      minPurchase: 5,
-      quantity: 0
-    },
-   ];
-
-   this.setState({ tickets });
+  loadTickets = async () => {
+    const { selectedShow } = this.props;
+    const res = await fetch(`http://localhost:5000/shows/${selectedShow}`);
+    if (res.status === 200) {
+      const data = await res.json();
+      console.log(data);
+      this.setState({ tickets: data.ticketTypes });
+    }
   }
 
   render() {
@@ -70,9 +45,9 @@ export default class BookTickets extends React.Component<{}, TSState> {
       ticketElms.push(
         <Ticket
           key={i}
-          cost={ticket.cost}
+          cost={ticket.price}
           description={ticket.description}
-          minPurchase={ticket.minPurchase}
+          minPurchase={ticket.minPurchaseAmount}
         />
       );
     }
