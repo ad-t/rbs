@@ -12,6 +12,7 @@ import { ITicket } from '../../../types/tickets';
 
 interface Prop {
   selectedShow: number;
+  updateTickets(tickets: Array<ITicket>): void;
 }
 interface State {
   tickets: Array<ITicket>;
@@ -76,7 +77,11 @@ export default class BookTickets extends React.Component<Prop, State> {
         <Divider style={{margin: '0em 1em'}}/>
         <div className="ticket-price">Total: ${totalPrice}</div>
         <div className="btn-controls">
-          <Button primary>PURCHASE TICKETS</Button>
+          <Button
+            primary
+            onClick={() => this.props.updateTickets(tickets)}
+            disabled={totalPrice === 0}
+          >PURCHASE TICKETS</Button>
         </div>
       </div>
     );

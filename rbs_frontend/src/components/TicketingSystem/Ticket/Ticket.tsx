@@ -43,7 +43,7 @@ export default class Ticket extends React.Component<Props, State> {
     return (
       <div className="ticket-item">
         <div className="cost">${cost}</div>
-        <div className="desc">{description}</div>
+        <div className="desc">- {description}</div>
         <div className="controls">
           <Button
             className="decrement"

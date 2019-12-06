@@ -6,27 +6,41 @@ import { Header, Icon, Step } from 'semantic-ui-react';
 
 import BookTickets from './BookTickets';
 import SelectShow from './SelectShow';
+import Invoice from './Invoice';
+import { ITicket } from '../../types/tickets';
 
 interface Props {};
 interface State {
   currentId: number;
   selectedShow: number;
+  tickets: Array<ITicket>;
 };
 
 export default class TicketingSystem extends React.Component<Props, State> {
   // This may be changed during testing. Default values should be:
   // currentId: 0, selectedShow: -1
-  state = { currentId: 1, selectedShow: 1 };
+  state = { currentId: 1, selectedShow: 1, tickets: [] };
 
   updateShow = (selectedShow: number) => {
     this.setState({ currentId: 1, selectedShow });
-  } 
+  }
+
+  updateTickets = (tickets: Array<ITicket>) => {
+    this.setState({ currentId: 2, tickets });
+  }
 
   render() {
     const { currentId, selectedShow } = this.state;
     let displayElm = <SelectShow updateShow={this.updateShow} />;
 
-    if (currentId === 1) displayElm = <BookTickets selectedShow={selectedShow}/>;
+    switch(currentId) {
+      case 1:
+        displayElm = <BookTickets selectedShow={selectedShow} updateTickets={this.updateTickets}/>;
+        break;
+      case 2:
+        displayElm = <Invoice />;
+        break;
+    }
 
     return (
       <React.Fragment>
