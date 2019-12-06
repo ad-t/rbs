@@ -4,24 +4,24 @@
 import React from 'react';
 import { Button } from 'semantic-ui-react';
 
-// Import icons
-import { FaPlus, FaMinus } from 'react-icons/fa';
+interface Props {
+  index: number;
+  cost: number;
+  description: string;
+  minPurchase: number;
+  updateAmount(index: number, amount: number): void;
+};
 
-// Import our interface
-import { ITicket } from '../../../types/tickets';
-
-export default class Ticket extends React.Component<{
-  cost: number,
-  description: string,
-  minPurchase: number
-}, {
+interface State {
   ticketSales: number
-}> {
+}
+
+export default class Ticket extends React.Component<Props, State> {
   state = { ticketSales: 0 };
 
   modifyTicket = (value: number) => {
     // Modify the ticket sales by a value
-    const { minPurchase } = this.props;
+    const { index, minPurchase } = this.props;
     let { ticketSales } = this.state;
 
     ticketSales += value;
@@ -32,6 +32,7 @@ export default class Ticket extends React.Component<{
         ticketSales = 0;
     }
 
+    this.props.updateAmount(index, ticketSales);
     this.setState({ ticketSales });
   }
 
