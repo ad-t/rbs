@@ -30,15 +30,15 @@ export default class TicketingSystem extends React.Component<Props, State> {
   }
 
   render() {
-    const { currentId, selectedShow } = this.state;
+    const { currentId, selectedShow, tickets } = this.state;
     let displayElm = <SelectShow updateShow={this.updateShow} />;
 
     switch(currentId) {
       case 1:
-        displayElm = <BookTickets selectedShow={selectedShow} updateTickets={this.updateTickets}/>;
+        displayElm = <BookTickets selectedShow={selectedShow} updateTickets={this.updateTickets} />;
         break;
       case 2:
-        displayElm = <Invoice />;
+        displayElm = <Invoice tickets={tickets} />;
         break;
     }
 

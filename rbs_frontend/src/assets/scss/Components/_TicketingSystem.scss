@@ -25,6 +25,11 @@
   padding: 1em;
 }
 
+.ticket-price-summary {
+  text-align: right;
+  padding: 1em;
+}
+
 .btn-controls {
   bottom: 0;
   position: absolute;
@@ -37,20 +42,17 @@
   .ui.primary.button { margin: 0; }
 }
 
-.tickets-list { padding: 1em; }
+.tickets-list { padding: 0 1em; }
 
 .ticket-item {
   display: flex;
   align-items: center;
-  font-size: 17px;
+  font-size: 15px;
   margin-bottom: 0.5em;
 
-  .cost {
-    padding: 0em 0.5em 0em 0em;
-  }
-  .desc {
-    flex-grow: 1;
-  }
+  .ticket-logo { padding: 0 1em 0 0; }
+  .ticket-desc { flex-grow: 1; }
+
   .ticket-numbers {
     display: flex;
     align-items: center;

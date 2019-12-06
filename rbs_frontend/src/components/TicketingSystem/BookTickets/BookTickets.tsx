@@ -2,7 +2,7 @@
  * This file will handle the entire landing page.
  */
 import React from 'react';
-import { Button, Divider } from 'semantic-ui-react';
+import { Button, Divider, List } from 'semantic-ui-react';
 
 // Import our custom element
 import Ticket from '../Ticket';
@@ -75,13 +75,13 @@ export default class BookTickets extends React.Component<Prop, State> {
           {ticketElms}
         </div>
         <Divider style={{margin: '0em 1em'}}/>
-        <div className="ticket-price">Total: ${totalPrice}</div>
+        <div className="ticket-price">Total Cost: ${totalPrice}</div>
         <div className="btn-controls">
           <Button
             primary
             onClick={() => this.props.updateTickets(tickets)}
             disabled={totalPrice === 0}
-          >PURCHASE TICKETS</Button>
+          >RESERVE TICKETS</Button>
         </div>
       </div>
     );

@@ -2,7 +2,7 @@
  * This file will handle the entire landing page.
  */
 import React from 'react';
-import { Button } from 'semantic-ui-react';
+import { Button, Icon } from 'semantic-ui-react';
 
 interface Props {
   index: number;
@@ -42,8 +42,10 @@ export default class Ticket extends React.Component<Props, State> {
 
     return (
       <div className="ticket-item">
-        <div className="cost">${cost}</div>
-        <div className="desc">- {description}</div>
+        <div className="ticket-logo"><Icon name='ticket' size='large'/></div>
+        <div className="ticket-desc">
+          ${cost} - {description}
+        </div>
         <div className="controls">
           <Button
             className="decrement"
