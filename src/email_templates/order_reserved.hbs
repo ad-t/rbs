@@ -10,12 +10,12 @@
   <p>Hi {{name}},</p>
   <p>
     Thank you for for reserving tickets to {{production.title}} {{production.year}} - {{production.subtitle}}.
-    Please pay for your tickets by {{order.expires}}, otherwise your order may be cancelled.
+    Please pay for your tickets by {{expires}}, otherwise your order may be cancelled.
   </p>
 
   <h3>Your Order</h3>
   <p>
-      {{order.totalSeats}}x - {{production.title}} {{production.year}}<br />
+      {{order.numSeats}}x - {{production.title}} {{production.year}}<br />
       <b>Total: </b>{{order.paidPrice}}
   </p>
 

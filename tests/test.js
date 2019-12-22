@@ -112,4 +112,19 @@ describe("shows", () => {
       server.get("/shows/1234undefined")
             .expect(400, done);
     });
+
+  it ("reserve a ticket for a valid show",
+    function (done) {
+      server.post("/shows/1/seats")
+            .send({
+              "name": "John Smith",
+              "email": "john@example.com",
+              "phone": "0412345678",
+              "seats": [{
+                "numSeats": 1,
+                "ticketType": 1
+              }]
+            })
+            .expect(201, done);
+    });
 });

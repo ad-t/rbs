@@ -6,6 +6,7 @@ import { Order } from "../entity/order";
 import { PaymentMethod } from "../entity/payment";
 import { Payment } from "../entity/payment";
 import Logger from "../logging";
+import { sendEmail } from "../services/email";
 import { IItemDetail, orderCreateRequestBody, paypalClient, paypalFee } from "../services/paypal";
 
 export async function GetOrder(req: Request, res: Response): Promise<void> {
@@ -100,9 +101,9 @@ export async function PaypalCaptureOrder(req: Request, res: Response) {
     const repo = conn.getRepository(Order);
     // get order and paypalorder
     const order: Order = await repo.findOne(
-      req.params.id, {relations: ["payment"]}
+      req.params.id, {relations: ["payment", "ticketType", "show", "show.production"]}
     );
-    repo.findOne();
+
     if (!order) {
       res.status(404).json({error: "order not found (or paypal ID has not yet been set up)"});
       return;
@@ -129,8 +130,19 @@ export async function PaypalCaptureOrder(req: Request, res: Response) {
     order.paidAt = new Date();
     await repo.save(order);
 
-    // TODO send email
     res.json({success: true});
+
+    const show = order.show;
+    const production = show.production;
+
+    sendEmail("order_complete", {
+      to: order.email,
+      subject: `${production.title} ${production.year} - Payment Confirmation`
+    }, {
+      order,
+      show,
+      production
+    });
 
   } catch (err) {
     Logger.Error(err.stack);

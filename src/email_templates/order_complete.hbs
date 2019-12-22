@@ -15,14 +15,14 @@
 
   <h3>Venue and Time</h3>
   <p>
-      <b>Venue: </b>{{show.location}} <br />
+      <b>Venue: </b>{{production.location}} <br />
       <b>Time: </b>{{show.time}}
   </p>
 
   <h3>Your Order</h3>
   <p>
-      {{order.totalSeats}}x - {{production.title}} {{production.year}}<br />
-      <b>Total: </b>{{order.paidPrice}}
+      {{order.numSeats}}x - {{production.title}} {{production.year}}<br />
+      <b>Total: </b>{{order.payment.totalPrice}}
   </p>
 
   <hr />
@@ -30,8 +30,8 @@
   <h3>Ticket Info</h3>
   <ul>
     <li>
-      Doors will open at 7:30pm and the show will start at 8:00pm sharp. Doors will close after
-      8:00pm, after which you can only enter during intermission.
+      Doors will open at 7pm and the show will start at 7:30pm sharp. Doors will close after
+      7:30pm, after which you can only enter during intermission.
     </li>
     <li>
       Please print out each of the tickets found at the links above, or display the link on your
@@ -39,7 +39,7 @@
       for tickets.
     </li>
     <li>
-      Members of a group booking must present each ticket individually.
+      All members of a group booking shall enter together.
     </li>
     <li>
       You can email the above seat links to other members of the group booking to facilitate
@@ -54,17 +54,25 @@
 
   <h3>Getting There</h3>
 
+  <h4>Public Transport</h4>
   <p>
+    Take the L3 Kingsford Line to UNSW Anzac Parade.
     Enter through Anzac Parade Gate and follow the University Mall. The Science Theatre is located
     on the left, opposite the Red Centre.
+  </p>
 
+  <h4>Drop-off</h4>
+  <p>
+    For dropping off patrons and disabled permit parking, please enter through Gate 2, High St. Turn
+    left at the Io Myers Theatre, then make a first right, and then right again onto Union Road.
+    Patrons with disabilities may park here in designated bays.
+  </p>
+
+  <h4>Parking</h4>
+  <p>
     Alternatively, free on-campus parking is available after 7:30pm. Parking stations are located
     near Gate 14 (Barker Street) and Gate 2 (High Street). Alternatively, street parking is
     available after 6pm or next to NIDA (Anzac Parade) after 6:30pm.
-
-    For dropping off patrons and handicapped parking, please enter through Gate 2, High St. Turn
-    left at the Io Myers Theatre, then make a first right, and then right again onto Union Road.
-    Handicapped patrons may park here in designated bays.
   </p>
 
   <p>We hope you enjoy the show!</p>

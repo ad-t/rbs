@@ -5,6 +5,7 @@ import { Order } from "../entity/order";
 import { Show } from "../entity/show";
 import { Ticket } from "../entity/ticket";
 import Logger from "../logging";
+import { sendEmail } from "../services/email";
 
 export async function GetShow(req: Request, res: Response) {
   if (!/^\d+$/.test(req.params.id)) {
@@ -65,7 +66,9 @@ export async function ReserveSeats(req: Request, res: Response): Promise<void> {
     const conn: Connection = await getConnection();
     await conn.transaction("READ COMMITTED", async (txEntityManager) => {
       const show = await txEntityManager.getRepository(Show).findOne(
-        req.params.id, {relations: ["ticketTypes"]});
+        req.params.id, {relations: ["ticketTypes", "production"]}
+      );
+
       if (!show) {
         res.status(404).json({error: `show not found: ${req.params.id}`});
         return;
@@ -93,7 +96,7 @@ export async function ReserveSeats(req: Request, res: Response): Promise<void> {
         subtotal += seatReq.numSeats * ticketType.price;
       }
 
-      let order: Order = new Order();
+      const order: Order = new Order();
       order.name = name;
       order.email = email;
       order.phone = phone;
@@ -105,7 +108,7 @@ export async function ReserveSeats(req: Request, res: Response): Promise<void> {
       show.reservedSeats += totalSeats;
 
       await txEntityManager.save(show);
-      order = await txEntityManager.save(order);
+      await txEntityManager.save(order);
 
       for (const seatsReq of seats) {
         for (let i = 0; i < seatsReq.numSeats; i++) {
@@ -117,6 +120,22 @@ export async function ReserveSeats(req: Request, res: Response): Promise<void> {
       }
 
       res.status(201).json(order);
+
+      const production = show.production;
+      const expires = new Date(order.createdAt);
+      expires.setDate(order.createdAt.getDate() + 2);
+
+      /*
+      sendEmail("order_reserved", {
+        to: order.email,
+        subject: `${production.title} ${production.year} - Seat Reservation`
+      }, {
+        order,
+        show,
+        production,
+        expires
+      });
+      */
     });
   } catch (error) {
     Logger.Error(error.toString());
