@@ -8,7 +8,6 @@ import "reflect-metadata";
 import {
   ConnectionOptions,
   createConnection,
-  getConnection,
   getRepository,
 } from "typeorm";
 
@@ -91,10 +90,14 @@ function genericLoggingMiddleware(req: express.Request, res: express.Response, n
 // setup
 async function bootstrap() {
   Logger.Info("Creating database connection...");
-  await createConnection(options);
+  const conn = await createConnection(options);
   if (process.env.NODE_ENV === "development") {
     Logger.Info("Since we're in the development environment, purge the database tables");
-    activeEntities.forEach(async (entity) => await getConnection().getRepository(entity).delete({}));
+    await conn.manager.transaction((manager) =>
+      Promise.all(
+        activeEntities.map((entity) => manager.delete(entity, {}))
+      )
+    );
     Logger.Info("Seeding database...");
     await seedDB();
   }
