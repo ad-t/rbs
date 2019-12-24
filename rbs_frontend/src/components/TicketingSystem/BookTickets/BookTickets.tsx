@@ -29,7 +29,7 @@ export default class BookTickets extends React.Component<Prop, State> {
 
   loadTickets = async () => {
     const { selectedShow } = this.props;
-    const res = await fetch(`http://localhost:5000/shows/${selectedShow}`);
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/shows/${selectedShow}`);
     if (res.status === 200) {
       const data = await res.json();
       for (let i = 0; i < data.ticketTypes.length; ++i) {
