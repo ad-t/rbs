@@ -13,6 +13,15 @@ PAYPAL_CLIENT_ID
 PAYPAL_CLIENT_SECRET
 ```
 
+Required for email:
+
+```
+MAIL_HOST=localhost
+MAIL_PORT=2525
+MAIL_USER=postmaster@example.com
+MAIL_PASSWD=test
+```
+
 Example for development:
 ```
 SERVER_PORT=8080
