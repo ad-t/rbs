@@ -19,6 +19,7 @@ interface State {
   showNights: Array<ShowNight>
 };
 
+declare var REACT_APP_PROD_ID: number;
 export default class SelectShow extends React.Component<Props, State> {
   state = {
     showNights: []
