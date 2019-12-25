@@ -19,13 +19,13 @@ export async function seedDB() {
 
     const s1 = new Show();
     s1.id = 1;
-    s1.time = new Date();
+    s1.time = new Date("July 23, 2019 19:30:00");
     s1.totalSeats = 150;
     await conn.manager.save(s1);
 
     const s2 = new Show();
     s2.id = 2;
-    s2.time = new Date();
+    s2.time = new Date("July 24, 2019 19:30:00");
     s2.totalSeats = 150;
     await conn.manager.save(s2);
 
