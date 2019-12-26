@@ -220,8 +220,7 @@ app.get("/shows/:id", ShowRoutes.GetShow);
  *             - name
  *             - email
  *             - phone
- *             - numSeats
- *             - ticketType
+ *             - seats
  *           properties:
  *             name:
  *               type: string
@@ -232,12 +231,17 @@ app.get("/shows/:id", ShowRoutes.GetShow);
  *             phone:
  *               type: string
  *               example: 0412345678
- *             numSeats:
- *               type: integer
- *               example: 1
- *             ticketType:
- *               type: integer
- *               example: 1
+ *             seats:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   numSeats:
+ *                     type: integer
+ *                     example: 1
+ *                   ticketType:
+ *                     type: integer
+ *                     example: 1
  *     responses:
  *       201:
  *         description: Seats have been reserved successfully
