@@ -23,6 +23,11 @@ async function getTemplate(name: string) {
 }
 
 export async function sendEmail(templateName: string, details: IDetails, data: object) {
+  // Don't attempt to send email if not configured.
+  if (!process.env.MAIL_HOST) {
+    return;
+  }
+
   const transport = nodemailer.createTransport({
     host: process.env.MAIL_HOST,
     port: +process.env.MAIL_PORT || 587,
