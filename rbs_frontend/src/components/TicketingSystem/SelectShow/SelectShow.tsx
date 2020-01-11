@@ -19,13 +19,14 @@ interface State {
   showNights: Array<ShowNight>
 };
 
+declare var REACT_APP_PROD_ID: number;
 export default class SelectShow extends React.Component<Props, State> {
   state = {
     showNights: []
   };
 
   componentDidMount = async() => {
-    const res = await fetch(`http://localhost:5000/productions/${process.env.REACT_APP_PROD_ID}/shows`);
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/productions/${process.env.REACT_APP_PROD_ID}/shows`);
     if (res.status === 200) {
       const data = await res.json();
       this.setState({showNights: data});

@@ -1,3 +1,15 @@
+## Environment variables
+
+Before running, create a `.env` file in this folder:
+
+```
+REACT_APP_PROD_ID=<the production ID>
+REACT_APP_PAYPAL_CLIENT_ID=<PayPal client ID>
+REACT_APP_API_URL=http://localhost:8080
+```
+
+---
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts

@@ -2,37 +2,77 @@
  * This component will return an invoice that shows what tickets were purchased from the user.
  */
 import React from 'react';
-import { Accordion, Button, Divider, Form, Icon, Input } from 'semantic-ui-react';
+import ReactDOM from 'react-dom';
+import { Button, Icon } from 'semantic-ui-react';
+
+// Import our interface
 import { ITicket } from '../../../types/tickets';
 
-import TicketNoControl from '../TicketNoControl';
+declare var paypal : any;
+const PayPalButton = paypal.Buttons.driver('react', { React, ReactDOM });
 
-interface Props {
+interface Prop {
+  selectedShow: number;
   tickets: Array<ITicket>;
-};
+  updatePayment(details: any): void;
+}
 
 interface State {
-  name: string;
-  email: string;
-  phone: string;
-  showTickets: boolean;
-};
+  orderID: string;
+}
 
-export default class Ticket extends React.Component<Props, State> {
+export default class Ticket extends React.Component<Prop, State> {
   state = {
-    name: '',
-    email: '',
-    phone: '',
-    showTickets: false
-  };
-
-  handleChange = (e: any, { name, value } : any) => {
-    this.setState({[name]: value} as Pick<State, keyof State>);
+    orderID: ''
   }
 
-  handleSubmit = () => {
-    const { name, email, phone } = this.state;
-    console.log(`${name} ${email} ${phone}`);
+  async createOrder() {
+    const orderRes = await fetch(`${process.env.REACT_APP_API_URL}/shows/${this.props.selectedShow}/seats`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      // TODO: collect user details
+      body: JSON.stringify({
+        "name": "John Smith",
+        "email": "john@example.com",
+        "phone": "0412345678",
+        "numSeats": this.props.tickets[0].quantity,
+        "ticketType": this.props.tickets[0].id
+      })
+    });
+
+    const data = await orderRes.json();
+    this.state.orderID = data.id;
+
+    const setupRes = await fetch(`${process.env.REACT_APP_API_URL}/orders/${data.id}/paypal-setup`, {
+      method: 'POST'
+    });
+    const setup = await setupRes.json();
+    return setup.paypalOrderID;
+  }
+
+  private paypalFee(price: number) {
+    return price * 1.026 + 0.30;
+  }
+
+  async onApprove(data: any, actions: any) {
+    const verify = await fetch(`${process.env.REACT_APP_API_URL}/orders/${this.state.orderID}/paypal-capture`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "paypalOrderID": data.orderID
+      })
+    });
+
+    if (verify.status === 200) {
+      this.props.updatePayment({});
+    } else {
+      const text = await verify.text()
+      alert(verify.status + ': ' + text);
+    }
   }
 
   render() {
@@ -56,50 +96,12 @@ export default class Ticket extends React.Component<Props, State> {
     }
 
     return (
-      <Form onSubmit={this.handleSubmit} style={{padding: '0 1em'}}>
-        <Form.Input
-          label='Name'
-          placeholder='Your name'
-          name="name"
-          value={name}
-          onChange={this.handleChange}
-        />
-        <Form.Input
-          label='Email'
-          placeholder='Your email'
-          name="email"
-          value={email}
-          onChange={this.handleChange}
-        />
-        <Form.Field>
-          <label>Phone Number</label>
-          <Input
-            label='+61'
-            placeholder='4xx xxx xxx'
-            name="phone"
-            value={phone}
-            onChange={this.handleChange}
-          />
-        </Form.Field>
-        <Accordion styled style={{margin: '1.5em 0'}}>
-          <Accordion.Title
-            active={showTickets}
-            index={0}
-            onClick={() => this.setState({showTickets: !showTickets})}
-          >
-            <Icon name='dropdown' />
-            View Your Tickets
-          </Accordion.Title>
-          <Accordion.Content active={showTickets}>
-            <div className="tickets-list">
-              {ticketElms}
-            </div>
-            <Divider style={{margin: '0em 1em'}}/>
-            <div className="ticket-price-summary">Total Cost: ${totalPrice}</div>
-          </Accordion.Content>
-        </Accordion>
-        <Button type='submit' fluid primary>PURCHASE TICKETS</Button>
-      </Form>
+      <div className="btn-show-nights" style={{margin: '1em auto', width: '25%'}}>
+        <PayPalButton
+          createOrder={ () => this.createOrder() }
+          onApprove={ (data: any, actions: any) => this.onApprove(data, actions) }
+        ></PayPalButton>
+      </div>
     );
   }
 };
