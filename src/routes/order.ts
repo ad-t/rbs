@@ -6,13 +6,13 @@ import { Order } from "../entity/order";
 import { PaymentMethod } from "../entity/payment";
 import { Payment } from "../entity/payment";
 import Logger from "../logging";
-import { orderCreateRequestBody, paypalClient, paypalFee } from "../services/paypal";
+import { IItemDetail, orderCreateRequestBody, paypalClient, paypalFee } from "../services/paypal";
 
 export async function GetOrder(req: Request, res: Response): Promise<void> {
   try {
     const conn = getConnection();
     const order: Order = await conn.getRepository(Order).findOne(
-      req.params.id, {relations: ["show", "ticketType"]});
+      req.params.id, {relations: ["show", "tickets"]});
     if (!order) {
       res.status(404).json({error: `No order found with id ${req.params.id}`});
       return;
@@ -29,7 +29,7 @@ export async function SetupPaypal(req: Request, res: Response) {
     const conn = getConnection();
     const order: Order = await conn.getRepository(Order).findOne(
       {id: req.params.id},
-      {relations: ["show", "show.production", "payment", "ticketType"]}
+      {relations: ["show", "show.production", "payment", "tickets", "tickets.ticketType"]}
     );
     if (!order) {
       res.status(404).json({error: `No order found with id ${req.params.id}`});
@@ -50,16 +50,28 @@ export async function SetupPaypal(req: Request, res: Response) {
     const prod = show.production;
 
     const subtotal = AUD(order.subtotalPrice);
-    const unitPrice = AUD(order.ticketType.price);
     const fee = paypalFee(subtotal);
     const totalPrice = subtotal.add(fee);
+
+    const itemDetails = new Map<number, IItemDetail>();
+    for (const ticket of order.tickets) {
+      if (itemDetails.has(ticket.ticketType.id)) {
+        itemDetails.get(ticket.ticketType.id).quantity++;
+      } else {
+        itemDetails.set(ticket.ticketType.id, {
+          name: ticket.ticketType.description,
+          unitPrice: AUD(ticket.ticketType.price),
+          quantity: 1
+        });
+      }
+    }
 
     // https://developer.paypal.com/docs/checkout/reference/server-integration/set-up-transaction/#on-the-server
     const request = new paypal.orders.OrdersCreateRequest();
     request.prefer("return=representation");
     const details = orderCreateRequestBody(
       order.id, prod.title, prod.year.toString(), prod.subtitle, show.time, subtotal,
-      unitPrice, order.numSeats);
+      itemDetails.values());
     request.requestBody(details);
     Logger.Info(JSON.stringify(details));
 
