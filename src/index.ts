@@ -77,8 +77,15 @@ const options: ConnectionOptions = {
 };
 
 function genericLoggingMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
+  function afterResponse() {
+    res.removeListener("finish", afterResponse);
+    res.removeListener("close", afterResponse);
+    Logger.Info(`${res.statusCode} - ${req.path}`);
+  }
+
+  res.on("finish", afterResponse);
+  res.on("close", afterResponse);
   next();
-  Logger.Info(`${res.statusCode} - ${req.path}`);
 }
 
 // setup

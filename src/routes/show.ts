@@ -104,19 +104,23 @@ export async function ReserveSeats(req: Request, res: Response): Promise<void> {
 
       show.reservedSeats += totalSeats;
 
+      await txEntityManager.save(show);
+      order = await txEntityManager.save(order);
+
       for (const seatsReq of seats) {
         for (let i = 0; i < seatsReq.numSeats; i++) {
           const ticket = new Ticket();
           ticket.ticketType = seatsReq.ticketTypeObj;
-          order.tickets.push(ticket);
+          ticket.order = order;
+          await txEntityManager.save(ticket);
         }
       }
 
-      await txEntityManager.save(show);
-      order = await txEntityManager.save(order);
       res.status(201).json(order);
     });
   } catch (error) {
+    Logger.Error(error.toString());
+    Logger.Error(error.stack);
     res.status(500).json({error: error.toString()});
   }
 }
