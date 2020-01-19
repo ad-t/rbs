@@ -44,7 +44,7 @@ export function orderCreateRequestBody(
   const items: object[] = [];
   for (const item of itemDetails) {
     items.push({
-      name: `${title} ${year}: ${subtitle}`,
+      name: `${title} ${year}: ${subtitle} - ${item.name}`,
       description: showTime.toLocaleDateString("en-AU",
       {
         weekday: "long",

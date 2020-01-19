@@ -12,7 +12,7 @@ export async function GetOrder(req: Request, res: Response): Promise<void> {
   try {
     const conn = getConnection();
     const order: Order = await conn.getRepository(Order).findOne(
-      req.params.id, {relations: ["show", "tickets"]});
+      req.params.id, {relations: ["show", "tickets", "tickets.ticketType"]});
     if (!order) {
       res.status(404).json({error: `No order found with id ${req.params.id}`});
       return;
