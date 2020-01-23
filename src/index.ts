@@ -24,6 +24,7 @@ import * as ShowRoutes from "./routes/show";
 import bodyParser = require("body-parser");
 import { seedDB } from "./dev";
 import { Payment } from "./entity/payment";
+import { Ticket } from "./entity/ticket";
 import { TicketType } from "./entity/ticket_type";
 import Logger from "./logging";
 
@@ -53,7 +54,8 @@ const activeEntities = [
   Show,
   Order,
   Payment,
-  TicketType
+  TicketType,
+  Ticket
 ];
 
 const options: ConnectionOptions = {
@@ -75,8 +77,15 @@ const options: ConnectionOptions = {
 };
 
 function genericLoggingMiddleware(req: express.Request, res: express.Response, next: express.NextFunction) {
+  function afterResponse() {
+    res.removeListener("finish", afterResponse);
+    res.removeListener("close", afterResponse);
+    Logger.Info(`${res.statusCode} - ${req.path}`);
+  }
+
+  res.on("finish", afterResponse);
+  res.on("close", afterResponse);
   next();
-  Logger.Info(`${res.statusCode} - ${req.path}`);
 }
 
 // setup
@@ -220,8 +229,7 @@ app.get("/shows/:id", ShowRoutes.GetShow);
  *             - name
  *             - email
  *             - phone
- *             - numSeats
- *             - ticketType
+ *             - seats
  *           properties:
  *             name:
  *               type: string
@@ -232,12 +240,17 @@ app.get("/shows/:id", ShowRoutes.GetShow);
  *             phone:
  *               type: string
  *               example: 0412345678
- *             numSeats:
- *               type: integer
- *               example: 1
- *             ticketType:
- *               type: integer
- *               example: 1
+ *             seats:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   numSeats:
+ *                     type: integer
+ *                     example: 1
+ *                   ticketType:
+ *                     type: integer
+ *                     example: 1
  *     responses:
  *       201:
  *         description: Seats have been reserved successfully
