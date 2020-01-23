@@ -3,6 +3,7 @@ import {Connection, getConnection} from "typeorm";
 import isEmail from "validator/lib/isEmail";
 import { Order } from "../entity/order";
 import { Show } from "../entity/show";
+import { Ticket } from "../entity/ticket";
 import Logger from "../logging";
 
 export async function GetShow(req: Request, res: Response) {
@@ -30,10 +31,10 @@ export async function ReserveSeats(req: Request, res: Response): Promise<void> {
     let name: string;
     let phone: string;
     let email: string;
-    let numSeats: number;
-    let ticketTypeID: number;
+    let seats: any[];
+    let totalSeats = 0;
     try {
-      ({name, phone, email, numSeats, ticketType: ticketTypeID} = req.body);
+      ({name, phone, email, seats} = req.body);
       if (typeof name !== "string" || name.length === 0) {
         throw new Error("invalid name");
       }
@@ -43,12 +44,18 @@ export async function ReserveSeats(req: Request, res: Response): Promise<void> {
       if (typeof email !== "string" || !isEmail(email)) {
         throw new Error("invalid email");
       }
-      if (typeof numSeats !== "number" || (!Number.isInteger(numSeats)) ||
-          numSeats <= 0) {
-        throw new Error("invalid numSeats");
-      }
-      if (typeof ticketTypeID !== "number" || (!Number.isInteger(numSeats)) || numSeats <= 0) {
-        throw new Error("invalid ticketType");
+      for (const seatsReq of seats) {
+        if (typeof seatsReq.numSeats !== "number"
+            || (!Number.isInteger(seatsReq.numSeats))
+            || seatsReq.numSeats <= 0) {
+          throw new Error("invalid numSeats");
+        }
+        if (typeof seatsReq.ticketType !== "number"
+            || (!Number.isInteger(seatsReq.ticketType))
+            || seatsReq.ticketType <= 0) {
+          throw new Error("invalid ticketType");
+        }
+        totalSeats += seatsReq.numSeats;
       }
     } catch (err) {
       res.status(400).json({error: err.toString()});
@@ -64,24 +71,26 @@ export async function ReserveSeats(req: Request, res: Response): Promise<void> {
         return;
       }
 
-      if (numSeats + show.reservedSeats > show.totalSeats) {
+      if (totalSeats + show.reservedSeats > show.totalSeats) {
         res.status(409).json({error: "Not enough available seats"});
         return;
       }
 
-      // Find ticket type for show
-      const filteredTicketType = show.ticketTypes.filter((tt) => tt.id === ticketTypeID);
-      if (filteredTicketType.length < 1) {
-        res.status(404).json({error: `show ${req.params.id} has no ticket type ${ticketTypeID}`});
-        return;
-      }
-      const ticketType = filteredTicketType[0];
-
-      if (numSeats < ticketType.minPurchaseAmount) {
-        res.status(400).json({
-          error: `minimum ${ticketType.minPurchaseAmount} seats for ticket type ${ticketTypeID}`
-        });
-        return;
+      let subtotal = 0;
+      for (const seatReq of seats) {
+        const ticketType = show.ticketTypes.find((tt) => tt.id === seatReq.ticketType);
+        if (!ticketType) {
+          res.status(404).json({error: `show ${req.params.id} has no ticket type ${seatReq.ticketType}`});
+          return;
+        }
+        if (seatReq.numSeats < ticketType.minPurchaseAmount) {
+          res.status(400).json({
+            error: `minimum ${ticketType.minPurchaseAmount} seats for ticket type ${ticketType.id}`
+          });
+          return;
+        }
+        seatReq.ticketTypeObj = ticketType;
+        subtotal += seatReq.numSeats * ticketType.price;
       }
 
       let order: Order = new Order();
@@ -89,16 +98,29 @@ export async function ReserveSeats(req: Request, res: Response): Promise<void> {
       order.email = email;
       order.phone = phone;
       order.show = show;
-      order.numSeats = numSeats;
-      order.ticketType = ticketType;
-      order.subtotalPrice = ticketType.price * numSeats;
+      order.numSeats = totalSeats;
+      order.subtotalPrice = subtotal;
+      order.tickets = [];
 
-      show.reservedSeats += numSeats;
+      show.reservedSeats += totalSeats;
+
       await txEntityManager.save(show);
       order = await txEntityManager.save(order);
+
+      for (const seatsReq of seats) {
+        for (let i = 0; i < seatsReq.numSeats; i++) {
+          const ticket = new Ticket();
+          ticket.ticketType = seatsReq.ticketTypeObj;
+          ticket.order = order;
+          await txEntityManager.save(ticket);
+        }
+      }
+
       res.status(201).json(order);
     });
   } catch (error) {
+    Logger.Error(error.toString());
+    Logger.Error(error.stack);
     res.status(500).json({error: error.toString()});
   }
 }

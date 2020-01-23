@@ -23,6 +23,12 @@ export function paypalFee(subtotal: currency): currency {
   return subtotal.multiply(0.026).add(0.30);
 }
 
+export interface IItemDetail {
+  name: string;
+  unitPrice: currency;
+  quantity: number;
+}
+
 export function orderCreateRequestBody(
     orderID: string,
     title: string,
@@ -30,11 +36,27 @@ export function orderCreateRequestBody(
     subtitle: string,
     showTime: Date,
     subtotal: currency,
-    unitPrice: currency,
-    quantity: number
+    itemDetails: Iterable<IItemDetail>
 ): object {
   const fee: currency = paypalFee(subtotal);
   const totalPrice: currency = subtotal.add(fee);
+
+  const items: object[] = [];
+  for (const item of itemDetails) {
+    items.push({
+      name: `${title} ${year}: ${subtitle} - ${item.name}`,
+      description: showTime.toLocaleDateString("en-AU",
+      {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric"
+      }),
+      category: "DIGITAL_GOODS",
+      quantity: item.quantity,
+      unit_amount: moneyObj(item.unitPrice)
+    });
+  }
 
   // https://developer.paypal.com/docs/checkout/reference/server-integration/set-up-transaction/#on-the-server
   return {
@@ -56,19 +78,7 @@ export function orderCreateRequestBody(
           handling: moneyObj(fee)
         }
       },
-      items: [{
-        name: `${title} ${year}: ${subtitle}`,
-        description: showTime.toLocaleDateString("en-AU",
-        {
-          weekday: "long",
-          day: "numeric",
-          month: "long",
-          year: "numeric"
-        }),
-        category: "DIGITAL_GOODS",
-        quantity,
-        unit_amount: moneyObj(unitPrice)
-      }]
+      items
     }]
   };
 }

@@ -1,7 +1,7 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Payment } from "./payment";
 import { Show } from "./show";
-import { TicketType } from "./ticket_type";
+import { Ticket } from "./ticket";
 
 @Entity()
 export class Order {
@@ -38,6 +38,6 @@ export class Order {
   @OneToOne((type) => Payment, (payment) => payment.order, {cascade: true})
   public payment: Payment;
 
-  @ManyToOne((type) => TicketType, {onDelete: "SET NULL"})
-  public ticketType: TicketType;
+  @OneToMany((type) => Ticket, (t) => t.order)
+  public tickets: Ticket[];
 }
