@@ -64,3 +64,26 @@
     button{ margin: 0; }
   }
 }
+
+.registration {
+  display: flex;
+  .personal-details {
+    flex-grow: 1;
+    padding: 0 1em;
+  }
+  .invoice {
+    flex-grow: 1;
+    padding: 0 1em;
+  }
+}
+
+.paypal-btn-group {
+  padding: 0 1em;
+  margin: auto;
+}
+
+@media all and (min-width: 980px) {
+  .paypal-btn-group {
+    width: 25%;
+  }
+}

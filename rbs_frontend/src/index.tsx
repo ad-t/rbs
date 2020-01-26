@@ -19,17 +19,23 @@ import * as serviceWorker from './serviceWorker';
 
 interface State {
   tickets: Array<ITicket>;
+  buyingTicket: Boolean;
 };
 
 class Index extends React.Component<{}, State> {
   state: State = {
     tickets: [],
+    buyingTicket: true
   }
 
+  toggleTickets = () => this.setState({buyingTicket: !this.state.buyingTicket});
+
   render() {
+    const { buyingTicket } = this.state;
+
     return (
       <React.Fragment>
-        <TicketingSystem />
+        {buyingTicket ? <TicketingSystem /> : <LandingPage toggleTickets={this.toggleTickets} />}
       </React.Fragment>
     );
   }

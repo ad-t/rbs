@@ -3,7 +3,9 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Button, Icon } from 'semantic-ui-react';
+import { Button, Divider, Form, Header, Icon, Input } from 'semantic-ui-react';
+
+import TicketNoControl from '../TicketNoControl';
 
 // Import our interface
 import { ITicket } from '../../../types/tickets';
@@ -19,14 +21,31 @@ interface Prop {
 
 interface State {
   orderID: string;
+  name: string;
+  email: string;
+  phone: string;
+  [key: string]: any;
 }
 
 export default class Ticket extends React.Component<Prop, State> {
   state = {
-    orderID: ''
+    orderID: '',
+    name: '',
+    email: '',
+    phone: ''
   }
 
   async createOrder() {
+    const seats = [];
+    for (const ticket of this.props.tickets) {
+      if (ticket.quantity > 0) {
+        seats.push({
+          numSeats: ticket.quantity,
+          ticketType: ticket.id
+        });
+      }
+    }
+
     const orderRes = await fetch(`${process.env.REACT_APP_API_URL}/shows/${this.props.selectedShow}/seats`, {
       method: 'POST',
       headers: {
@@ -37,8 +56,7 @@ export default class Ticket extends React.Component<Prop, State> {
         "name": "John Smith",
         "email": "john@example.com",
         "phone": "0412345678",
-        "numSeats": this.props.tickets[0].quantity,
-        "ticketType": this.props.tickets[0].id
+        seats
       })
     });
 
@@ -53,7 +71,7 @@ export default class Ticket extends React.Component<Prop, State> {
   }
 
   private paypalFee(price: number) {
-    return price * 1.026 + 0.30;
+    return price * 0.026 + 0.30;
   }
 
   async onApprove(data: any, actions: any) {
@@ -75,9 +93,11 @@ export default class Ticket extends React.Component<Prop, State> {
     }
   }
 
+  handleChange = (e :any, { name , value } :any) => this.setState({ [name]: value })
+
   render() {
     const { tickets } = this.props;
-    const { name, email, phone, showTickets } = this.state;
+    const { name, email, phone } = this.state;
     const ticketElms: Array<JSX.Element> = [];
     let totalPrice = 0;
 
@@ -96,12 +116,58 @@ export default class Ticket extends React.Component<Prop, State> {
     }
 
     return (
-      <div className="btn-show-nights" style={{margin: '1em auto', width: '25%'}}>
-        <PayPalButton
-          createOrder={ () => this.createOrder() }
-          onApprove={ (data: any, actions: any) => this.onApprove(data, actions) }
-        ></PayPalButton>
-      </div>
+      <React.Fragment>
+        <div className="registration">
+          <div className="personal-details">
+            <Header as='h2'>Personal Details</Header>
+            <Form>
+              <Form.Field
+                id='form-input-control-first-name'
+                control={Input}
+                label='Name'
+                name='name'
+                placeholder='John Smith'
+                onChange={this.handleChange}
+              />
+              <Form.Field
+                id='form-input-control-error-email'
+                control={Input}
+                label='Email'
+                name='email'
+                placeholder='john@example.com'
+                onChange={this.handleChange}
+              />
+              <Form.Field
+                id='form-input-control-phone'
+                control={Input}
+                label='Phone'
+                name='phone'
+                placeholder='0412345678'
+                onChange={this.handleChange}
+              />
+            </Form>
+          </div>
+          <div className="invoice">
+            <Header as='h2'>Invoice</Header>
+            <div className="tickets-list">
+              {ticketElms}
+            </div>
+            <Divider style={{margin: '0em 1em'}}/>
+            <div className="ticket-price">
+              <div style={{marginBottom: '0.5em'}}>
+                Paypal fee: ${this.paypalFee(totalPrice).toFixed(2)}
+              </div>
+              <div>Total Cost: ${totalPrice + this.paypalFee(totalPrice)}</div>
+            </div>
+          </div>
+        </div>
+        <div className="paypal-btn-group" style={{margin: '1em auto'}}>
+          <PayPalButton
+            createOrder={ () => this.createOrder() }
+            onApprove={ (data: any, actions: any) => this.onApprove(data, actions) }
+          ></PayPalButton>
+        </div>
+      </React.Fragment>
     );
   }
 };
