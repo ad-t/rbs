@@ -46,16 +46,16 @@ export default class Ticket extends React.Component<Prop, State> {
       }
     }
 
+    // TODO: validate personal details
     const orderRes = await fetch(`${process.env.REACT_APP_API_URL}/shows/${this.props.selectedShow}/seats`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      // TODO: collect user details
       body: JSON.stringify({
-        "name": "John Smith",
-        "email": "john@example.com",
-        "phone": "0412345678",
+        "name": this.state.name,
+        "email": this.state.email,
+        "phone": this.state.phone,
         seats
       })
     });
