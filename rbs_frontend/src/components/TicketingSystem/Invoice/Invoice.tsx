@@ -157,7 +157,7 @@ export default class Ticket extends React.Component<Prop, State> {
               <div style={{marginBottom: '0.5em'}}>
                 Paypal fee: ${this.paypalFee(totalPrice).toFixed(2)}
               </div>
-              <div>Total Cost: ${totalPrice + this.paypalFee(totalPrice)}</div>
+              <div>Total Cost: ${(totalPrice + this.paypalFee(totalPrice)).toFixed(2)}</div>
             </div>
           </div>
         </div>
