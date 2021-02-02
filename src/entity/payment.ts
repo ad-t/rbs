@@ -3,7 +3,8 @@ import { Order } from "./order";
 
 export enum PaymentMethod {
   CASH = "cash",
-  PAYPAL = "paypal"
+  PAYPAL = "paypal",
+  SQUARE = "square"
 }
 
 @Entity()
@@ -23,6 +24,7 @@ export class Payment {
 
   // Paypal: OrderID
   // Stripe: CHECKOUT_SESSION_ID
+  // Square: reference_id
   @Column()
   public transactionID: string;
 

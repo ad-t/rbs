@@ -25,7 +25,7 @@ interface State {
 class Index extends React.Component<{}, State> {
   state: State = {
     tickets: [],
-    buyingTicket: true
+    buyingTicket: false
   }
 
   toggleTickets = () => this.setState({buyingTicket: !this.state.buyingTicket});

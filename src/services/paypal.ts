@@ -20,7 +20,9 @@ function environment() {
 }
 
 export function paypalFee(subtotal: currency): currency {
-  return subtotal.multiply(0.026).add(0.30);
+  // PayPal fees are rounded using arithmetic rounding (round half up).
+  // 1 / 0.974 - 1 = 1.02669...
+  return subtotal.multiply(0.0266).add(0.30);
 }
 
 export interface IItemDetail {

@@ -286,6 +286,27 @@ app.get("/orders/:id", OrderRoutes.GetOrder);
 
 /**
  * @swagger
+ * /orders/{id}/square-setup:
+ *   post:
+ *     summary: Setup order with Square
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         required: true
+ *         description: order uuid
+ *     responses:
+ *       200:
+ *         description: Order has been setup
+ *       404:
+ *         description: Order with ID not found
+ */
+app.post("/orders/:id/square-setup", OrderRoutes.SetupSquare);
+
+/**
+ * @swagger
  * /orders/{id}/paypal-setup:
  *   post:
  *     summary: Setup order with paypal
@@ -325,3 +346,24 @@ app.post("/orders/:id/paypal-setup", OrderRoutes.SetupPaypal);
  *         description: Order with ID not found
  */
 app.post("/orders/:id/paypal-capture", OrderRoutes.PaypalCaptureOrder);
+
+/**
+ * @swagger
+ * /orders/{id}/square-verify-payment:
+ *   post:
+ *     summary: Verify that a user has made a payment to Square
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         required: true
+ *         description: order uuid (not paypal order id)
+ *     responses:
+ *       200:
+ *         description: order has been captured
+ *       404:
+ *         description: Order with ID not found
+ */
+app.post("/orders/:id/square-verify-payment", OrderRoutes.SquareVerifyPayment);

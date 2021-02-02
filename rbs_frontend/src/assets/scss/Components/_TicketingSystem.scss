@@ -77,13 +77,14 @@
   }
 }
 
-.paypal-btn-group {
-  padding: 0 1em;
-  margin: auto;
+.confirmation {
+  display: flex;
+  .booking-info {
+    flex-grow: 1;
+    padding: 0 1em;
+  }
 }
 
-@media all and (min-width: 980px) {
-  .paypal-btn-group {
-    width: 25%;
-  }
+.payment-btn-group {
+  margin-top: 1em;
 }
