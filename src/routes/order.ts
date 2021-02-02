@@ -75,9 +75,9 @@ export async function SetupSquare(req: Request, res: Response) {
       itemDetails.values());
     Logger.Info(JSON.stringify(details));
 
-    // FIXME: idempotency key is wrong
+    // TODO: review what would be the best idempotency key
     const body: CreateCheckoutRequest = {
-      idempotencyKey: "what" + Date.now(),
+      idempotencyKey: order.id,
       order: details
     };
     body.askForShippingAddress = false;
@@ -114,7 +114,6 @@ export async function SetupSquare(req: Request, res: Response) {
     payment.transactionID = result.checkout.order.id;
     await conn.getRepository(Payment).save(payment);
 
-    // TODO: verify Square order ID, checkout ID, and transaction totals
     res.json({paypalOrderID: payment.transactionID, url: result.checkout.checkoutPageUrl});
   } catch (err) {
     if (err instanceof ApiError) {
@@ -270,10 +269,6 @@ export async function SquareVerifyPayment(req: Request, res: Response) {
 
     // Verify that the order has been fully paid (COMPLETED) and the Square order
     // is for the same amount that we expect.
-    // tslint:disable-next-line:no-console
-    console.log(result.order.totalMoney.amount);
-    // tslint:disable-next-line:no-console
-    console.log(order.payment.totalPrice);
     if (!result.order || result.order.state !== "COMPLETED" ||
         result.order.totalMoney.amount !== Math.round(order.payment.totalPrice * 100)) {
       res.status(422).json({error: "order has not been (fully) paid yet"});
