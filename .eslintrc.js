@@ -30,8 +30,7 @@ module.exports = {
         "eslint-plugin-jsdoc",
         "eslint-plugin-prefer-arrow",
         "eslint-plugin-import",
-        "@typescript-eslint",
-        "@typescript-eslint/tslint"
+        "@typescript-eslint"
     ],
     "rules": {
         "@typescript-eslint/adjacent-overload-signatures": "error",
@@ -105,6 +104,7 @@ module.exports = {
         "@typescript-eslint/no-empty-function": "error",
         "@typescript-eslint/no-empty-interface": "error",
         "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-floating-promises": "warn",
         "@typescript-eslint/no-misused-new": "error",
         "@typescript-eslint/no-namespace": "error",
         "@typescript-eslint/no-parameter-properties": "off",
@@ -236,23 +236,6 @@ module.exports = {
             }
         ],
         "use-isnan": "error",
-        "valid-typeof": "off",
-        "@typescript-eslint/tslint/config": [
-            "error",
-            {
-                "rules": {
-                    "import-spacing": true,
-                    "whitespace": [
-                        true,
-                        "check-branch",
-                        "check-decl",
-                        "check-operator",
-                        "check-separator",
-                        "check-type",
-                        "check-typecast"
-                    ]
-                }
-            }
-        ]
+        "valid-typeof": "off"
     }
 };
