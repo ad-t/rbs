@@ -7,6 +7,12 @@ export class Ticket {
   @PrimaryGeneratedColumn("uuid")
   public id: string;
 
+  @Column()
+  public name: string;
+
+  @Column({ default: 0 })
+  public postcode: number;
+
   @ManyToOne((type) => Order, (o) => o.tickets, {onDelete: "CASCADE"})
   public order: Order;
 

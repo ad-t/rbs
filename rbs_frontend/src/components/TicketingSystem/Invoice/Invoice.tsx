@@ -133,7 +133,7 @@ export default class Ticket extends React.Component<Prop, State> {
     });
 
     if (verify.status === 200) {
-      this.props.updatePayment({ orderID: this.state.orderID });
+      this.props.updatePayment({ tickets: this.props.tickets, orderID: this.state.orderID });
     } else {
       const text = await verify.text()
       alert(verify.status + ': ' + text);
@@ -150,7 +150,7 @@ export default class Ticket extends React.Component<Prop, State> {
     });
 
     if (verify.status === 200) {
-      this.props.updatePayment({ orderID: this.state.orderID });
+      this.props.updatePayment({ tickets: this.props.tickets, orderID: this.state.orderID });
     } else {
       const text = await verify.text()
       alert(verify.status + ': ' + text);
@@ -190,7 +190,6 @@ export default class Ticket extends React.Component<Prop, State> {
                 control={Input}
                 label='Name'
                 name='name'
-                placeholder='John Smith'
                 onChange={this.handleChange}
                 defaultValue={this.state.name}
               />
@@ -199,7 +198,6 @@ export default class Ticket extends React.Component<Prop, State> {
                 control={Input}
                 label='Email'
                 name='email'
-                placeholder='john@example.com'
                 onChange={this.handleChange}
                 defaultValue={this.state.email}
               />
@@ -208,7 +206,6 @@ export default class Ticket extends React.Component<Prop, State> {
                 control={Input}
                 label='Phone'
                 name='phone'
-                placeholder='0412345678'
                 onChange={this.handleChange}
                 defaultValue={this.state.phone}
               />

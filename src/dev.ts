@@ -6,23 +6,23 @@ import { TicketType } from "./entity/ticket_type";
 // Seed database
 export async function seedDB() {
   try {
-    const conn: Connection = await getConnection();
+    const conn: Connection = getConnection();
     const prod = new Production();
     prod.id = 1;
     prod.title = "CSE Revue";
-    prod.subtitle = "Arraybian bytes";
-    prod.year = 2019;
+    prod.subtitle = "The Bee Movie";
+    prod.year = 2021;
     prod.description = "lol";
     prod.location = "Science Theatre";
     prod.showImage = "";
     const s1 = new Show();
     s1.id = 1;
-    s1.time = new Date("April 6, 2020 19:30:00");
+    s1.time = new Date("July 20, 2021 19:30:00");
     s1.totalSeats = 150;
     await conn.manager.save(s1);
     const s2 = new Show();
     s2.id = 2;
-    s2.time = new Date("April 7, 2020 19:30:00");
+    s2.time = new Date("July 21, 2021 19:30:00");
     s2.totalSeats = 150;
     await conn.manager.save(s2);
     prod.shows = [
@@ -35,14 +35,14 @@ export async function seedDB() {
       const tt1 = new TicketType();
       tt1.id = i * 2 + 1;
       tt1.description = "Single";
-      tt1.price = 15.00;
+      tt1.price = 1500;
       tt1.minPurchaseAmount = 1;
       tt1.show = show;
 
       const tt2 = new TicketType();
       tt2.id = i * 2 + 2;
       tt2.description = "Group";
-      tt2.price = 12.00;
+      tt2.price = 1200;
       tt2.minPurchaseAmount = 5;
       tt2.show = show;
 
@@ -51,6 +51,6 @@ export async function seedDB() {
     });
 
   } catch (error) {
-    throw Error(`ERROR: Failed to seed database.\n${error}`);
+    throw new Error(`ERROR: Failed to seed database.\n${error}`);
   }
 }

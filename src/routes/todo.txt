@@ -1,0 +1,28 @@
+Ready:
+* Basic booking
+* Different ticket types (group, arc members, etc.)
+* Payment gateways: Square, PayPal
+
+In progress:
+* Email confirmation
+
+TODO:
+* QR code and ticket verification
+* Admin panel
+ - Look up by email, name, mobile phone, ticket ID
+ - Overview of total ticket sales/night
+ - Manually book people in with bank transfer
+* Seatmap
+
+TODO for CSE:
+* Book multiple nights in one transaction
+* Forward email confirmations to exec/ticketing???
+  * For law too
+
+TODO for Law:
+* Discount codes
+* 'Manage my booking'
+
+
+
+- CSE: wants to see the full code

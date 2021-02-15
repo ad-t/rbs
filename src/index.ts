@@ -19,6 +19,7 @@ import { Show } from "./entity/show";
 import * as OrderRoutes from "./routes/order";
 import * as ProductionRoutes from "./routes/production";
 import * as ShowRoutes from "./routes/show";
+import * as AdminRoutes from "./routes/admin";
 
 // libraries
 import bodyParser = require("body-parser");
@@ -94,7 +95,10 @@ async function bootstrap() {
   await createConnection(options);
   if (process.env.NODE_ENV === "development") {
     Logger.Info("Since we're in the development environment, purge the database tables");
-    activeEntities.forEach(async (entity) => await getConnection().getRepository(entity).delete({}));
+    // Can't use .clear() as TRUNCATE doesn't work with foreign key constraints.
+    await Promise.all(
+      activeEntities.map(async (entity) => await getConnection().getRepository(entity).delete({}))
+    );
     Logger.Info("Seeding database...");
     await seedDB();
   }
@@ -112,6 +116,25 @@ app.listen(API_PORT, async () => {
   await bootstrap();
   Logger.Info(`Server started at ${API_HOST}:${API_PORT}`);
 });
+
+/**
+ * @swagger
+ * /admin/shows/{id}:
+ *   get:
+ *     summary: Get show info and ticket types
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: integer
+ *         required: true
+ *         description: show id
+ *     responses:
+ *       200:
+ *         description: Information about the show and ticket types
+ *       404:
+ *         description: Show not found
+ */
+app.get("/admin/shows/:id", AdminRoutes.GetShowOrders);
 
 /**
  * @swagger
@@ -283,6 +306,29 @@ app.post("/shows/:id/seats", ShowRoutes.ReserveSeats);
  *         description: Order with ID not found
  */
 app.get("/orders/:id", OrderRoutes.GetOrder);
+
+/**
+ * @swagger
+ * /orders/{id}:
+ *   get:
+ *     summary: Set customer details (name/etc). Required before setting up payment.
+ *     consumes:
+ *       - application/json
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: string
+ *         required: true
+ *         description: order uuid
+ *       - in: body
+ *         name: customerdeets
+ *     responses:
+ *       200:
+ *         description: Retrieved order
+ *       404:
+ *         description: Order with ID not found
+ */
+app.post("/orders/:id/details", OrderRoutes.CompleteDetails);
 
 /**
  * @swagger

@@ -10,6 +10,47 @@ import Logger from "../logging";
 import { IItemDetail, orderCreateRequestBody, paypalClient, paypalFee } from "../services/paypal";
 import { orderCreateRequestBody as squareOrderCreateRequestBody, squareClient, squareFee } from "../services/square";
 
+export async function CompleteDetails(req: Request, res: Response) {
+  let tickets: object[];
+  try {
+    const conn = getConnection();
+    const orderRepo = conn.getRepository(Order);
+    const order: Order = await orderRepo.findOne(
+      req.params.id);
+    if (!order) {
+      res.status(404).json({error: `No order found with id ${req.params.id}`});
+      return;
+    }
+    // TODO: check all details are filled
+    ({tickets} = req.body);
+    for (let t of tickets) {
+      const ticketRepo = conn.getRepository(Ticket);
+      const ticket: Ticket = await ticketRepo.findOne(t.id);
+      // TODO: do we need to validate that this ticket belongs to the order?
+      if (!ticket) {
+        res.status(400).json({error: `No ticket found with ID ${t.id}`});
+        return;
+      }
+
+      if (!t.name || !t.postcode) {
+        res.status(400).json({error: `Ticket missing details`});
+      }
+
+      ticket.name = t.name;
+      ticket.postcode = t.postcode;
+      await ticketRepo.save(ticket);
+    }
+
+    order.detailsCompleted = true;
+    await orderRepo.save(order);
+    // TODO: what to send?
+    res.json({});
+  } catch (err) {
+    Logger.Error(err.stack);
+    res.status(500).json({error: "Internal server error"});
+  }
+}
+
 export async function GetOrder(req: Request, res: Response): Promise<void> {
   try {
     const conn = getConnection();
@@ -36,6 +77,10 @@ export async function SetupSquare(req: Request, res: Response) {
     );
     if (!order) {
       res.status(404).json({error: `No order found with id ${req.params.id}`});
+      return;
+    }
+    if (!order.detailsCompleted) {
+      res.status(409).json({error: "Customer details have not been completed yet"});
       return;
     }
     if (order.paid) {
@@ -108,7 +153,7 @@ export async function SetupSquare(req: Request, res: Response) {
     const payment = order.payment || new Payment();
     payment.order = order;
     payment.method = PaymentMethod.SQUARE;
-    payment.totalPrice = (totalPrice.format() as any);
+    payment.totalPrice = totalPrice.intValue;
     // We want to store the Square Order ID instead of the Checkout ID, as this
     // is the only thing that can actually verify payment using the API.
     payment.transactionID = result.checkout.order.id;
@@ -118,7 +163,7 @@ export async function SetupSquare(req: Request, res: Response) {
   } catch (err) {
     if (err instanceof ApiError) {
       // If unsuccessful we will display the list of errors
-      // tslint:disable-next-line:no-console
+      // eslint-disable-next-line no-console
       console.error("Errors: ", err.errors);
     } else {
       Logger.Error(err.stack);
@@ -136,6 +181,10 @@ export async function SetupPaypal(req: Request, res: Response) {
     );
     if (!order) {
       res.status(404).json({error: `No order found with id ${req.params.id}`});
+      return;
+    }
+    if (!order.detailsCompleted) {
+      res.status(409).json({error: "Customer details have not been completed yet"});
       return;
     }
     if (order.paid) {
@@ -186,7 +235,7 @@ export async function SetupPaypal(req: Request, res: Response) {
     const payment = order.payment || new Payment();
     payment.order = order;
     payment.method = PaymentMethod.PAYPAL;
-    payment.totalPrice = (totalPrice.format() as any);
+    payment.totalPrice = totalPrice.intValue;
     payment.transactionID = paypalResponse.result.id;
     await conn.getRepository(Payment).save(payment);
 
@@ -229,6 +278,7 @@ export async function PaypalCaptureOrder(req: Request, res: Response) {
 
     order.payment.captureID = captureID;
     order.paid = true;
+    // TODO: Use current date or date as specified in Square API?
     order.paidAt = new Date();
     await repo.save(order);
 
@@ -270,7 +320,7 @@ export async function SquareVerifyPayment(req: Request, res: Response) {
     // Verify that the order has been fully paid (COMPLETED) and the Square order
     // is for the same amount that we expect.
     if (!result.order || result.order.state !== "COMPLETED" ||
-        result.order.totalMoney.amount !== Math.round(order.payment.totalPrice * 100)) {
+        result.order.totalMoney.amount !== order.payment.totalPrice) {
       res.status(422).json({error: "order has not been (fully) paid yet"});
       return;
     }
@@ -296,5 +346,5 @@ export async function SquareVerifyPayment(req: Request, res: Response) {
 }
 
 function AUD(amount: any): currency {
-  return currency(amount, {separator: "", formatWithSymbol: false});
+  return currency(amount, {separator: "", symbol: "", fromCents: true});
 }

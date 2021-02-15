@@ -32,13 +32,13 @@ export interface IItemDetail {
 }
 
 export function orderCreateRequestBody(
-    orderID: string,
-    title: string,
-    year: string,
-    subtitle: string,
-    showTime: Date,
-    subtotal: currency,
-    itemDetails: Iterable<IItemDetail>
+  orderID: string,
+  title: string,
+  year: string,
+  subtitle: string,
+  showTime: Date,
+  subtotal: currency,
+  itemDetails: Iterable<IItemDetail>
 ): object {
   const fee: currency = paypalFee(subtotal);
   const totalPrice: currency = subtotal.add(fee);
@@ -71,7 +71,7 @@ export function orderCreateRequestBody(
     purchase_units: [{
       invoice_id: orderID,
       description: `Tickets for ${title} ${year}`,
-      soft_descriptor: "RBS Revue Tickets", // credit card statement
+      soft_descriptor: "Tickets Revue", // credit card statement
       amount: {
         currency_code: "AUD",
         value: totalPrice.format(),

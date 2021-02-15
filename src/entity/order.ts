@@ -23,10 +23,13 @@ export class Order {
   @ManyToOne((type) => Show, (show) => show.orders, {onDelete: "SET NULL"})
   public show: Show;
 
+  @Column({default: false})
+  public detailsCompleted: boolean;
+
   @Column()
   public numSeats: number;
 
-  @Column({type: "decimal", precision: 13, scale: 2})
+  @Column()
   public subtotalPrice: number;
 
   @Column({default: false})

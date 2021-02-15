@@ -35,6 +35,10 @@ export default class BookTickets extends React.Component<Prop, State> {
       for (let i = 0; i < data.ticketTypes.length; ++i) {
         data.ticketTypes[i].quantity = 0;
       }
+      // On backend ticket prices are stored as cents.
+      for (let i = 0; i < data.ticketTypes.length; ++i) {
+        data.ticketTypes[i].price /= 100;
+      }
       this.setState({ tickets: data.ticketTypes });
     }
   }
