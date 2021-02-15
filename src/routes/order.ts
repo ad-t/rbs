@@ -11,6 +11,7 @@ import { IItemDetail, orderCreateRequestBody, paypalClient, paypalFee } from "..
 import { orderCreateRequestBody as squareOrderCreateRequestBody, squareClient, squareFee } from "../services/square";
 
 export async function CompleteDetails(req: Request, res: Response) {
+  // TODO: create type for this
   let tickets: object[];
   try {
     const conn = getConnection();
@@ -44,7 +45,7 @@ export async function CompleteDetails(req: Request, res: Response) {
     order.detailsCompleted = true;
     await orderRepo.save(order);
     // TODO: what to send?
-    res.json({});
+    res.json({success: true});
   } catch (err) {
     Logger.Error(err.stack);
     res.status(500).json({error: "Internal server error"});
@@ -126,9 +127,10 @@ export async function SetupSquare(req: Request, res: Response) {
       order: details
     };
     body.askForShippingAddress = false;
+    // TODO: change this to variable
     body.merchantSupportEmail = "ticketing@medrevue.org";
     // Don't use example@example.com - otherwise the payment won't go through.
-    body.prePopulateBuyerEmail = "karl@medrevue.org";
+    body.prePopulateBuyerEmail = order.email;
     // body.prePopulateShippingAddress = ...;
     // So-called transactionId is actually the orderId in the Square Payment API.
     // Square Order ID is available from the response to createCheckout.
@@ -150,6 +152,7 @@ export async function SetupSquare(req: Request, res: Response) {
     Logger.Info(JSON.stringify(others));
 
     // Save paypal details
+    // TODO: check whether we want to reuse existing payment object
     const payment = order.payment || new Payment();
     payment.order = order;
     payment.method = PaymentMethod.SQUARE;
