@@ -24,7 +24,7 @@ const AdminNavbar = (props) => (
       {/* TODO: hide if no event selected */}
       <Dropdown item simple text='Bookings'>
         <Dropdown.Menu>
-          <Dropdown.Item>Manual Booking</Dropdown.Item>
+          <Dropdown.Item as={Link} to='/manual-booking'>Manual Booking</Dropdown.Item>
           <Dropdown.Item as={Link} to='/find-booking'>Find Booking</Dropdown.Item>
           <Dropdown.Divider />
           <Dropdown.Header>Super Admin</Dropdown.Header>

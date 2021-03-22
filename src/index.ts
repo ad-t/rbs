@@ -4,12 +4,13 @@ import express from "express";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 
+import bodyParser = require("body-parser");
+
 import "reflect-metadata";
 import {
   ConnectionOptions,
   createConnection,
-  getConnection,
-  getRepository,
+  getConnection
 } from "typeorm";
 
 import { Order } from "./entity/order";
@@ -22,7 +23,6 @@ import * as ShowRoutes from "./routes/show";
 import * as AdminRoutes from "./routes/admin";
 
 // libraries
-import bodyParser = require("body-parser");
 import { seedDB } from "./dev";
 import { Payment } from "./entity/payment";
 import { Ticket } from "./entity/ticket";
@@ -119,7 +119,7 @@ app.listen(API_PORT, async () => {
 
 /**
  * @swagger
- * /admin/shows/{id}:
+ * /admin/shows/{id}/tickets:
  *   get:
  *     summary: Get show info and ticket types
  *     parameters:
@@ -134,7 +134,7 @@ app.listen(API_PORT, async () => {
  *       404:
  *         description: Show not found
  */
-app.get("/admin/shows/:id", AdminRoutes.GetShowOrders);
+app.get("/admin/shows/:id/tickets", AdminRoutes.GetShowOrders);
 
 /**
  * @swagger

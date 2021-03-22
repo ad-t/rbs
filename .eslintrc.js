@@ -100,12 +100,13 @@ module.exports = {
             }
         ],
         "@typescript-eslint/member-ordering": "error",
-        "@typescript-eslint/naming-convention": "error",
+        "@typescript-eslint/naming-convention": "warn",
         "@typescript-eslint/no-empty-function": "error",
         "@typescript-eslint/no-empty-interface": "error",
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-floating-promises": "warn",
         "@typescript-eslint/no-misused-new": "error",
+        "@typescript-eslint/no-misused-promises": "warn",
         "@typescript-eslint/no-namespace": "error",
         "@typescript-eslint/no-parameter-properties": "off",
         "@typescript-eslint/no-shadow": [
@@ -125,6 +126,12 @@ module.exports = {
             "double",
             {
                 "avoidEscape": true
+            }
+        ],
+        "@typescript-eslint/restrict-template-expressions": [
+            "warn",
+            {
+                "allowNumber": true
             }
         ],
         "@typescript-eslint/semi": [
@@ -175,7 +182,7 @@ module.exports = {
         "id-match": "error",
         "import/order": "error",
         "jsdoc/check-alignment": "error",
-        "jsdoc/check-indentation": "error",
+        "jsdoc/check-indentation": ["warn", {"excludeTags": ["swagger"]}],
         "jsdoc/newline-after-description": "error",
         "max-classes-per-file": [
             "error",
@@ -211,7 +218,7 @@ module.exports = {
             "error",
             "never"
         ],
-        "prefer-arrow/prefer-arrow-functions": "error",
+        "prefer-arrow/prefer-arrow-functions": "off",
         "prefer-const": "error",
         "quote-props": [
             "error",

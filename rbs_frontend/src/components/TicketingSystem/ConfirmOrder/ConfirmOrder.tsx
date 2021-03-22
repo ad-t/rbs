@@ -2,7 +2,7 @@
  * This component will return an invoice that shows what tickets were purchased from the user.
  */
 import React from 'react';
-import { Button, Icon, Header, Segment, Grid } from 'semantic-ui-react';
+import { Button, Icon, Header, Segment, Grid, List } from 'semantic-ui-react';
 
 import TicketNoControl from '../TicketNoControl';
 
@@ -18,6 +18,8 @@ export default class ConfirmOrder extends React.Component<Prop, {}> {
   render() {
     const { details } = this.props;
 
+    console.log(details);
+
     const orderID = details.orderID.slice(0, 6).toUpperCase();
     const { tickets } = details;
 
@@ -25,7 +27,29 @@ export default class ConfirmOrder extends React.Component<Prop, {}> {
     let totalQty = 0;
     for (let i = 0; i < tickets.length; ++i) {
       const ticket: ITicket = tickets[i];
+      console.log(ticket);
       ticketElms.push(
+        <Segment>
+          <List>
+            <List.Item>
+              <List.Icon name='ticket' />
+              <List.Content>{ticket.description} - ${`${ticket.price.toFixed(2)}`}</List.Content>
+            </List.Item>
+            <List.Item>
+              <List.Icon name='marker' />
+              <List.Content>{ticket.quantity}</List.Content>
+            </List.Item>
+            {ticket.details.map(x => (
+              <List.Item>
+                <List.Icon name='mail' />
+                <List.Content>
+                  {x.name}
+                </List.Content>
+              </List.Item>
+            ))}
+          </List>
+        </Segment>
+        /*
         <TicketNoControl
           key={i}
           index={i}
@@ -33,6 +57,7 @@ export default class ConfirmOrder extends React.Component<Prop, {}> {
           description={ticket.description}
           quantity={ticket.quantity}
         />
+        */
       );
       totalQty += ticket.quantity;
     }
@@ -43,9 +68,12 @@ export default class ConfirmOrder extends React.Component<Prop, {}> {
       <Grid.Column>
         <div className="confirmation">
           <div className="booking-info">
-            <Header as='h2'>Payment Complete</Header>
-            <p>Thanks for purchasing {totalQty} tickets!</p>
-            <p>Booking reference: <pre>{orderID}</pre></p>
+            <Header as='h2'>Thank you!</Header>
+            <p>Your payment was successful for {totalQty} tickets.</p>
+            <p>Here's your booking reference &ndash; please keep it safe.</p>
+            <p><span style={{font:"bold 20px monospace"}}>{orderID}</span></p>
+            <p>A copy of this booking confirmation has been sent to <strong>{details.email}</strong>.</p>
+            <p>No GST applies for this purchase.</p>
           </div>
         </div>
       </Grid.Column>

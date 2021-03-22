@@ -10,8 +10,11 @@ export class Ticket {
   @Column()
   public name: string;
 
-  @Column({ default: 0 })
-  public postcode: number;
+  @Column()
+  public phone: string;
+
+  @Column({ length: 10 })
+  public postcode: string;
 
   @ManyToOne((type) => Order, (o) => o.tickets, {onDelete: "CASCADE"})
   public order: Order;

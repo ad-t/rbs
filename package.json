@@ -33,7 +33,7 @@
     "winston": "^3.2.1"
   },
   "scripts": {
-    "prebuild": "eslint --fix",
+    "prebuild": "eslint src || true",
     "build": "tsc",
     "prestart": "yarn run build",
     "serve": "node .",

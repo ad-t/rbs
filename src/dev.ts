@@ -4,7 +4,7 @@ import { Show } from "./entity/show";
 import { TicketType } from "./entity/ticket_type";
 
 // Seed database
-export async function seedDB() {
+export async function seedDB(): Promise<void> {
   try {
     const conn: Connection = getConnection();
     const prod = new Production();
@@ -51,6 +51,6 @@ export async function seedDB() {
     });
 
   } catch (error) {
-    throw new Error(`ERROR: Failed to seed database.\n${error}`);
+    throw new Error(`ERROR: Failed to seed database.\n${String(error)}`);
   }
 }

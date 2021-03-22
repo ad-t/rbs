@@ -1,10 +1,12 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import paypal from "@paypal/checkout-server-sdk";
 import currency = require("currency.js");
 
 // TODO rewrite this if we ever expand
 const defaultTZ = "Australia/Sydney";
 
-export function paypalClient() {
+export function paypalClient(): any {
+  // eslint-disable-next-line
   return new paypal.core.PayPalHttpClient(environment());
 }
 
@@ -14,8 +16,10 @@ function environment() {
       process.env.PAYPAL_CLIENT_SECRET || "PAYPAL-SANDBOX-CLIENT-SECRET";
 
   if (process.env.NODE_ENV === "production") {
+    // eslint-disable-next-line
     return new paypal.core.LiveEnvironment(clientId, clientSecret);
   }
+  // eslint-disable-next-line
   return new paypal.core.SandboxEnvironment(clientId, clientSecret);
 }
 
@@ -39,16 +43,15 @@ export function orderCreateRequestBody(
   showTime: Date,
   subtotal: currency,
   itemDetails: Iterable<IItemDetail>
-): object {
+) {
   const fee: currency = paypalFee(subtotal);
   const totalPrice: currency = subtotal.add(fee);
 
-  const items: object[] = [];
+  const items = [];
   for (const item of itemDetails) {
     items.push({
       name: `${title} ${year}: ${subtitle} - ${item.name}`,
-      description: showTime.toLocaleDateString("en-AU",
-      {
+      description: showTime.toLocaleDateString("en-AU", {
         weekday: "long",
         day: "numeric",
         month: "long",
@@ -64,13 +67,13 @@ export function orderCreateRequestBody(
   return {
     intent: "CAPTURE",
     application_context: {
-      brand_name: "Revue Booking System",
+      brand_name: "UNSW Med Revue",
       shipping_preferences: "NO_SHIPPING",
       user_action: "PAY_NOW"
     },
     purchase_units: [{
       invoice_id: orderID,
-      description: `Tickets for ${title} ${year}`,
+      description: `${title} ${year} Tickets`,
       soft_descriptor: "Tickets Revue", // credit card statement
       amount: {
         currency_code: "AUD",
@@ -85,6 +88,6 @@ export function orderCreateRequestBody(
   };
 }
 
-function moneyObj(amount: currency): object {
+function moneyObj(amount: currency) {
   return {currency_code: "AUD", value: amount.format()};
 }

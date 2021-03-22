@@ -3,12 +3,13 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Button, Divider, Form, Header, Icon, Input, Grid, Container } from 'semantic-ui-react';
+import { Button, Divider, Form, Header, Icon, Input, Grid, Container, List, Popup } from 'semantic-ui-react';
 
 import TicketNoControl from '../TicketNoControl';
+import TicketholderDetails from '../TicketholderDetails';
 
 // Import our interface
-import { ITicket } from '../../../types/tickets';
+import { ITicket, ITicketDetails } from '../../../types/tickets';
 
 import SquareButton from './SquareButton';
 
@@ -37,19 +38,22 @@ export default class Ticket extends React.Component<Prop, State> {
     phone: '0412345678'
   }
 
-  async createOrder() {
+  async reserveSeats() {
     const seats = [];
     for (const ticket of this.props.tickets) {
-      if (ticket.quantity > 0) {
-        seats.push({
-          numSeats: ticket.quantity,
-          ticketType: ticket.id
-        });
-      }
+      // TODO: add postcode data
+      ticket.details.forEach(obj => {
+        obj.postcode = "0000";
+      });
+
+      seats.push({
+        details: ticket.details,
+        ticketType: ticket.id
+      });
     }
 
     // TODO: validate personal details
-    const orderRes = await fetch(`${process.env.REACT_APP_API_URL}/shows/${this.props.selectedShow}/seats`, {
+    return await fetch(`${process.env.REACT_APP_API_URL}/shows/${this.props.selectedShow}/seats`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -61,7 +65,10 @@ export default class Ticket extends React.Component<Prop, State> {
         seats
       })
     });
+  }
 
+  createOrder = async () => {
+    const orderRes = await this.reserveSeats();
     const data = await orderRes.json();
     this.state.orderID = data.id;
 
@@ -69,35 +76,11 @@ export default class Ticket extends React.Component<Prop, State> {
       method: 'POST'
     });
     const setup = await setupRes.json();
-    console.log(setup.url);
     return setup.paypalOrderID;
   }
 
   async setupSquare() {
-    const seats = [];
-    for (const ticket of this.props.tickets) {
-      if (ticket.quantity > 0) {
-        seats.push({
-          numSeats: ticket.quantity,
-          ticketType: ticket.id
-        });
-      }
-    }
-
-    // TODO: validate personal details
-    const orderRes = await fetch(`${process.env.REACT_APP_API_URL}/shows/${this.props.selectedShow}/seats`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        "name": this.state.name,
-        "email": this.state.email,
-        "phone": this.state.phone,
-        seats
-      })
-    });
-
+    const orderRes = await this.reserveSeats();
     const data = await orderRes.json();
     this.state.orderID = data.id;
 
@@ -105,6 +88,8 @@ export default class Ticket extends React.Component<Prop, State> {
       method: 'POST'
     });
     const setup = await setupRes.json();
+    /* NOTE: hack to detect window closed without CORS */
+    // FIXME: detect if paid or not
     const win = window.open(setup.url, 'square-pay', 'toolbar=no');
     if (win) {
       const timer = setInterval(() => {
@@ -117,8 +102,8 @@ export default class Ticket extends React.Component<Prop, State> {
     return setup.paypalOrderID;
   };
 
-  private paypalFee(price: number) {
-    return price * 0.026 + 0.30;
+  private handlingFee(price: number) {
+    return 1.69;
   }
 
   async onPaypalApprove(data: any, actions: any) {
@@ -133,7 +118,7 @@ export default class Ticket extends React.Component<Prop, State> {
     });
 
     if (verify.status === 200) {
-      this.props.updatePayment({ tickets: this.props.tickets, orderID: this.state.orderID });
+      this.props.updatePayment({ tickets: this.props.tickets, orderID: this.state.orderID, email: this.state.email });
     } else {
       const text = await verify.text()
       alert(verify.status + ': ' + text);
@@ -150,9 +135,10 @@ export default class Ticket extends React.Component<Prop, State> {
     });
 
     if (verify.status === 200) {
-      this.props.updatePayment({ tickets: this.props.tickets, orderID: this.state.orderID });
+      this.props.updatePayment({ tickets: this.props.tickets, orderID: this.state.orderID, email: this.state.email });
     } else {
       const text = await verify.text()
+      // FIXME: use better UI
       alert(verify.status + ': ' + text);
     }
   }
@@ -179,82 +165,135 @@ export default class Ticket extends React.Component<Prop, State> {
       totalPrice += (ticket.quantity * ticket.price);
     }
 
+    const detailsElms: Array<JSX.Element> = [];
+    let ticketCounter = 0;
+    for (let ticket of tickets) {
+      for (let i = 0; i < ticket.quantity; ++i) {
+        const currDetails = ticket.details[i];
+
+        detailsElms.push(
+          <TicketholderDetails index={ticketCounter}
+            name={currDetails.name}
+            postcode={currDetails.postcode}
+            phone={currDetails.phone}
+            description={ticket.description}
+            onNameChange={s => { currDetails.name = s; }}
+            onPostcodeChange={s => { currDetails.postcode = s; }}
+            onPhoneChange={s => { currDetails.phone = s; }} />
+        );
+
+        ++ticketCounter;
+      }
+    }
+
     return (
       <React.Fragment>
-        <div className="registration">
-          <div className="personal-details">
-            <Header as='h2'>Personal Details</Header>
-            <Form>
-              <Form.Field
-                id='form-input-control-first-name'
-                control={Input}
-                label='Name'
-                name='name'
-                onChange={this.handleChange}
-                defaultValue={this.state.name}
-              />
-              <Form.Field
-                id='form-input-control-error-email'
-                control={Input}
-                label='Email'
-                name='email'
-                onChange={this.handleChange}
-                defaultValue={this.state.email}
-              />
-              <Form.Field
-                id='form-input-control-phone'
-                control={Input}
-                label='Phone'
-                name='phone'
-                onChange={this.handleChange}
-                defaultValue={this.state.phone}
-              />
-            </Form>
-          </div>
-          <div className="invoice">
-            <Header as='h2'>Invoice</Header>
-            <div className="tickets-list">
-              {ticketElms}
-            </div>
-            <Divider style={{margin: '0em 1em'}}/>
-            <div className="ticket-price">
-              <div style={{marginBottom: '0.5em'}}>
-                Subtotal: ${totalPrice.toFixed(2)}
+        <div style={{margin: "0 1em"}}>
+          <Grid columns={2}>
+            <Grid.Column>
+              <Header as='h2'>Purchaser Details</Header>
+              <Form>
+                <Form.Field
+                  control={Input}
+                  label='Name'
+                  name='name'
+                  onChange={this.handleChange}
+                  defaultValue={this.state.name}
+                  required
+                />
+                <Form.Field
+                  control={Input}
+                  label='Email'
+                  name='email'
+                  onChange={this.handleChange}
+                  defaultValue={this.state.email}
+                  required
+                />
+                <Form.Field
+                  control={Input}
+                  label='Phone'
+                  name='phone'
+                  onChange={this.handleChange}
+                  defaultValue={this.state.phone}
+                  required
+                />
+              </Form>
+
+              {detailsElms}
+            </Grid.Column>
+
+            <Grid.Column style={{fontVariantNumeric: "tabular-nums"}}>
+              <Header as='h2'>Checkout</Header>
+              <div className="tickets-list">
+                {ticketElms}
               </div>
-              <div style={{marginBottom: '0.5em'}}>
-                Paypal fee: ${this.paypalFee(totalPrice).toFixed(2)}
+              <Divider style={{margin: '0em 1em'}}/>
+              <div className="ticket-price">
+                <List>
+                <List.Item>
+                  Subtotal: ${totalPrice.toFixed(2)}
+                </List.Item>
+                <List.Item>
+                  <Popup
+                    trigger={<Icon circular name='info' size='tiny' color='blue' inverted />}
+                    content='This covers our ticket processing, technology and support costs. This fee is only once per transaction, no matter how many tickets are purchased.'
+                    size='small'
+                  /> Handling Fee: ${this.handlingFee(totalPrice).toFixed(2)}
+                </List.Item>
+                <List.Item>Total Cost: ${(totalPrice + this.handlingFee(totalPrice)).toFixed(2)}</List.Item>
+                </List>
               </div>
-              <div>Total Cost: ${(totalPrice + this.paypalFee(totalPrice)).toFixed(2)}</div>
-            </div>
-          </div>
+              <Header as='h4'>Policies</Header>
+              <p>By purchasing a ticket to UNSW Med Revue 2021, you agree to the following:</p>
+              <ul>
+              <li>Mask wearing within the theatre is currently compulsory at all times, except for momentary eating or drinking or if you have a lawful reason not to do so.</li>
+              <li>Do <strong>not</strong> attend if you have symptoms of COVID-19, or you are required to self-isolate or quarantine.</li>
+              <li>You will follow the <a href="https://hospitality.unsw.edu.au/storage/app/media/COVIDSafe/COVIDSafe%20Conditions%20of%20Entry.pdf" target="_blank">UNSW Hospitality conditions of entry</a> at all times.</li>
+              <li>Arc tickets may require proof of Arc membership upon entry.</li>
+              <li>Ticket exchanges may be available (subject to capacity). Please contact us ASAP if you need to reschedule.</li>
+              <li>Tickets will be refunded in full (minus handling fees and surcharges) if the event is cancelled, or you are required to
+              self-isolate due to COVID-19 regulations. Any other refunds will be at our sole discretion.
+              (This does not affect your rights under Australian Consumer Law.)</li>
+              </ul>
+            </Grid.Column>
+          </Grid>
         </div>
         <Container className="payment-btn-group">
           <Grid stackable columns={4} centered>
-            <Grid.Row>
-              <Grid.Column>
-                <SquareButton setupSquare={ () => this.setupSquare() } />
-              </Grid.Column>
-              <Grid.Column>
-                <PayPalButton
-                  createOrder={ () => this.createOrder() }
-                  onApprove={ (data: any, actions: any) => this.onPaypalApprove(data, actions) }
-                  fundingSource={ paypal.FUNDING.PAYPAL }
-                  style={{ height: 45 }}
-                ></PayPalButton>
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row>
-              <Grid.Column textAlign='center'>
-                <p>No surcharge applies</p>
-              </Grid.Column>
-              <Grid.Column textAlign='center'>
-                <p>0.41% + $0.30 surcharge applies for PayPal</p>
-              </Grid.Column>
-            </Grid.Row>
+            <Grid.Column>
+              <Grid columns={1}>
+                <Grid.Column>
+                  <SquareButton setupSquare={ () => this.setupSquare() } />
+                </Grid.Column>
+                <Grid.Column textAlign='center' style={{ paddingTop: "2px" }}>
+                  <p>No extra surcharge</p>
+                </Grid.Column>
+              </Grid>
+            </Grid.Column>
+            <Grid.Column>
+              <Grid columns={1}>
+                <Grid.Column>
+                  {/*
+                    For some reason the font size also affects the height.
+                    At smaller font sizes there is more 'mystery padding, but a
+                    large font size removes this immediately.
+                  */}
+                  <div style={{ height: "45px" }}>
+                  <PayPalButton
+                    createOrder={this.createOrder}
+                    onApprove={ (data: any, actions: any) => this.onPaypalApprove(data, actions) }
+                    fundingSource={ paypal.FUNDING.PAYPAL }
+                    style={{ height: 45 }} />
+                  </div>
+                </Grid.Column>
+                <Grid.Column textAlign='center' style={{ paddingTop: 0 }}>
+                  <p>0.41% + $0.30 surcharge applies for PayPal</p>
+                </Grid.Column>
+              </Grid>
+            </Grid.Column>
           </Grid>
         </Container>
       </React.Fragment>
     );
   }
 };
-

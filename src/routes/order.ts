@@ -4,20 +4,26 @@ import {Request, Response} from "express";
 import { ApiError, CreateCheckoutRequest, CreateOrderRequest } from "square";
 import { getConnection } from "typeorm";
 import { Order } from "../entity/order";
+import { Ticket} from "../entity/ticket";
 import { PaymentMethod } from "../entity/payment";
 import { Payment } from "../entity/payment";
 import Logger from "../logging";
 import { IItemDetail, orderCreateRequestBody, paypalClient, paypalFee } from "../services/paypal";
 import { orderCreateRequestBody as squareOrderCreateRequestBody, squareClient, squareFee } from "../services/square";
 
+interface ITicketDetails {
+  id: string;
+  name: string;
+  postcode: string;
+}
+
 export async function CompleteDetails(req: Request, res: Response) {
   // TODO: create type for this
-  let tickets: object[];
+  let tickets: ITicketDetails[];
   try {
     const conn = getConnection();
     const orderRepo = conn.getRepository(Order);
-    const order: Order = await orderRepo.findOne(
-      req.params.id);
+    const order: Order = await orderRepo.findOne(req.params.id);
     if (!order) {
       res.status(404).json({error: `No order found with id ${req.params.id}`});
       return;
@@ -34,7 +40,7 @@ export async function CompleteDetails(req: Request, res: Response) {
       }
 
       if (!t.name || !t.postcode) {
-        res.status(400).json({error: `Ticket missing details`});
+        res.status(400).json({error: "Ticket missing details"});
       }
 
       ticket.name = t.name;

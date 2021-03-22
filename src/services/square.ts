@@ -4,7 +4,7 @@ import { Client, CreateOrderRequest, Environment } from "square";
 // TODO rewrite this if we ever expand
 const defaultTZ = "Australia/Sydney";
 
-export function squareClient() {
+export function squareClient(): Client {
   return new Client(environment());
 }
 
@@ -35,13 +35,13 @@ export interface IItemDetail {
 }
 
 export function orderCreateRequestBody(
-    orderID: string,
-    title: string,
-    year: string,
-    subtitle: string,
-    showTime: Date,
-    subtotal: currency,
-    itemDetails: Iterable<IItemDetail>
+  orderID: string,
+  title: string,
+  year: string,
+  subtitle: string,
+  showTime: Date,
+  subtotal: currency,
+  itemDetails: Iterable<IItemDetail>
 ): CreateOrderRequest {
   const fee: currency = squareFee(subtotal);
 
@@ -56,14 +56,13 @@ export function orderCreateRequestBody(
   for (const item of itemDetails) {
     items.push({
       name: `${title} ${year}: ${subtitle} - ${item.name}`,
-      variationName: showTime.toLocaleDateString("en-AU",
-      {
+      variationName: showTime.toLocaleDateString("en-AU", {
         weekday: "long",
         day: "numeric",
         month: "long",
         year: "numeric"
       }),
-      quantity: item.quantity + "",
+      quantity: item.quantity.toString(),
       basePriceMoney: moneyObj(item.unitPrice)
     });
   }

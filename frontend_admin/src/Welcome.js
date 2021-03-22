@@ -14,9 +14,24 @@ import AdminNavbar from './Layouts/AdminNavbar'
 import AdminFooter from './Layouts/AdminFooter'
 
 class Overview extends React.Component {
-  nights = [123, 456, 135, 246];
+  // TODO: use proper variable
+  // TODO: handle timezones of client
+  state = {
+    shows: []
+  }
+
+  async componentDidMount() {
+    // TODO: use proper ID
+    const showRes = await fetch(`${process.env.REACT_APP_API_URL}/productions/1/shows`);
+
+    if (showRes.status === 200) {
+      const shows = await showRes.json();
+      this.setState({shows});
+    }
+  }
 
   render() {
+    const {shows} = this.state;
     return (
       <div>
         <AdminNavbar />
@@ -26,10 +41,12 @@ class Overview extends React.Component {
           <p>Check up on ticket sales here.</p>
 
           <Grid columns={4}>
-            {this.nights.map((x, i) =>
+            {shows.map((x, i) =>
               <Grid.Column>
                 <Segment>
-                  Night {i+1}: {x} tickets
+                  <p>Night {i+1}</p>
+                  <strong>{new Date(x.time).toLocaleString()}</strong>
+                  <p>{x.reservedSeats} tickets</p>
                 </Segment>
               </Grid.Column>
             )}

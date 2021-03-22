@@ -11,16 +11,26 @@ import {
   Segment,
   Form,
   Radio,
-  Table
+  Table,
+  Message
 } from 'semantic-ui-react'
 import AdminNavbar from './Layouts/AdminNavbar'
 import AdminFooter from './Layouts/AdminFooter'
 
 class FindBooking extends React.Component {
   state = {
-    data: []
+    data: [],
+    inputMethod: 'id',
+    search: '',
+    submittedSearch: ''
   }
-  handleChange = (e, { value }) => this.setState({ value })
+  handleChange = (e, { value }) => this.setState({ inputMethod: value })
+
+  searchChange = (e, { value }) => this.setState({ search: value });
+
+  onSubmit = e => {
+    this.setState({ submittedSearch: this.state.search });
+  }
 
   async componentDidMount() {
     // TODO: use proper ID
@@ -32,16 +42,36 @@ class FindBooking extends React.Component {
     }
   }
 
-
   render() {
-    const {data} = this.state;
+    const {data, inputMethod, search, submittedSearch} = this.state;
+
+    const searchResults = submittedSearch ? (
+      /* TODO: make sortable */
+      <Message color='orange'>Search results not implemented yet!</Message>
+    ) : (
+      <Segment>
+        Enter a ticket to get started
+      </Segment>
+    );
+
+    let entryInput;
+    if (inputMethod === 'qr') {
+      entryInput = <Message color='orange'>QR Code not implemented yet!</Message>;
+    } else {
+      entryInput = (
+        <Form onSubmit={this.onSubmit}>
+          <Form.Input icon={{ name: 'search', circular: true, link: true, onClick: this.onSubmit }}
+            value={search} placeholder='Ticket ID...' onChange={this.searchChange} />
+        </Form>
+      );
+    }
 
     return (
-      <div>
+      <React.Fragment>
         <AdminNavbar />
 
         <Container text style={{ marginTop: '7em' }}>
-          <Header as='h1'>Find Booking</Header>
+          <Header as='h1'>Check In Ticket</Header>
 
           <p>Find by:</p>
           <Form>
@@ -52,57 +82,33 @@ class FindBooking extends React.Component {
           */}
           <Form.Field>
             <Radio
-              label='Name'
+              label='Ticket ID'
               name='radioGroup'
-              value='name'
-              checked={this.state.value === 'name'}
+              value='id'
+              checked={inputMethod === 'id'}
               onChange={this.handleChange}
             />
           </Form.Field>
           <Form.Field>
             <Radio
-              label='Email'
+              label='QR Code'
               name='radioGroup'
-              value='email'
-              checked={this.state.value === 'email'}
-              onChange={this.handleChange}
-            />
-          </Form.Field>
-          <Form.Field>
-            <Radio
-              label='Phone'
-              name='radioGroup'
-              value='phone'
-              checked={this.state.value === 'phone'}
+              value='qr'
+              checked={inputMethod === 'qr'}
               onChange={this.handleChange}
             />
           </Form.Field>
         </Form>
 
-        {/* TODO: make sortable */}
-        <Table celled>
-          <Table.Header>
-            <Table.Row>
-              <Table.HeaderCell>Name</Table.HeaderCell>
-              <Table.HeaderCell>Number of Seats</Table.HeaderCell>
-              <Table.HeaderCell>Amount Paid</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>
+        <div style={{ marginTop: '0.8em' }}>
+          {entryInput}
+        </div>
 
-          <Table.Body>
-            {data.map(({name, numSeats, subtotalPrice}) => (
-              <Table.Row>
-                <Table.Cell>{name}</Table.Cell>
-                <Table.Cell>{numSeats}</Table.Cell>
-                <Table.Cell>${(subtotalPrice / 100).toFixed(2)}</Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table>
+        {searchResults}
         </Container>
 
         <AdminFooter />
-      </div>
+      </React.Fragment>
     );
   }
 }

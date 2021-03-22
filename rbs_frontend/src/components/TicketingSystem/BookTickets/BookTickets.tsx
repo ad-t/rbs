@@ -8,19 +8,21 @@ import { Button, Divider, List } from 'semantic-ui-react';
 import Ticket from '../Ticket';
 
 // Import our interface
-import { ITicket } from '../../../types/tickets';
+import { ITicket, ITicketDetails } from '../../../types/tickets';
 
 interface Prop {
   selectedShow: number;
   updateTickets(tickets: Array<ITicket>): void;
 }
+
 interface State {
   tickets: Array<ITicket>;
 };
 
 export default class BookTickets extends React.Component<Prop, State> {
   state = {
-    tickets: []
+    // FIXME: figure out why this requires the 'as'
+    tickets: [] as Array<ITicket>
   }
 
   componentDidMount = () => {
@@ -34,6 +36,7 @@ export default class BookTickets extends React.Component<Prop, State> {
       const data = await res.json();
       for (let i = 0; i < data.ticketTypes.length; ++i) {
         data.ticketTypes[i].quantity = 0;
+        data.ticketTypes[i].details = [];
       }
       // On backend ticket prices are stored as cents.
       for (let i = 0; i < data.ticketTypes.length; ++i) {
@@ -52,6 +55,26 @@ export default class BookTickets extends React.Component<Prop, State> {
       this.setState({ tickets });
     }
   }
+
+  reserveTickets = () => {
+    const {tickets} = this.state;
+
+    for (const t of tickets) {
+      // Ensure num of details fields match the quantity requested.
+      // TODO: remove when quantity < details.length
+      while (t.details.length < t.quantity) {
+        const currDetails : ITicketDetails = {
+          name: "Jane Doe",
+          phone: "",
+          postcode: "0000"
+        };
+        t.details.push(currDetails);
+      }
+    }
+
+    this.props.updateTickets(tickets);
+  }
+
 
   render() {
     const { tickets } = this.state;
@@ -75,6 +98,7 @@ export default class BookTickets extends React.Component<Prop, State> {
 
     return (
       <div>
+        <p style={{margin: '0.5em 1em'}}><strong>Note:</strong> A Handling Fee of $1.69 per transaction applies.</p>
         <div className="tickets-list">
           {ticketElms}
         </div>
@@ -83,7 +107,7 @@ export default class BookTickets extends React.Component<Prop, State> {
         <div className="btn-controls">
           <Button
             primary
-            onClick={() => this.props.updateTickets(tickets)}
+            onClick={this.reserveTickets}
             disabled={totalPrice === 0}
           >RESERVE TICKETS</Button>
         </div>
