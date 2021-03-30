@@ -152,9 +152,11 @@ const adminLogin = basicAuth({
 
 const adminPage = [adminCors, adminLogin];
 
-cron.schedule('* * * * */10', () => {
+/*
+cron.schedule('* * * * *', () => {
   get
 });
+*/
 
 /**
  * @swagger

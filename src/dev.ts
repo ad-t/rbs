@@ -44,7 +44,7 @@ export async function seedDB(): Promise<void> {
     ];
     await conn.manager.save(prod);
 
-    for (const [s, i] of [s1, s2, s3, s4].entries()) {
+    for (const [i, show] of [s1, s2, s3, s4].entries()) {
       const tt1 = new TicketType();
       tt1.description = "General";
       tt1.price = 2100;
