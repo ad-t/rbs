@@ -16,6 +16,7 @@ export async function seedDB(): Promise<void> {
     prod.description = "Hello";
     prod.location = "Science Theatre";
     prod.showImage = "";
+    prod.email = "ticketing@medrevue.org";
     const s1 = new Show();
     s1.id = 1;
     s1.time = new Date("2021-04-13T19:00:00+10:00");

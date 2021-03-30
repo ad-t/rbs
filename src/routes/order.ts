@@ -3,6 +3,7 @@ import currency = require("currency.js");
 import {Request, Response} from "express";
 import { ApiError, CreateCheckoutRequest, CreateOrderRequest } from "square";
 import { getConnection } from "typeorm";
+import { sendEmail } from "../services/email";
 import { Order } from "../entity/order";
 import { Ticket } from "../entity/ticket";
 import { VenueSeat } from "../entity/venue_seat";
@@ -323,6 +324,19 @@ export async function PaypalCaptureOrder(req: Request, res: Response) {
     order.paidAt = new Date();
     await repo.save(order);
 
+    const show = order.show;
+    const production = show.production;
+
+    sendEmail("order_complete", {
+      to: order.email,
+      subject: `${production.title} ${production.year} - Payment Confirmation`
+    }, {
+      order,
+      show,
+      production,
+      shortId: order.id.slice(0, 6).toUpperCase()
+    });
+
     // TODO send email
     res.json({success: true});
 
@@ -338,7 +352,7 @@ export async function SquareVerifyPayment(req: Request, res: Response) {
     const repo = conn.getRepository(Order);
     // get order and paypalorder
     const order: Order = await repo.findOne(
-      req.params.id, {relations: ["payment"]}
+      req.params.id, {relations: ["payment", "show", "show.production"]}
     );
     repo.findOne();
     if (!order) {
@@ -373,7 +387,32 @@ export async function SquareVerifyPayment(req: Request, res: Response) {
     order.paidAt = new Date();
     await repo.save(order);
 
-    // TODO send email
+    // Send email
+    const show = order.show;
+    const production = show.production;
+
+    sendEmail("order_complete", {
+      from: {
+        name: production.title,
+        address: production.email,
+      },
+      to: {
+        name: order.name,
+        address: order.email
+      },
+      bcc: production.email,
+      subject: `${production.title} ${production.year} - Payment Confirmation`
+    }, {
+      order,
+      show,
+      production,
+      misc: {
+        shortId: order.id.slice(0, 6).toUpperCase(),
+        price: `$${(order.payment.totalPrice / 100).toFixed(2)}`,
+        time: show.time.toLocaleString('en-AU', { timeZone: 'Australia/Sydney' })
+      }
+    });
+
     res.json({success: true});
 
   } catch (err) {
