@@ -72,9 +72,11 @@ export default class BookTickets extends React.Component<Prop, State> {
       for (; i < ticketType.quantity; ++i) {
         const currDetails : ITicketDetails = {
           typeId: ticketType.id,
-          name: "Jane Doe",
+//           name: "Jane Doe",
+          name: "",
           phone: "",
-          postcode: "0000",
+//           postcode: "0000",
+          postcode: "",
           seatNum: ""
         };
         ticketDetails.push(currDetails);
