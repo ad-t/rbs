@@ -11,15 +11,29 @@ import {
   Segment,
   Form,
   Radio,
-  Table
-} from 'semantic-ui-react'
- import { useTable } from 'react-table'
+  Table,
+  Message
+} from 'semantic-ui-react';
+
+import { useTable, useExpanded } from 'react-table';
 //import { QuickScore } from "quick-score";
 import Fuse from 'fuse.js';
-import AdminNavbar from './Layouts/AdminNavbar'
-import AdminFooter from './Layouts/AdminFooter'
+import AdminNavbar from './Layouts/AdminNavbar';
+import AdminFooter from './Layouts/AdminFooter';
 
 const columns = [{
+  // Make an expander cell
+  Header: () => null, // No header
+  id: 'expander', // It needs an ID
+  Cell: ({ row }) => (
+    // Use Cell to render an expander for each row.
+    // We can use the getToggleRowExpandedProps prop-getter
+    // to build the expander.
+    <span {...row.getToggleRowExpandedProps()}>
+      {row.isExpanded ? '👇' : '👉'}
+    </span>
+  ),
+}, {
   Header: 'Name',
   accessor: 'name', // accessor is the "key" in the data
 }, {
@@ -32,25 +46,43 @@ const columns = [{
   Header: 'Phone',
   accessor: 'phone'
 }, {
-  Header: 'Amount Paid',
+  Header: 'Amount',
   accessor: 'subtotalPrice',
   // TODO: use a proper currency thing
   Cell: props => `$${(props.value / 100).toFixed(2)}`
+}, {
+  Header: 'Paid?',
+  accessor: d => (typeof d.paid === 'boolean' ? d.paid.toString() : '')
 }];
 
-// react-table only works with functional components.
-function MyTable({data, columns}) {
+const subColumns = [{
+  Header: 'Name',
+  accessor: 'name', // accessor is the "key" in the data
+}, {
+  Header: 'Phone',
+  accessor: 'phone'
+}, {
+  Header: 'Postcode',
+  accessor: 'postcode'
+}, {
+  Header: 'Type',
+  accessor: 'ticketType.description'
+}];
+
+function MySubTable({ data, columns }) {
   // Use the state and functions returned from useTable to build your UI
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     rows,
-    prepareRow,
-  } = useTable({
-    columns,
-    data,
-  });
+    prepareRow
+  } = useTable(
+    {
+      columns,
+      data,
+    }
+  );
 
   return (
      <Table celled {...getTableProps()}>
@@ -68,6 +100,8 @@ function MyTable({data, columns}) {
         {rows.map((row, i) => {
           prepareRow(row)
           return (
+            /*row.getRowProps() has issues with React.Fragment*/
+            /**/
             <Table.Row {...row.getRowProps()}>
               {row.cells.map(cell => {
                 return <Table.Cell {...cell.getCellProps()}>{cell.render('Cell')}</Table.Cell>
@@ -80,6 +114,70 @@ function MyTable({data, columns}) {
   );
 }
 
+// react-table only works with functional components.
+function MyTable({ data, columns }) {
+  // Use the state and functions returned from useTable to build your UI
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+    visibleColumns,
+    state: { expanded }
+  } = useTable(
+    {
+      columns,
+      data,
+    },
+    useExpanded
+  );
+
+  return (
+     <Table celled {...getTableProps()}>
+      <Table.Header>
+
+        {headerGroups.map(headerGroup => (
+          <Table.Row {...headerGroup.getHeaderGroupProps()}>
+            {headerGroup.headers.map(column => (
+              <Table.HeaderCell {...column.getHeaderProps()}>{column.render('Header')}</Table.HeaderCell>
+            ))}
+          </Table.Row>
+        ))}
+      </Table.Header>
+      <Table.Body {...getTableBodyProps()}>
+        {rows.map((row, i) => {
+          prepareRow(row)
+          return (
+            /*row.getRowProps() has issues with React.Fragment*/
+            /*...row.getRowProps()*/
+            <React.Fragment >
+            <Table.Row>
+              {row.cells.map(cell => {
+                return <Table.Cell {...cell.getCellProps()}>{cell.render('Cell')}</Table.Cell>
+              })}
+            </Table.Row>
+            {row.isExpanded ?
+              <Table.Row>
+              <Table.Cell colSpan={visibleColumns.length}>{renderRowSubComponent({ row })}</Table.Cell>
+              </Table.Row>
+            : undefined
+            }
+            </React.Fragment>
+          )
+        })}
+      </Table.Body>
+    </Table>
+  );
+}
+
+function renderRowSubComponent({ row }) {
+  if (row.original.tickets) {
+    return <MySubTable data={row.original.tickets} columns={subColumns} />;
+  }
+  return <Message color='orange'>Ticket listings unavailable</Message>;
+}
+
 // TODO: evaluate if we really need this
 const searchTypeToCol = {
   name: 'name',
@@ -90,29 +188,59 @@ const searchTypeToCol = {
 class FindBooking extends React.Component {
   state = {
     data: [],
+    nights: [{
+      key: 1,
+      text: 'Night 1 - 13 April 2021',
+      value: 1
+    }],
+    showId: undefined,
     searchType: 'name',
     search: ''
   }
   searchChange = (e, { value }) => this.setState({ search: value });
   handleChange = (e, { value }) => this.setState({ searchType: value });
 
-  async componentDidMount() {
-    // TODO: use proper ID
-    const showRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/shows/2/tickets`);
+  async fetchTickets(showId) {
+    const showRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/shows/${showId}/tickets`, {credentials: 'include'});
 
-    if (showRes.status === 200) {
+    if (showRes.ok) {
       const data = await showRes.json();
       this.setState({data: data});
     }
   }
 
+  async componentDidMount() {
+    const showRes = await fetch(`${process.env.REACT_APP_API_URL}/productions/1/shows`);
+
+    if (showRes.ok) {
+      const data = await showRes.json();
+      console.log(data);
+      const nights = data.map((a, i) => ({
+        key: a.id,
+        text: `Night ${i+1} - ${new Date(a.time).toLocaleString()}`,
+        value: a.id
+      }));
+      this.setState({nights});
+    }
+
+    if (this.state.showId) {
+      this.fetchTickets(this.state.showId);
+    }
+  }
+
+  onShowNightChange = (e, data) => {
+    this.setState({ showId: data.value });
+    this.fetchTickets(data.value);
+  }
+
   render() {
-    const {data, searchType, search } = this.state;
+    const { nights, data, searchType, search } = this.state;
 
     // TODO: check if react-table filter will do a better job
     const fuse = new Fuse(data, { keys: [ searchTypeToCol[searchType] ] });
     // Display all results if no search string.
     const filteredData = search ? fuse.search(search).map(a => a.item) : data;
+    console.log(this.state);
 
     return (
       <React.Fragment>
@@ -120,6 +248,17 @@ class FindBooking extends React.Component {
 
         <Container style={{ marginTop: '7em' }}>
           <Header as='h1'>Find Booking</Header>
+
+          <p>Select show:</p>
+          <div style={{ marginBottom: '1em'}}>
+          <Dropdown
+            placeholder="Select show night"
+            selection
+            options={nights}
+            value={this.state.showId}
+            onChange={this.onShowNightChange}
+          />
+          </div>
 
           <p>Find by:</p>
           <Form onSubmit={this.onSubmit}>
@@ -160,7 +299,8 @@ class FindBooking extends React.Component {
         </Form>
 
         {/* TODO: make sortable */}
-        <MyTable data={filteredData} columns={columns} />
+        <MyTable data={filteredData.length ? filteredData : [{name: this.state.showId === undefined ? 'Please select a show night' : 'No tickets found for this night', subtotalPrice: 0}]}
+          columns={columns} selectedIndex={0} />
         </Container>
 
         <AdminFooter />

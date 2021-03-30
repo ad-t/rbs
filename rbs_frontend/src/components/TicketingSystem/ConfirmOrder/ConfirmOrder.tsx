@@ -7,21 +7,22 @@ import { Button, Icon, Header, Segment, Grid, List } from 'semantic-ui-react';
 import TicketNoControl from '../TicketNoControl';
 
 // Import our interface
-import { ITicket } from '../../../types/tickets';
+import { ITicket, ITicketDetails } from '../../../types/tickets';
 
 interface Prop {
   // TODO: make this into a proper React type
+  tickets: ITicket[];
+  ticketDetails: ITicketDetails[];
   details: any;
 }
 
 export default class ConfirmOrder extends React.Component<Prop, {}> {
   render() {
-    const { details } = this.props;
+    const { details, tickets, ticketDetails } = this.props;
 
     console.log(details);
 
     const orderID = details.orderID.slice(0, 6).toUpperCase();
-    const { tickets } = details;
 
     const ticketElms: Array<JSX.Element> = [];
     let totalQty = 0;
@@ -39,11 +40,11 @@ export default class ConfirmOrder extends React.Component<Prop, {}> {
               <List.Icon name='marker' />
               <List.Content>{ticket.quantity}</List.Content>
             </List.Item>
-            {ticket.details.map(x => (
+            {ticketDetails.filter(x => x.typeId === ticket.id).map(x => (
               <List.Item>
                 <List.Icon name='mail' />
                 <List.Content>
-                  {x.name}
+                  {x.name} ({x.seatNum})
                 </List.Content>
               </List.Item>
             ))}

@@ -9,6 +9,7 @@ interface Props {
   name: string;
   postcode: string;
   phone: string;
+  seatNum: string;
   description: string;
   onNameChange(name: string): void;
   onPostcodeChange(postcode: string): void;
@@ -37,13 +38,12 @@ export default class TicketholderDetails extends React.Component<Props, State> {
     this.onPostcodeChange = this.onPostcodeChange.bind(this);
   }
 
-
   render() {
-    const { name, phone, index, description } = this.props;
+    const { name, phone, index, description, seatNum } = this.props;
 
     return (
       <React.Fragment>
-        <Header as='h3'>Ticket #{index + 1}: {description}</Header>
+        <Header as='h3'>Ticket #{index + 1}: {description} ({seatNum})</Header>
         {/* TODO: field validation */}
         <Form size="small">
           <Form.Field

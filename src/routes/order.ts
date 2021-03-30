@@ -4,7 +4,8 @@ import {Request, Response} from "express";
 import { ApiError, CreateCheckoutRequest, CreateOrderRequest } from "square";
 import { getConnection } from "typeorm";
 import { Order } from "../entity/order";
-import { Ticket} from "../entity/ticket";
+import { Ticket } from "../entity/ticket";
+import { VenueSeat } from "../entity/venue_seat";
 import { PaymentMethod } from "../entity/payment";
 import { Payment } from "../entity/payment";
 import Logger from "../logging";
@@ -15,10 +16,12 @@ interface ITicketDetails {
   id: string;
   name: string;
   postcode: string;
+  seatNum: string;
 }
 
 export async function CompleteDetails(req: Request, res: Response) {
   // TODO: create type for this
+  // FIXME: does this need to be wrapped in a transaction?
   let tickets: ITicketDetails[];
   try {
     const conn = getConnection();
@@ -41,10 +44,38 @@ export async function CompleteDetails(req: Request, res: Response) {
 
       if (!t.name || !t.postcode) {
         res.status(400).json({error: "Ticket missing details"});
+        return;
+      }
+
+      // Check this seat exists
+      const seatRepo = conn.getRepository(VenueSeat);
+      const seat: VenueSeat = await seatRepo.findOne(t.seatNum);
+
+      if (!seat) {
+        res.status(400).json({error: `Invalid seat number`});
+        return;
+      }
+
+      // Check this seat hasn't been booked by someone else
+      const ticketAlreadyBooked: Ticket = await ticketRepo.findOne({
+        where: {
+          seat: {
+            seatNum: t.seatNum
+          }
+        },
+        relations: ["seat"]
+      });
+
+      console.log(`\nTicket: `, ticketAlreadyBooked, "\n");
+
+      if (ticketAlreadyBooked) {
+        res.status(409).json({error: `Seat {t.seatSum} already booked`});
+        return;
       }
 
       ticket.name = t.name;
       ticket.postcode = t.postcode;
+      ticket.seat = seat;
       await ticketRepo.save(ticket);
     }
 
@@ -107,6 +138,7 @@ export async function SetupSquare(req: Request, res: Response) {
     const subtotal = AUD(order.subtotalPrice);
     const fee = squareFee(subtotal);
     const totalPrice = subtotal.add(fee);
+    console.log(subtotal, fee, totalPrice);
 
     const itemDetails = new Map<number, IItemDetail>();
     for (const ticket of order.tickets) {
@@ -146,7 +178,7 @@ export async function SetupSquare(req: Request, res: Response) {
     // checkoutId: self-explanatory
     // referenceId: our own order ID
     // transactionId: Square's order ID
-    // body.redirectUrl = "http://localhost:3000/order-confirm";
+    body.redirectUrl = "http://localhost:3000/square-checkout-callback.html";
 
     // Send request to Square API
     Logger.Info(JSON.stringify(body));
@@ -324,12 +356,13 @@ export async function SquareVerifyPayment(req: Request, res: Response) {
 
     // Call Square API to verify payment has been made
     const { result, ...httpResponse } = await squareClient().ordersApi.retrieveOrder(order.payment.transactionID);
-    Logger.Info(JSON.stringify(result));
+    console.log(JSON.stringify(result));
 
     // Verify that the order has been fully paid (COMPLETED) and the Square order
     // is for the same amount that we expect.
     if (!result.order || result.order.state !== "COMPLETED" ||
         result.order.totalMoney.amount !== order.payment.totalPrice) {
+      console.log(order.payment);
       res.status(422).json({error: "order has not been (fully) paid yet"});
       return;
     }

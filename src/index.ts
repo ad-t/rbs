@@ -3,14 +3,16 @@ import dotenv from "dotenv";
 import express from "express";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
-
+import basicAuth from "express-basic-auth";
 import bodyParser = require("body-parser");
+import cron = require("node-cron");
 
 import "reflect-metadata";
 import {
   ConnectionOptions,
   createConnection,
-  getConnection
+  getConnection,
+  getRepository
 } from "typeorm";
 
 import { Order } from "./entity/order";
@@ -27,6 +29,7 @@ import { seedDB } from "./dev";
 import { Payment } from "./entity/payment";
 import { Ticket } from "./entity/ticket";
 import { TicketType } from "./entity/ticket_type";
+import { VenueSeat } from "./entity/venue_seat";
 import Logger from "./logging";
 
 // initialise config
@@ -56,7 +59,8 @@ const activeEntities = [
   Order,
   Payment,
   TicketType,
-  Ticket
+  Ticket,
+  VenueSeat
 ];
 
 const options: ConnectionOptions = {
@@ -94,14 +98,21 @@ async function bootstrap() {
   Logger.Info("Creating database connection...");
   await createConnection(options);
   if (process.env.NODE_ENV === "development") {
-    Logger.Info("Since we're in the development environment, purge the database tables");
-    // Can't use .clear() as TRUNCATE doesn't work with foreign key constraints.
-    await Promise.all(
-      activeEntities.map(async (entity) => await getConnection().getRepository(entity).delete({}))
-    );
-    Logger.Info("Seeding database...");
-    await seedDB();
+    Logger.Info("Development environment: to clear the tables, go to /reset");
   }
+}
+
+async function resetDB() {
+  Logger.Info("Purging the database tables...");
+  // Can't use .clear() as TRUNCATE doesn't work with foreign key constraints.
+  /*await Promise.all(
+    activeEntities.map(async (entity) => await getRepository(entity).delete({}))
+  );*/
+  for (const entity of activeEntities) {
+    await getRepository(entity).delete({});
+  }
+  Logger.Info("Seeding database...");
+  await seedDB();
 }
 
 if (process.env.NODE_ENV === "development") {
@@ -110,11 +121,39 @@ if (process.env.NODE_ENV === "development") {
   app.use(bodyParser.json());
   Logger.Info(`API documentation available at ${API_HOST}:${API_PORT}/docs`);
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(specs));
+
+  app.get("/reset", async function (_, res) {
+    try {
+      await resetDB();
+      res.json({success: true});
+    } catch (err) {
+      Logger.Error(err.stack);
+      res.status(500).json({error: "Internal server error"});
+    }
+  });
 }
 
 app.listen(API_PORT, async () => {
   await bootstrap();
   Logger.Info(`Server started at ${API_HOST}:${API_PORT}`);
+});
+
+console.log(process.env.ADMIN_URL);
+const adminCors = cors({
+  origin: process.env.ADMIN_URL,
+  credentials: true
+});
+
+const adminLogin = basicAuth({
+    users: { [process.env.FOH_ADMIN_USERNAME]: process.env.FOH_ADMIN_PWD },
+    challenge: true,
+    realm: 'MRTS Admin 2021'
+});
+
+const adminPage = [adminCors, adminLogin];
+
+cron.schedule('* * * * */10', () => {
+  get
 });
 
 /**
@@ -134,7 +173,9 @@ app.listen(API_PORT, async () => {
  *       404:
  *         description: Show not found
  */
-app.get("/admin/shows/:id/tickets", AdminRoutes.GetShowOrders);
+app.get("/admin/shows/:id/tickets", adminPage, AdminRoutes.getShowOrders);
+
+app.post("/admin/tickets/:id/check-in", adminPage, AdminRoutes.checkInTicket);
 
 /**
  * @swagger
@@ -229,6 +270,27 @@ app.get("/productions/:id/shows", ProductionRoutes.GetShows);
  *         description: Show not found
  */
 app.get("/shows/:id", ShowRoutes.GetShow);
+
+/**
+ * @swagger
+ * /shows/{id}/seats:
+ *   post:
+ *     summary: Get seat map for a specific show
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         type: integer
+ *         required: true
+ *         description: show id
+ *     responses:
+ *       200:
+ *         description: Seats have been reserved successfully
+ *       400:
+ *         description: Bad request
+ *       404:
+ *         description: No show with given ID
+ */
+app.get("/shows/:id/seats", ShowRoutes.getSeats);
 
 /**
  * @swagger

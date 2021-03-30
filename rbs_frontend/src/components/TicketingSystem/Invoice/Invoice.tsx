@@ -18,7 +18,9 @@ const PayPalButton = paypal.Buttons.driver('react', { React, ReactDOM });
 
 interface Prop {
   selectedShow: number;
-  tickets: Array<ITicket>;
+  tickets: ITicket[];
+  ticketDetails: ITicketDetails[];
+  updateTicketDetails(tickets: ITicketDetails[]): void;
   updatePayment(details: any): void;
 }
 
@@ -33,27 +35,26 @@ interface State {
 export default class Ticket extends React.Component<Prop, State> {
   state = {
     orderID: '',
-    name: 'John Smith',
-    email: 'john@example.com',
-    phone: '0412345678'
+//     name: 'John Smith',
+//     email: 'john@example.com',
+//     phone: '0412345678'
+    name: '',
+    email: '',
+    phone: ''
   }
 
   async reserveSeats() {
     const seats = [];
     for (const ticket of this.props.tickets) {
-      // TODO: add postcode data
-      ticket.details.forEach(obj => {
-        obj.postcode = "0000";
-      });
-
+      const details = this.props.ticketDetails.filter(x => x.typeId === ticket.id)
       seats.push({
-        details: ticket.details,
+        details,
         ticketType: ticket.id
       });
     }
 
     // TODO: validate personal details
-    return await fetch(`${process.env.REACT_APP_API_URL}/shows/${this.props.selectedShow}/seats`, {
+    const result = await fetch(`${process.env.REACT_APP_API_URL}/shows/${this.props.selectedShow}/seats`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -65,14 +66,32 @@ export default class Ticket extends React.Component<Prop, State> {
         seats
       })
     });
+
+    if (!result.ok) {
+      const text = await result.text();
+      alert(result.status + ': ' + text);
+      throw new Error(result.status + ': ' + text);
+    }
+
+    return result;
   }
 
   createOrder = async () => {
-    const orderRes = await this.reserveSeats();
-    const data = await orderRes.json();
-    this.state.orderID = data.id;
+    let id = this.state.orderID;
+    if (!id) {
+      let orderRes;
+      try {
+        orderRes = await this.reserveSeats();
+      } catch (e) {
+        console.error(e);
+        return;
+      }
+      const data = await orderRes.json();
+      id = data.id;
+      this.setState({orderID: id});
+    }
 
-    const setupRes = await fetch(`${process.env.REACT_APP_API_URL}/orders/${data.id}/paypal-setup`, {
+    const setupRes = await fetch(`${process.env.REACT_APP_API_URL}/orders/${id}/paypal-setup`, {
       method: 'POST'
     });
     const setup = await setupRes.json();
@@ -80,11 +99,21 @@ export default class Ticket extends React.Component<Prop, State> {
   }
 
   async setupSquare() {
-    const orderRes = await this.reserveSeats();
-    const data = await orderRes.json();
-    this.state.orderID = data.id;
+    let id = this.state.orderID;
+    if (!id) {
+      let orderRes;
+      try {
+        orderRes = await this.reserveSeats();
+      } catch (e) {
+        console.error(e);
+        return;
+      }
+      const data = await orderRes.json();
+      id = data.id;
+      this.setState({orderID: id});
+    }
 
-    const setupRes = await fetch(`${process.env.REACT_APP_API_URL}/orders/${data.id}/square-setup`, {
+    const setupRes = await fetch(`${process.env.REACT_APP_API_URL}/orders/${id}/square-setup`, {
       method: 'POST'
     });
     const setup = await setupRes.json();
@@ -103,7 +132,7 @@ export default class Ticket extends React.Component<Prop, State> {
   };
 
   private handlingFee(price: number) {
-    return 1.69;
+    return 2.19;
   }
 
   async onPaypalApprove(data: any, actions: any) {
@@ -135,7 +164,7 @@ export default class Ticket extends React.Component<Prop, State> {
     });
 
     if (verify.status === 200) {
-      this.props.updatePayment({ tickets: this.props.tickets, orderID: this.state.orderID, email: this.state.email });
+      this.props.updatePayment({ orderID: this.state.orderID, email: this.state.email });
     } else {
       const text = await verify.text()
       // FIXME: use better UI
@@ -146,7 +175,7 @@ export default class Ticket extends React.Component<Prop, State> {
   handleChange = (e: any, { name , value }: any) => this.setState({ [name]: value })
 
   render() {
-    const { tickets } = this.props;
+    const { tickets, ticketDetails } = this.props;
     const { name, email, phone } = this.state;
     const ticketElms: Array<JSX.Element> = [];
     let totalPrice = 0;
@@ -167,23 +196,24 @@ export default class Ticket extends React.Component<Prop, State> {
 
     const detailsElms: Array<JSX.Element> = [];
     let ticketCounter = 0;
-    for (let ticket of tickets) {
-      for (let i = 0; i < ticket.quantity; ++i) {
-        const currDetails = ticket.details[i];
+    for (let i = 0; i < ticketDetails.length; ++i) {
+      const currDetails = ticketDetails[i];
+      const ticketType = tickets.find(t => currDetails.typeId === t.id);
+      const description = ticketType?.description || "";
 
-        detailsElms.push(
-          <TicketholderDetails index={ticketCounter}
-            name={currDetails.name}
-            postcode={currDetails.postcode}
-            phone={currDetails.phone}
-            description={ticket.description}
-            onNameChange={s => { currDetails.name = s; }}
-            onPostcodeChange={s => { currDetails.postcode = s; }}
-            onPhoneChange={s => { currDetails.phone = s; }} />
-        );
+      detailsElms.push(
+        <TicketholderDetails index={i}
+          name={currDetails.name}
+          postcode={currDetails.postcode}
+          phone={currDetails.phone}
+          seatNum={currDetails.seatNum}
+          description={description}
+          onNameChange={s => { currDetails.name = s; }}
+          onPostcodeChange={s => { currDetails.postcode = s; }}
+          onPhoneChange={s => { currDetails.phone = s; }} />
+      );
 
-        ++ticketCounter;
-      }
+      ++ticketCounter;
     }
 
     return (
@@ -246,7 +276,7 @@ export default class Ticket extends React.Component<Prop, State> {
               <Header as='h4'>Policies</Header>
               <p>By purchasing a ticket to UNSW Med Revue 2021, you agree to the following:</p>
               <ul>
-              <li>Mask wearing within the theatre is currently compulsory at all times, except for momentary eating or drinking or if you have a lawful reason not to do so.</li>
+              <li>Mask wearing within the theatre is currently compulsory at all times, except for momentary eating or drinking or if you have a relevant medical condition.</li>
               <li>Do <strong>not</strong> attend if you have symptoms of COVID-19, or you are required to self-isolate or quarantine.</li>
               <li>You will follow the <a href="https://hospitality.unsw.edu.au/storage/app/media/COVIDSafe/COVIDSafe%20Conditions%20of%20Entry.pdf" target="_blank">UNSW Hospitality conditions of entry</a> at all times.</li>
               <li>Arc tickets may require proof of Arc membership upon entry.</li>

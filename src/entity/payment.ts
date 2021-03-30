@@ -4,7 +4,8 @@ import { Order } from "./order";
 export enum PaymentMethod {
   CASH = "cash",
   PAYPAL = "paypal",
-  SQUARE = "square"
+  SQUARE = "square",
+  MANUAL_OVERRIDE = "override"
 }
 
 @Entity()
@@ -19,8 +20,11 @@ export class Payment {
   @Column({type: "enum", enum: PaymentMethod, nullable: true})
   public method: PaymentMethod;
 
-  @Column({type: "decimal", precision: 13, scale: 2})
+  @Column()
   public totalPrice: number;
+
+  @Column({nullable: true})
+  public notes: string;
 
   // Paypal: OrderID
   // Stripe: CHECKOUT_SESSION_ID

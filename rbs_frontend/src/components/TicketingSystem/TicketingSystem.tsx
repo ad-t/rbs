@@ -2,20 +2,22 @@
  * This file will handle information relating to the show
  */
 import React from 'react';
-import { Header, Icon, Step, Container, Menu, Image, Dropdown } from 'semantic-ui-react';
+import { Header, Icon, Step, Container, Menu, Image, Dropdown, List } from 'semantic-ui-react';
 
 import BookTickets from './BookTickets';
 import SelectShow from './SelectShow';
 import SelectSeats from './SelectSeats';
 import Invoice from './Invoice';
 import ConfirmOrder from './ConfirmOrder';
-import { ITicket } from '../../types/tickets';
+import { ITicket, ITicketDetails } from '../../types/tickets';
 
 interface Props {};
 interface State {
   currentId: number;
   selectedShow: number;
-  tickets: Array<ITicket>;
+  showStr: string;
+  tickets: ITicket[];
+  ticketDetails: ITicketDetails[];
   details: any;
 };
 
@@ -28,22 +30,64 @@ const CONFIRM = 4;
 export default class TicketingSystem extends React.Component<Props, State> {
   // This may be changed during testing. Default values should be:
   // currentId: 0, selectedShow: -1
-  state = { currentId: 0, selectedShow: -1, tickets: [], details: null };
+  state = {
+    currentId: 0,
+    selectedShow: -1,
+    showStr: '',
+    tickets: [] as ITicket[],
+    ticketDetails: [] as ITicketDetails[],
+    details: null
+  };
 
-  updateShow = (selectedShow: number) => {
-    this.setState({ currentId: BOOK_TICKETS, selectedShow });
+  goToSelectShow = () => {
+    this.setState({ currentId: SELECT_SHOW });
   }
 
-  updateTickets = (tickets: Array<ITicket>) => {
-    this.setState({ currentId: SELECT_SEATS, tickets });
+  updateShow = (selectedShow: number, showStr: string) => {
+    // If selected show is different, reset ticket quantities and details
+    // This is because e.g. available seats might be different.
+    if (selectedShow !== this.state.selectedShow) {
+      const tickets = [ ...this.state.tickets ].map(t => {
+        const newType = { ...t };
+        newType.quantity = 0;
+        return newType;
+      });
+
+      this.setState({ tickets, ticketDetails: [] });
+    }
+    this.setState({ currentId: BOOK_TICKETS, selectedShow, showStr });
   }
 
-  updateSeats = (tickets: Array<ITicket>) => {
-    this.setState({ currentId: INVOICE, tickets });
+  goToSelectSeats = () => {
+    this.setState({ currentId: SELECT_SEATS });
+  }
+
+  updateTickets = (tickets: ITicket[]) => {
+    this.setState({ tickets });
+  }
+
+  updateTicketDetails = (ticketDetails: ITicketDetails[]) => {
+    this.setState({ ticketDetails });
+  }
+
+  goToInvoice = () => {
+    this.setState({ currentId: INVOICE });
   }
 
   updatePayment = (details: any) => {
     this.setState({ currentId: CONFIRM, details });
+  }
+
+  canGoBack(from: number, to: number) {
+    return from > to && from !== CONFIRM;
+  }
+
+  goBackTo = (from: number, to: number) => {
+    if (!this.canGoBack(from, to)) {
+      return;
+    }
+
+    this.setState({ currentId: to });
   }
 
   render() {
@@ -55,18 +99,26 @@ export default class TicketingSystem extends React.Component<Props, State> {
         displayElm = <SelectShow updateShow={this.updateShow} />;
         break;
       case BOOK_TICKETS:
-        displayElm = <BookTickets selectedShow={selectedShow} updateTickets={this.updateTickets} />;
+        displayElm = <BookTickets selectedShow={selectedShow} tickets={this.state.tickets} ticketDetails={this.state.ticketDetails}
+          updateTickets={this.updateTickets} updateTicketDetails={this.updateTicketDetails} next={this.goToSelectSeats} />;
         break;
       case SELECT_SEATS:
-        displayElm = <SelectSeats tickets={this.state.tickets} selectedShow={selectedShow} updateSeats={this.updateSeats} />;
+        displayElm = <SelectSeats tickets={this.state.tickets} ticketDetails={this.state.ticketDetails}
+          updateTickets={this.updateTickets} updateTicketDetails={this.updateTicketDetails}
+          selectedShow={selectedShow} next={this.goToInvoice} />;
         break;
       case INVOICE:
-        displayElm = <Invoice tickets={this.state.tickets} selectedShow={selectedShow} updatePayment={this.updatePayment}/>;
+        displayElm = <Invoice tickets={this.state.tickets} ticketDetails={this.state.ticketDetails}
+          updateTicketDetails={this.updateTicketDetails} selectedShow={selectedShow} updatePayment={this.updatePayment}/>;
         break;
       case CONFIRM:
-        displayElm = <ConfirmOrder details={this.state.details}/>;
+        displayElm = <ConfirmOrder tickets={this.state.tickets} ticketDetails={this.state.ticketDetails} details={this.state.details}/>;
         break;
     }
+
+    const { canGoBack, goBackTo } = this;
+
+    console.log(canGoBack(currentId, SELECT_SEATS));
 
     return (
       <React.Fragment>
@@ -77,21 +129,12 @@ export default class TicketingSystem extends React.Component<Props, State> {
       </Menu.Item>
 
       <Menu.Menu position='right'>
-        {/* TODO: dynamically load events */}
-        {/*
-        <Dropdown item simple text='Select Event&hellip;'>
-          <Dropdown.Menu>
-            <Dropdown.Header>Events</Dropdown.Header>
-
-            <Dropdown.Item>Med Revue 2021</Dropdown.Item>
-            <Dropdown.Divider />
-            <Dropdown.Header>More Actions</Dropdown.Header>
-            <Dropdown.Item>Create Event</Dropdown.Item>
-            <Dropdown.Item>Event List</Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-        */}
-        <Menu.Item><strong>Med Revue 2021</strong></Menu.Item>
+        <Menu.Item>
+          <List>
+            <List.Item><strong>Med Revue 2021</strong></List.Item>
+            <List.Item><strong>Need help?</strong> ticketing@medrevue.org<br/>or contact us on <a href="https://www.facebook.com/MedRevue">Facebook</a></List.Item>
+          </List>
+        </Menu.Item>
         <Menu.Item>
           <Image size='tiny' src='/covid-safe-logo.png' />
         </Menu.Item>
@@ -109,19 +152,24 @@ export default class TicketingSystem extends React.Component<Props, State> {
         </Header>
         <div style={{margin: "1em 1em"}}>
         <Step.Group size='mini' widths={5} unstackable>
-          <Step active={currentId === SELECT_SHOW} completed={currentId > SELECT_SHOW}>
+          {/* FIXME: as long as onClick is present, link makes no difference */}
+          <Step active={currentId === SELECT_SHOW} completed={currentId > SELECT_SHOW}
+              link={canGoBack(currentId, SELECT_SHOW)} onClick={canGoBack(currentId, SELECT_SHOW) ? (() => goBackTo(currentId, SELECT_SHOW)) : undefined}>
             <Icon name='bullhorn'/>
             <Step.Content>
               <Step.Title>Show Night</Step.Title>
+              <Step.Description>{this.state.showStr}</Step.Description>
             </Step.Content>
           </Step>
-          <Step active={currentId === BOOK_TICKETS} completed={currentId > BOOK_TICKETS}>
+          <Step active={currentId === BOOK_TICKETS} completed={currentId > BOOK_TICKETS}
+              link={canGoBack(currentId, BOOK_TICKETS)} onClick={canGoBack(currentId, BOOK_TICKETS) ? (() => goBackTo(currentId, BOOK_TICKETS)) : undefined}>
             <Icon name='ticket' />
             <Step.Content>
               <Step.Title>Tickets</Step.Title>
             </Step.Content>
           </Step>
-          <Step active={currentId === SELECT_SEATS} completed={currentId > SELECT_SEATS}>
+          <Step active={currentId === SELECT_SEATS} completed={currentId > SELECT_SEATS}
+              link={canGoBack(currentId, SELECT_SEATS)} onClick={canGoBack(currentId, SELECT_SEATS) ? (() => goBackTo(currentId, SELECT_SEATS)) : undefined}>
             <Icon name='map marker' />
             <Step.Content>
               <Step.Title>Seats</Step.Title>

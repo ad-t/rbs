@@ -22,7 +22,8 @@ class FindBooking extends React.Component {
     data: [],
     inputMethod: 'id',
     search: '',
-    submittedSearch: ''
+    submittedSearch: '',
+    showId: 2
   }
   handleChange = (e, { value }) => this.setState({ inputMethod: value })
 
@@ -32,13 +33,19 @@ class FindBooking extends React.Component {
     this.setState({ submittedSearch: this.state.search });
   }
 
-  async componentDidMount() {
+  async fetchTickets() {
     // TODO: use proper ID
-    const showRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/shows/2/tickets`);
+    const showRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/shows/${this.state.showId}/tickets`);
 
     if (showRes.status === 200) {
       const data = await showRes.json();
       this.setState({data: data});
+    }
+  }
+
+  async componentDidMount() {
+    if (this.state.showId) {
+      this.fetchTickets();
     }
   }
 

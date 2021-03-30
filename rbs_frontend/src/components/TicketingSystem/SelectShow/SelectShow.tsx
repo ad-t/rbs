@@ -13,10 +13,10 @@ interface ShowNight {
 };
 
 interface Props {
-  updateShow(selectedShow: number): void;
+  updateShow(selectedShow: number, showStr: string): void;
 };
 interface State {
-  showNights: Array<ShowNight>
+  showNights: ShowNight[]
 };
 
 declare var REACT_APP_PROD_ID: number;
@@ -45,19 +45,17 @@ export default class SelectShow extends React.Component<Props, State> {
           size='large'
           fluid
           primary
-          onClick={() => this.props.updateShow(e.id)}
+          onClick={() => this.props.updateShow(e.id, moment(e.time).format('DD MMMM YYYY'))}
         >
-          {moment(e.time).format('h:mmA - Do MMMM YYYY')}
+          {moment(e.time).format('h:mma - ddd DD MMMM YYYY')}
         </Button>
       )
     });
 
     return (
-      <React.Fragment>
-        <div className="btn-show-nights">
-          {btnElms}
-        </div>
-      </React.Fragment>
+      <div className="btn-show-nights">
+        {btnElms}
+      </div>
     );
   }
 };

@@ -25,7 +25,8 @@ export function squareFee(subtotal: currency): currency {
   // percent. You're actually supposed to multiply the *total* by the rate, but
   // since we don't have the total we need to work backwards.
   // 1 / 0.978 - 1 = 1.02249...
-  return subtotal.multiply(0.0224);
+  //return subtotal.multiply(0.0224);
+  return currency(2.19);
 }
 
 export interface IItemDetail {
@@ -46,8 +47,13 @@ export function orderCreateRequestBody(
   const fee: currency = squareFee(subtotal);
 
   const surcharge = {
-    name: "Square payment surcharge",
-    percentage: "2.24", // 1 / 0.978 rounded down to nearest 0.01%
+    // name: "Square payment surcharge",
+    // percentage: "2.24", // 1 / 0.978 rounded down to nearest 0.01%
+    name: "Handling fee",
+    amountMoney: {
+      currency: "AUD",
+      amount: 219
+    },
     // NOTE: Docs say not required but API fails if not given
     calculationPhase: "SUBTOTAL_PHASE",
   };

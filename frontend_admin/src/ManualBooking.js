@@ -19,14 +19,10 @@ const ManualBooking = () => (
 
     <Container text style={{ marginTop: '7em' }}>
       <Header as='h1'>Manual Booking</Header>
-      <p>This is a basic fixed menu template using fixed size containers.</p>
-      <p>
-        A text container is used for the main container, which is useful for single column layouts.
-      </p>
-
-      <Image src='/images/wireframe/media-paragraph.png' style={{ marginTop: '2em' }} />
-      <Image src='/images/wireframe/paragraph.png' style={{ marginTop: '2em' }} />
-      <Image src='/images/wireframe/paragraph.png' style={{ marginTop: '2em' }} />
+      <p>Process the booking through the main site, then when you reach the payment page, attempt to pay and then quit out of the Square payment window.</p>
+      <p>Once this is done, you should see the order as unpaid on the bookings page.</p>
+      <p>You should now be able to manually override the booking as paid in special circumstances.</p>
+      <p>Only use this if it is necessary.</p>
     </Container>
 
     <AdminFooter />
