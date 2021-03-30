@@ -29,6 +29,7 @@ export default class Logger {
   }
 
   private static loggerFunc(lvl: string, msg: string) {
+    if (!Logger.logger) return;
     Logger.logger.log({
       level: lvl,
       message: msg,
