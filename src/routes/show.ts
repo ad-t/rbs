@@ -165,13 +165,20 @@ export async function ReserveSeats(req: Request, res: Response): Promise<void> {
 
           // Check this seat hasn't been booked by someone else
           const ticketRepo = txEntityManager.getRepository(Ticket);
+
+          // Make sure that it's on the same night
           const ticketAlreadyBooked: Ticket = await ticketRepo.findOne({
             where: {
               seat: {
                 seatNum: seatDetail.seatNum
+              },
+              order: {
+                show: {
+                  id: show.id
+                }
               }
             },
-            relations: ["seat"]
+            relations: ["seat", "order", "order.show"]
           });
 
           if (ticketAlreadyBooked) {

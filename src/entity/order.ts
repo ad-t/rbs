@@ -1,4 +1,7 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column, CreateDateColumn, UpdateDateColumn, Entity,
+  ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, LessThan
+} from "typeorm";
 import { Payment } from "./payment";
 import { Show } from "./show";
 import { Ticket } from "./ticket";
@@ -10,6 +13,9 @@ export class Order {
 
   @CreateDateColumn()
   public createdAt: Date;
+
+  @UpdateDateColumn()
+  public updatedAt: Date;
 
   @Column({length: 50})
   public name: string;

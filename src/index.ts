@@ -12,7 +12,8 @@ import {
   ConnectionOptions,
   createConnection,
   getConnection,
-  getRepository
+  getRepository,
+  LessThan
 } from "typeorm";
 
 import { Order } from "./entity/order";
@@ -117,9 +118,12 @@ async function resetDB() {
 
 Logger.Init();
 app.use(bodyParser.json());
+app.use(cors({
+  origin: [process.env.FRONTEND_URL, process.env.ADMIN_URL],
+  credentials: true
+}));
 
 if (process.env.NODE_ENV === "development") {
-  app.use(cors());
   Logger.Info(`API documentation available at ${API_HOST}:${API_PORT}/docs`);
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(specs));
 
@@ -155,7 +159,12 @@ const adminPage = [adminCors, adminLogin];
 
 /*
 cron.schedule('* * * * *', () => {
-  get
+  const repo = getRepository(Order);
+  repo.delete({
+    // TODO: apparently this doesn't work on sqlite but does on MySQL???
+    updatedAt: LessThan(new Date(Date.now() - 20 * 60 * 1000)),
+    paid: false
+  });
 });
 */
 
