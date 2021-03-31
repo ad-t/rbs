@@ -68,7 +68,7 @@ const options: ConnectionOptions = {
   database: process.env.MYSQL_DATABASE,
   entities: activeEntities,
   host: "localhost",
-  logging: false,
+  logging: true,
   migrations: [
     // "src/migration/**/*.ts"
   ],
@@ -119,8 +119,7 @@ async function resetDB() {
 Logger.Init();
 app.use(bodyParser.json());
 app.use(cors({
-  origin: [process.env.FRONTEND_URL, process.env.ADMIN_URL],
-  credentials: true
+  origin: [process.env.FRONTEND_URL, process.env.ADMIN_URL]
 }));
 
 if (process.env.NODE_ENV === "development") {
@@ -158,13 +157,21 @@ const adminLogin = basicAuth({
 const adminPage = [adminCors, adminLogin];
 
 /*
-cron.schedule('* * * * *', () => {
-  const repo = getRepository(Order);
-  repo.delete({
-    // TODO: apparently this doesn't work on sqlite but does on MySQL???
-    updatedAt: LessThan(new Date(Date.now() - 20 * 60 * 1000)),
-    paid: false
-  });
+cron.schedule('* * * * *', async () => {
+  try {
+    const repo = getRepository(Order);
+    Logger.Info("Purging unpaid orders...");
+    const toDelete = await repo.find({
+      // TODO: apparently this doesn't work on sqlite but does on MySQL???
+      updatedAt: LessThan(new Date(Date.now() - 20 * 60 * 1000)),
+      paid: false
+    });
+
+    await repo.remove(toDelete);
+    Logger.Info(`purge: ${toDelete.length} unpaid orders removed.`);
+  } catch (e) {
+    console.error(e);
+  }
 });
 */
 
