@@ -115,10 +115,11 @@ async function resetDB() {
   await seedDB();
 }
 
+Logger.Init();
+app.use(bodyParser.json());
+
 if (process.env.NODE_ENV === "development") {
-  Logger.Init();
   app.use(cors());
-  app.use(bodyParser.json());
   Logger.Info(`API documentation available at ${API_HOST}:${API_PORT}/docs`);
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(specs));
 
