@@ -12,7 +12,7 @@ if (process.env.NODE_ENV && process.env.NODE_ENV.startsWith("prod")) {
 
 describe("productions", () => {
   // Reset the database for testing.
-  server.get("/reset").expect(200, done);
+  server.get("/reset").expect(200);
 
   it ("gets all of the active productions",
     function (done) {
@@ -80,7 +80,7 @@ describe("productions", () => {
 
 describe("shows", () => {
   // Reset the database for testing.
-  server.get("/reset").expect(200, done);
+  server.get("/reset").expect(200);
 
   it ("gets the seat count for a valid show",
     function (done) {
