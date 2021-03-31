@@ -120,6 +120,7 @@ export default class Ticket extends React.Component<Prop, State> {
   }
 
   async setupSquare() {
+    const win = window.open(undefined, 'square-pay', 'toolbar=no');;
     let id = this.state.orderID;
     if (!id) {
       let orderRes;
@@ -127,6 +128,7 @@ export default class Ticket extends React.Component<Prop, State> {
         orderRes = await this.reserveSeats();
       } catch (e) {
         console.error(e);
+        if (win) win.close();
         return null;
       }
       const data = await orderRes.json();
@@ -140,8 +142,9 @@ export default class Ticket extends React.Component<Prop, State> {
     const setup = await setupRes.json();
     /* NOTE: hack to detect window closed without CORS */
     // FIXME: detect if paid or not
-    const win = window.open(setup.url, 'square-pay', 'toolbar=no');
+
     if (win) {
+      win.location = setup.url;
       const timer = setInterval(() => {
         if (win.closed) {
           clearInterval(timer);
