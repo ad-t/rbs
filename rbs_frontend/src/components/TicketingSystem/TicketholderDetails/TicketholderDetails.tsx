@@ -11,24 +11,28 @@ interface Props {
   phone: string;
   seatNum: string;
   description: string;
+  showErrors: boolean;
   onNameChange(name: string): void;
   onPostcodeChange(postcode: string): void;
   onPhoneChange(phone: string): void;
 };
 
-interface State {};
+interface State {}
 
 export default class TicketholderDetails extends React.Component<Props, State> {
-  onNameChange(name: string) {
-    this.props.onNameChange(name);
+  isNameInvalid = () => this.props.showErrors && !this.props.name.trim()
+  isPostcodeInvalid = () => this.props.showErrors && !/^\d{4}$/.test(this.props.postcode)
+
+  onNameChange(_: Event, { value }: any) {
+    this.props.onNameChange(value);
   }
 
-  onPostcodeChange(postcode: string) {
-    this.props.onPhoneChange(postcode);
+  onPostcodeChange(_: Event, { value }: any) {
+    this.props.onPostcodeChange(value);
   }
 
-  onPhoneChange(phone: string) {
-    this.props.onPhoneChange(phone);
+  onPhoneChange(_: Event, { value }: any) {
+    this.props.onPhoneChange(value);
   }
 
   constructor(props: Props) {
@@ -53,6 +57,7 @@ export default class TicketholderDetails extends React.Component<Props, State> {
             name='name'
             onChange={this.onNameChange}
             defaultValue={this.props.name}
+            error={this.isNameInvalid()}
             required
           />
           <Form.Field
@@ -62,6 +67,7 @@ export default class TicketholderDetails extends React.Component<Props, State> {
             name='postcode'
             onChange={this.onPostcodeChange}
             defaultValue={this.props.postcode}
+            error={this.isPostcodeInvalid()}
             required
           />
           <Form.Field

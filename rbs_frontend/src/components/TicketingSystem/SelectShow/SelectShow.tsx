@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import moment from 'moment';
-import { Button } from 'semantic-ui-react';
+import { Button, Header } from 'semantic-ui-react';
 
 interface ShowNight {
   id: number;
@@ -54,6 +54,8 @@ export default class SelectShow extends React.Component<Props, State> {
 
     return (
       <div className="btn-show-nights">
+        <Header as="h2">Select a night</Header>
+        <p><strong>Venue:</strong> <a href="https://www.google.com/maps/place/The+Science+Theatre/@-33.9169099,151.2292462,18z/data=!4m5!3m4!1s0x6b12b18b08c4ec05:0x59642a2ddff49922!8m2!3d-33.9172663!4d151.2298228" target="_blank">UNSW Science Theatre</a> (parking and light rail available nearby)</p>
         {btnElms}
       </div>
     );

@@ -9,7 +9,6 @@ import { AdminRoute } from './AdminRoute';
 
 
 class App extends Component {
-
   render() {
     let { match } = this.props;
 

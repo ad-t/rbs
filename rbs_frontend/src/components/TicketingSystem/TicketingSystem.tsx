@@ -44,16 +44,10 @@ export default class TicketingSystem extends React.Component<Props, State> {
   }
 
   updateShow = (selectedShow: number, showStr: string) => {
-    // If selected show is different, reset ticket quantities and details
-    // This is because e.g. available seats might be different.
+    // If selected show is different, reset ticket quantities and details.
+    // This is because e.g. ticket types and available seats might be different.
     if (selectedShow !== this.state.selectedShow) {
-      const tickets = [ ...this.state.tickets ].map(t => {
-        const newType = { ...t };
-        newType.quantity = 0;
-        return newType;
-      });
-
-      this.setState({ tickets, ticketDetails: [] });
+      this.setState({ tickets: [], ticketDetails: [] });
     }
     this.setState({ currentId: BOOK_TICKETS, selectedShow, showStr });
   }
@@ -112,7 +106,7 @@ export default class TicketingSystem extends React.Component<Props, State> {
           updateTicketDetails={this.updateTicketDetails} selectedShow={selectedShow} updatePayment={this.updatePayment}/>;
         break;
       case CONFIRM:
-        displayElm = <ConfirmOrder tickets={this.state.tickets} ticketDetails={this.state.ticketDetails} details={this.state.details}/>;
+        displayElm = <ConfirmOrder showStr={this.state.showStr} tickets={this.state.tickets} ticketDetails={this.state.ticketDetails} details={this.state.details}/>;
         break;
     }
 

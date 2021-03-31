@@ -77,7 +77,7 @@ module.exports = () => ({
         targets: { browsers },
       },
     ],
-    '@babel/react',
+    '@babel/react'
   ],
   plugins,
   env: {

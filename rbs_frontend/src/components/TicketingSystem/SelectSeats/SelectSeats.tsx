@@ -159,7 +159,7 @@ export default class Ticket extends React.Component<Prop, State> {
       <Header as='h2'>Seat Selection</Header>
       <p><strong>Note:</strong> tickets and seats are not reserved until payment is completed.</p>
       <p><span style={{color:'green'}}>Green:</span> available, <span style={{color:'orange'}}>orange:</span> selected by you, grey: unavailable</p>
-      <Grid>
+      <Grid stackable>
         <Grid.Row columns={2}>
           <Grid.Column>
           <svg viewBox='0 0 200 200' style={{display: "block"}}

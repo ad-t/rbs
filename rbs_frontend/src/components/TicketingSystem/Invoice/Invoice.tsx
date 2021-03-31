@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Button, Divider, Form, Header, Icon, Input, Grid, Container, List, Popup } from 'semantic-ui-react';
+import { Button, Divider, Form, Header, Icon, Input, Grid, Container, List, Popup, Message } from 'semantic-ui-react';
 
 import TicketNoControl from '../TicketNoControl';
 import TicketholderDetails from '../TicketholderDetails';
@@ -30,6 +30,7 @@ interface State {
   email: string;
   phone: string;
   [key: string]: any;
+  hasClickedPayment: boolean;
 }
 
 export default class Ticket extends React.Component<Prop, State> {
@@ -40,17 +41,37 @@ export default class Ticket extends React.Component<Prop, State> {
 //     phone: '0412345678'
     name: '',
     email: '',
-    phone: ''
+    phone: '',
+    hasClickedPayment: false
+  }
+
+  constructor(props: Prop) {
+    super(props);
   }
 
   async reserveSeats() {
+    let valid = !!(this.state.name && this.state.email && this.state.phone);
+
+    for (const details of this.props.ticketDetails) {
+      if (!details.name || !details.postcode) {
+        valid = false;
+      }
+    }
+
+    if (!valid) {
+      alert("Please fill out all ticketholder details.");
+      throw new Error('invalid details');
+    }
+
     const seats = [];
     for (const ticket of this.props.tickets) {
       const details = this.props.ticketDetails.filter(x => x.typeId === ticket.id)
-      seats.push({
-        details,
-        ticketType: ticket.id
-      });
+      if (details.length) {
+        seats.push({
+          details,
+          ticketType: ticket.id
+        });
+      }
     }
 
     // TODO: validate personal details
@@ -84,7 +105,7 @@ export default class Ticket extends React.Component<Prop, State> {
         orderRes = await this.reserveSeats();
       } catch (e) {
         console.error(e);
-        return;
+        return null;
       }
       const data = await orderRes.json();
       id = data.id;
@@ -106,7 +127,7 @@ export default class Ticket extends React.Component<Prop, State> {
         orderRes = await this.reserveSeats();
       } catch (e) {
         console.error(e);
-        return;
+        return null;
       }
       const data = await orderRes.json();
       id = data.id;
@@ -176,12 +197,13 @@ export default class Ticket extends React.Component<Prop, State> {
 
   render() {
     const { tickets, ticketDetails } = this.props;
-    const { name, email, phone } = this.state;
+    const { name, email, phone, hasClickedPayment } = this.state;
     const ticketElms: Array<JSX.Element> = [];
     let totalPrice = 0;
 
     for (let i = 0; i < tickets.length; ++i) {
       const ticket: ITicket = tickets[i];
+      if (!ticket.quantity) continue;
       ticketElms.push(
         <TicketNoControl
           key={i}
@@ -195,11 +217,12 @@ export default class Ticket extends React.Component<Prop, State> {
     }
 
     const detailsElms: Array<JSX.Element> = [];
-    let ticketCounter = 0;
     for (let i = 0; i < ticketDetails.length; ++i) {
       const currDetails = ticketDetails[i];
       const ticketType = tickets.find(t => currDetails.typeId === t.id);
       const description = ticketType?.description || "";
+
+      const copyIndex = i;
 
       detailsElms.push(
         <TicketholderDetails index={i}
@@ -208,18 +231,22 @@ export default class Ticket extends React.Component<Prop, State> {
           phone={currDetails.phone}
           seatNum={currDetails.seatNum}
           description={description}
+          showErrors={hasClickedPayment}
           onNameChange={s => { currDetails.name = s; }}
           onPostcodeChange={s => { currDetails.postcode = s; }}
           onPhoneChange={s => { currDetails.phone = s; }} />
       );
-
-      ++ticketCounter;
     }
+
+    const isValidPurchaser = name.trim() && /^\S+@\S+$/.test(email) && phone.trim();
+    const formsAreValid = isValidPurchaser && ticketDetails.every(a =>
+      !!a.name.trim() && /^\d{4}$/.test(a.postcode)
+    );
 
     return (
       <React.Fragment>
         <div style={{margin: "0 1em"}}>
-          <Grid columns={2}>
+          <Grid columns={2} stackable reversed="mobile">
             <Grid.Column>
               <Header as='h2'>Purchaser Details</Header>
               <Form>
@@ -229,6 +256,7 @@ export default class Ticket extends React.Component<Prop, State> {
                   name='name'
                   onChange={this.handleChange}
                   defaultValue={this.state.name}
+                  error={hasClickedPayment && !name.trim()}
                   required
                 />
                 <Form.Field
@@ -237,6 +265,7 @@ export default class Ticket extends React.Component<Prop, State> {
                   name='email'
                   onChange={this.handleChange}
                   defaultValue={this.state.email}
+                  error={hasClickedPayment && !/^\S+@\S+$/.test(email)}
                   required
                 />
                 <Form.Field
@@ -245,11 +274,16 @@ export default class Ticket extends React.Component<Prop, State> {
                   name='phone'
                   onChange={this.handleChange}
                   defaultValue={this.state.phone}
+                  error={hasClickedPayment && !phone.trim()}
                   required
                 />
               </Form>
 
               {detailsElms}
+
+              { hasClickedPayment && !formsAreValid ?
+                <Message color='red'>Incomplete details, please fill all fields to continue.</Message>
+              : undefined }
             </Grid.Column>
 
             <Grid.Column style={{fontVariantNumeric: "tabular-nums"}}>
@@ -293,21 +327,26 @@ export default class Ticket extends React.Component<Prop, State> {
             <Grid.Column>
               <Grid columns={1}>
                 <Grid.Column>
-                  <SquareButton setupSquare={ () => this.setupSquare() } />
+                  <SquareButton setupSquare={ async () => {
+                    this.setState({hasClickedPayment: true});
+                    if (!formsAreValid) return null;
+                    return await this.setupSquare();
+                  }} />
                 </Grid.Column>
                 <Grid.Column textAlign='center' style={{ paddingTop: "2px" }}>
-                  <p>No extra surcharge</p>
+                  <p>All major credit/debit cards accepted</p>
                 </Grid.Column>
               </Grid>
             </Grid.Column>
+            {/*
+              For some reason the font size also affects the height.
+              At smaller font sizes there is more 'mystery padding, but a
+              large font size removes this immediately.
+            */}
+            {/*
             <Grid.Column>
               <Grid columns={1}>
                 <Grid.Column>
-                  {/*
-                    For some reason the font size also affects the height.
-                    At smaller font sizes there is more 'mystery padding, but a
-                    large font size removes this immediately.
-                  */}
                   <div style={{ height: "45px" }}>
                   <PayPalButton
                     createOrder={this.createOrder}
@@ -321,6 +360,7 @@ export default class Ticket extends React.Component<Prop, State> {
                 </Grid.Column>
               </Grid>
             </Grid.Column>
+            */}
           </Grid>
         </Container>
       </React.Fragment>

@@ -5,7 +5,15 @@ var expect = chai.expect;
 const API_URL = "http://localhost:8080";
 const server = supertest.agent(API_URL);
 
+if (process.env.NODE_ENV && process.env.NODE_ENV.startsWith("prod")) {
+  // Err hello this is production!
+  throw new Error("Don't run the test suite on production!");
+}
+
 describe("productions", () => {
+  // Reset the database for testing.
+  server.get("/reset").expect(200, done);
+
   it ("gets all of the active productions",
     function (done) {
       server.get("/productions")
@@ -71,6 +79,9 @@ describe("productions", () => {
 });
 
 describe("shows", () => {
+  // Reset the database for testing.
+  server.get("/reset").expect(200, done);
+
   it ("gets the seat count for a valid show",
     function (done) {
       server.get("/shows/1")

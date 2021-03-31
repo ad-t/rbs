@@ -31,6 +31,12 @@ export default class BookTickets extends React.Component<Prop, State> {
     }
   }
 
+  componentDidUpdate = () => {
+    if (this.props.tickets.length === 0) {
+      this.loadTickets();
+    }
+  }
+
   loadTickets = async () => {
     const { selectedShow } = this.props;
     const res = await fetch(`${process.env.REACT_APP_API_URL}/shows/${selectedShow}`);
@@ -64,6 +70,7 @@ export default class BookTickets extends React.Component<Prop, State> {
       // Ensure num of details fields match the quantity requested.
       let i = 0;
       for (const t of oldTicketDetails) {
+        if (i >= ticketType.quantity) break;
         if (t.typeId === ticketType.id) {
           ticketDetails.push(t);
           i++;

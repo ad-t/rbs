@@ -13,6 +13,7 @@ interface Prop {
   // TODO: make this into a proper React type
   tickets: ITicket[];
   ticketDetails: ITicketDetails[];
+  showStr: string;
   details: any;
 }
 
@@ -29,6 +30,7 @@ export default class ConfirmOrder extends React.Component<Prop, {}> {
     for (let i = 0; i < tickets.length; ++i) {
       const ticket: ITicket = tickets[i];
       console.log(ticket);
+      if (!ticket.quantity) continue;
       ticketElms.push(
         <Segment>
           <List>
@@ -70,10 +72,12 @@ export default class ConfirmOrder extends React.Component<Prop, {}> {
         <div className="confirmation">
           <div className="booking-info">
             <Header as='h2'>Thank you!</Header>
-            <p>Your payment was successful for {totalQty} tickets.</p>
+            <p>Your payment was successful for {totalQty} {totalQty > 1 ? "tickets" : "ticket"}.</p>
             <p>Here's your booking reference &ndash; please keep it safe.</p>
             <p><span style={{font:"bold 20px monospace"}}>{orderID}</span></p>
             <p>A copy of this booking confirmation has been sent to <strong>{details.email}</strong>.</p>
+            <p>Venue: UNSW Science Theatre</p>
+            <p>Time: {this.props.showStr}, doors open 7pm</p>
             <p>No GST applies for this purchase.</p>
           </div>
         </div>
