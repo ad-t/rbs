@@ -8,7 +8,7 @@ echo "
 MYSQL_DATABASE=travis_ci_rbs
 MYSQL_USER=travis
 MYSQL_PASSWD=
-NODE_ENV=development
+NODE_ENV=test
 SERVER_PORT=8080
 EOF 
 " > .env

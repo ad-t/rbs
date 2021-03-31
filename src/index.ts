@@ -101,6 +101,10 @@ async function bootstrap() {
   if (process.env.NODE_ENV === "development") {
     Logger.Info("Development environment: to clear the tables, go to /reset");
   }
+  if (process.env.NODE_ENV === "test") {
+    Logger.Info("Test environment: will purge database");
+    resetDB();
+  }
 }
 
 async function resetDB() {
@@ -122,7 +126,7 @@ app.use(cors({
   origin: [process.env.FRONTEND_URL, process.env.ADMIN_URL]
 }));
 
-if (process.env.NODE_ENV === "development") {
+if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test") {
   Logger.Info(`API documentation available at ${API_HOST}:${API_PORT}/docs`);
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(specs));
 
@@ -156,24 +160,25 @@ const adminLogin = basicAuth({
 
 const adminPage = [adminCors, adminLogin];
 
-/*
-cron.schedule('* * * * *', async () => {
-  try {
-    const repo = getRepository(Order);
-    Logger.Info("Purging unpaid orders...");
-    const toDelete = await repo.find({
-      // TODO: apparently this doesn't work on sqlite but does on MySQL???
-      updatedAt: LessThan(new Date(Date.now() - 20 * 60 * 1000)),
-      paid: false
-    });
+if (process.env.NODE_ENV !== "test") {
+  // Remove unpaid orders if they've been left there.
+  cron.schedule('* * * * *', async () => {
+    try {
+      const repo = getRepository(Order);
+      Logger.Info("Purging unpaid orders...");
+      const toDelete = await repo.find({
+        // FIXME: apparently this doesn't work on sqlite but does on MySQL???
+        updatedAt: LessThan(new Date(Date.now() - 20 * 60 * 1000)),
+        paid: false
+      });
 
-    await repo.remove(toDelete);
-    Logger.Info(`purge: ${toDelete.length} unpaid orders removed.`);
-  } catch (e) {
-    console.error(e);
-  }
-});
-*/
+      await repo.remove(toDelete);
+      Logger.Info(`purge: ${toDelete.length} unpaid orders removed.`);
+    } catch (e) {
+      console.error(e);
+    }
+  });
+}
 
 /**
  * @swagger
