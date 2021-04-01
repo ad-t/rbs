@@ -198,6 +198,30 @@ export default class Ticket extends React.Component<Prop, State> {
 
   handleChange = (e: any, { name , value }: any) => this.setState({ [name]: value })
 
+  onNameChange = (index: number, value: string) => {
+    const newTicketDetails: ITicketDetails[] = [...this.props.ticketDetails];
+    const newDetail: ITicketDetails = { ...newTicketDetails[index] };
+    newDetail.name = value;
+    newTicketDetails[index] = newDetail;
+    this.props.updateTicketDetails(newTicketDetails);
+  }
+
+  onPostcodeChange = (index: number, value: string) => {
+    const newTicketDetails: ITicketDetails[] = [...this.props.ticketDetails];
+    const newDetail: ITicketDetails = { ...newTicketDetails[index] };
+    newDetail.postcode = value;
+    newTicketDetails[index] = newDetail;
+    this.props.updateTicketDetails(newTicketDetails);
+  }
+
+  onPhoneChange = (index: number, value: string) => {
+    const newTicketDetails: ITicketDetails[] = [...this.props.ticketDetails];
+    const newDetail: ITicketDetails = { ...newTicketDetails[index] };
+    newDetail.phone = value;
+    newTicketDetails[index] = newDetail;
+    this.props.updateTicketDetails(newTicketDetails);
+  }
+
   render() {
     const { tickets, ticketDetails } = this.props;
     const { name, email, phone, hasClickedPayment } = this.state;
@@ -235,9 +259,9 @@ export default class Ticket extends React.Component<Prop, State> {
           seatNum={currDetails.seatNum}
           description={description}
           showErrors={hasClickedPayment}
-          onNameChange={s => { currDetails.name = s; }}
-          onPostcodeChange={s => { currDetails.postcode = s; }}
-          onPhoneChange={s => { currDetails.phone = s; }} />
+          onNameChange={s => this.onNameChange(copyIndex, s)}
+          onPostcodeChange={s => this.onPostcodeChange(copyIndex, s)}
+          onPhoneChange={s => this.onPhoneChange(copyIndex, s)} />
       );
     }
 

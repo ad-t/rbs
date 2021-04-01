@@ -1,6 +1,9 @@
 import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import basicAuth from "express-basic-auth";
@@ -36,6 +39,11 @@ import Logger from "./logging";
 // initialise config
 dotenv.config();
 
+dayjs.extend(utc);
+dayjs.extend(timezone);
+// TODO: change this if we ever change
+dayjs.tz.setDefault("Australia/Sydney")
+
 const app = express();
 const API_PORT = process.env.SERVER_PORT;
 const API_HOST = "http://localhost";
@@ -68,7 +76,7 @@ const options: ConnectionOptions = {
   database: process.env.MYSQL_DATABASE,
   entities: activeEntities,
   host: "localhost",
-  logging: true,
+  logging: false,
   migrations: [
     // "src/migration/**/*.ts"
   ],
@@ -139,6 +147,9 @@ if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test") {
       res.status(500).json({error: "Internal server error"});
     }
   });
+
+  let now = dayjs().tz();
+  console.log(now.format());
 }
 
 app.listen(API_PORT, async () => {
