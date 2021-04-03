@@ -28,7 +28,8 @@ async function main() {
 
   // TODO: find way to use .env variables here
   await fetch(
-    `http://localhost:8080/orders/${orderId}/square-verify-payment`,
+//     `http://localhost:8080/orders/${orderId}/square-verify-payment`,
+    `https://tickets.medrevue.org/api/orders/${orderId}/square-verify-payment`,
     { method: 'POST' }
   );
 

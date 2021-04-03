@@ -179,7 +179,7 @@ export async function SetupSquare(req: Request, res: Response) {
     // checkoutId: self-explanatory
     // referenceId: our own order ID
     // transactionId: Square's order ID
-    body.redirectUrl = "http://localhost:3000/square-checkout-callback.html";
+    body.redirectUrl = `${process.env.BACKEND_URL}/square-checkout-callback.html`;
 
     // Send request to Square API
     Logger.Info(JSON.stringify(body));
