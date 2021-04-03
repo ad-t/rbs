@@ -21,24 +21,32 @@
   -->
   <title>Payment Complete &ndash; Med Revue 2021</title>
 <script>
-/*
-function parseQuery(queryString) {
-    var query = {};
-    var pairs = (queryString[0] === '?' ? queryString.substr(1) : queryString).split('&');
-    for (var i = 0; i < pairs.length; i++) {
-        var pair = pairs[i].split('=');
-        query[decodeURIComponent(pair[0])] = decodeURIComponent(pair[1] || '');
-    }
-    return query;
-}
-*/
+async function main() {
+  const params = (new URL(document.location)).searchParams;
+  // Reference ID is our own internal order ID (not Square's order ID).
+  const orderId = params.get("referenceId");
 
-window.close();
+  // TODO: find way to use .env variables here
+  await fetch(
+    `http://localhost:8080/orders/${orderId}/square-verify-payment`,
+    { method: 'POST' }
+  );
+
+  const elem = document.getElementById("can-close");
+  if (elem) {
+    elem.textContent = "You may now close this window.";
+  }
+
+  window.close();
+}
+
+main();
 </script>
 </head>
 <body>
   <h2>Payment Complete</h2>
-  <p>You may now close this window.</p>
+  <p>Now redirecting back to the confirmation page&hellip;</p>
+  <p id="can-close"></p>
   <p>If you are still experiencing issues, please contact us at
     <a href="mailto:ticketing@medrevue.org">ticketing@medrevue.org</a>.</p>
 </body>

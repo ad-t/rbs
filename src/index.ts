@@ -173,12 +173,14 @@ const adminPage = [adminCors, adminLogin];
 
 if (process.env.NODE_ENV !== "test") {
   // Remove unpaid orders if they've been left there.
+  /*
   cron.schedule('* * * * *', async () => {
     try {
       const repo = getRepository(Order);
       Logger.Info("Purging unpaid orders...");
       const toDelete = await repo.find({
         // FIXME: apparently this doesn't work on sqlite but does on MySQL???
+        // https://github.com/typeorm/typeorm/issues/2286
         updatedAt: LessThan(new Date(Date.now() - 20 * 60 * 1000)),
         paid: false
       });
@@ -189,6 +191,7 @@ if (process.env.NODE_ENV !== "test") {
       console.error(e);
     }
   });
+  */
 }
 
 /**

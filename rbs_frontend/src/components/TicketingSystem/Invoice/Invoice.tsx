@@ -120,7 +120,7 @@ export default class Ticket extends React.Component<Prop, State> {
   }
 
   async setupSquare() {
-    const win = window.open(undefined, 'square-pay', 'toolbar=no');;
+    const win = window.open(undefined, 'square-pay', 'toolbar=no');
     let id = this.state.orderID;
     if (!id) {
       let orderRes;

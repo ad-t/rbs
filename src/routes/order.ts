@@ -296,7 +296,6 @@ export async function PaypalCaptureOrder(req: Request, res: Response) {
     const order: Order = await repo.findOne(
       req.params.id, {relations: ["payment"]}
     );
-    repo.findOne();
     if (!order) {
       res.status(404).json({error: "order not found (or paypal ID has not yet been set up)"});
       return;
@@ -328,13 +327,25 @@ export async function PaypalCaptureOrder(req: Request, res: Response) {
     const production = show.production;
 
     sendEmail("order_complete", {
-      to: order.email,
+      from: {
+        name: production.title,
+        address: production.email,
+      },
+      to: {
+        name: order.name,
+        address: order.email
+      },
+      bcc: production.email,
       subject: `${production.title} ${production.year} - Payment Confirmation`
     }, {
       order,
       show,
       production,
-      shortId: order.id.slice(0, 6).toUpperCase()
+      misc: {
+        shortId: order.id.slice(0, 6).toUpperCase(),
+        price: `$${(order.payment.totalPrice / 100).toFixed(2)}`,
+        time: show.time.toLocaleString('en-AU', { timeZone: 'Australia/Sydney' })
+      }
     });
 
     // TODO send email
@@ -354,17 +365,19 @@ export async function SquareVerifyPayment(req: Request, res: Response) {
     const order: Order = await repo.findOne(
       req.params.id, {relations: ["payment", "show", "show.production"]}
     );
-    repo.findOne();
     if (!order) {
-      res.status(404).json({error: "order not found (or Square ID has not yet been set up)"});
+      res.status(404).json({error: "order not found"});
       return;
     }
     if (order.paid) {
-      res.status(422).json({error: "order has already been paid"});
+      // This hopefully makes this idempotent so that we don't face issues with
+      // repeat calls.
+      res.json({success: true});
+      // res.status(409).json({error: "order has already been paid"});
       return;
     }
-    if ((!order.payment) || order.payment.method !== PaymentMethod.SQUARE) {
-      res.status(422).json({error: "order has not been set up for Square"});
+    if (!order.payment || order.payment.method !== PaymentMethod.SQUARE) {
+      res.status(409).json({error: "order has not been set up for Square"});
       return;
     }
 
@@ -372,13 +385,36 @@ export async function SquareVerifyPayment(req: Request, res: Response) {
     const { result, ...httpResponse } = await squareClient().ordersApi.retrieveOrder(order.payment.transactionID);
     console.log(JSON.stringify(result));
 
-    // Verify that the order has been fully paid (COMPLETED) and the Square order
-    // is for the same amount that we expect.
-    if (!result.order || result.order.state !== "COMPLETED" ||
-        result.order.totalMoney.amount !== order.payment.totalPrice) {
-      console.log(order.payment);
-      res.status(422).json({error: "order has not been (fully) paid yet"});
+    // Verify that the order has been fully paid (COMPLETED) and the Square
+    // order is for the same amount that we expect.
+    if (!result.order) {
+      res.status(409).json({error: "order has not been paid yet"});
       return;
+    }
+
+    if (result.order.state !== "COMPLETED" || result.order.totalMoney.amount < order.payment.totalPrice) {
+      console.log(order.payment);
+
+      if (0 < result.order.totalMoney.amount && result.order.totalMoney.amount < order.payment.totalPrice) {
+        res.status(409).json({error: "Actual payment amount less than order amount."});
+      } else {
+        res.status(409).json({error: "order has not been paid yet"});
+      }
+      return;
+    }
+
+    // TODO: find/make an assertion library that performs 'hard' asserts in dev
+    // but performs 'soft' asserts (e.g. console.assert) in production
+    try {
+      console.assert(
+        order.payment.totalPrice === result.order.totalMoney.amount,
+        "incorrect payment amount: expected %d, actual %d",
+        order.payment.totalPrice, result.order.totalMoney.amount
+      );
+    } catch (e) {
+      if (e && e.stack) {
+        Logger.Error(e);
+      }
     }
 
     // FIXME: what capture ID should we put here?
@@ -418,6 +454,7 @@ export async function SquareVerifyPayment(req: Request, res: Response) {
   } catch (err) {
     if (err instanceof ApiError) {
       const errors = err.result;
+      console.error(errors);
       // const { statusCode, headers } = err;
     }
 
