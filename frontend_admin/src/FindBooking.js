@@ -19,7 +19,7 @@ import AdminFooter from './Layouts/AdminFooter'
 
 class FindBooking extends React.Component {
   state = {
-    data: [],
+    tickets: [],
     inputMethod: 'id',
     search: '',
     submittedSearch: '',
@@ -30,31 +30,48 @@ class FindBooking extends React.Component {
   searchChange = (e, { value }) => this.setState({ search: value });
 
   onSubmit = e => {
-    this.setState({ submittedSearch: this.state.search });
+    //if (this.state.search !== this.state.submittedSearch) {
+      this.fetchTickets(this.state.search);
+      this.setState({ submittedSearch: this.state.search });
+    //}
   }
 
-  async fetchTickets() {
+  async fetchTickets(ticketId: string) {
     // TODO: use proper ID
-    const showRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/shows/${this.state.showId}/tickets`);
+    const showRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/tickets/${ticketId}`, {credentials: 'include'});
 
     if (showRes.status === 200) {
       const data = await showRes.json();
-      this.setState({data: data});
-    }
-  }
+      this.setState({tickets: data});
+    } else if (showRes.status === 404) {
+      // TODO: should this return 200 and an empty array anyway?
 
-  async componentDidMount() {
-    if (this.state.showId) {
-      this.fetchTickets();
     }
   }
 
   render() {
-    const {data, inputMethod, search, submittedSearch} = this.state;
+    const {tickets, inputMethod, search, submittedSearch} = this.state;
 
-    const searchResults = submittedSearch ? (
+    const searchResults = tickets && tickets.length ? (
       /* TODO: make sortable */
-      <Message color='orange'>Search results not implemented yet!</Message>
+      /*<Message color='orange'>Search results not implemented yet!</Message>*/
+      <Table celled>
+      <Table.Header>
+          <Table.Row>
+              <Table.HeaderCell>ID</Table.HeaderCell>
+              <Table.HeaderCell>Checked in?</Table.HeaderCell>
+          </Table.Row>
+      </Table.Header>
+      <Table.Body>
+        {tickets.map(a =>
+          <Table.Row>
+            <Table.Cell>{a.id}</Table.Cell>
+            <Table.Cell>{a.checkInTime}</Table.Cell>
+          </Table.Row>
+        )}
+      </Table.Body>
+      </Table>
+
     ) : (
       <Segment>
         Enter a ticket to get started

@@ -94,7 +94,7 @@ function genericLoggingMiddleware(req: express.Request, res: express.Response, n
   function afterResponse() {
     res.removeListener("finish", afterResponse);
     res.removeListener("close", afterResponse);
-    Logger.Info(`${res.statusCode} - ${req.path}`);
+    Logger.Info(`${req.method} ${res.statusCode} - ${req.path}`);
   }
 
   res.on("finish", afterResponse);
@@ -212,8 +212,9 @@ if (process.env.NODE_ENV !== "test") {
  *         description: Show not found
  */
 app.get("/admin/shows/:id/tickets", adminPage, AdminRoutes.getShowOrders);
-
+app.get("/admin/tickets/:id", adminPage, AdminRoutes.getTicket);
 app.post("/admin/tickets/:id/check-in", adminPage, AdminRoutes.checkInTicket);
+app.post("/admin/tickets/:id/check-in-reverse", adminPage, AdminRoutes.reverseCheckInTicket);
 
 /**
  * @swagger

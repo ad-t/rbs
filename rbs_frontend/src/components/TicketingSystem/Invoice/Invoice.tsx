@@ -3,7 +3,10 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Button, Divider, Form, Header, Icon, Input, Grid, Container, List, Popup, Message } from 'semantic-ui-react';
+import {
+  Button, Divider, Form, Header, Icon, Input,
+  Grid, Container, List, Popup, Message
+} from 'semantic-ui-react';
 
 import TicketNoControl from '../TicketNoControl';
 import TicketholderDetails from '../TicketholderDetails';

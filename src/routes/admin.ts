@@ -36,17 +36,80 @@ export async function getShowOrders(req: Request, res: Response) {
   }
 }
 
-export async function checkInTicket(req: Request, res: Response) {
-  if (!/^[a-zA-Z0-9-]+$/.test(req.params.id)) {
+export async function getTicketOrOrder(req: Request, res: Response) {
+  if (!/^\d+$/.test(req.params.id)) {
+    res.status(400).json({error: "invalid show ID"});
+    return;
+  }
+
+  try {
+    const conn = getConnection();
+    const orders: Order[] = await conn.getRepository(Order).find({
+      where: {
+        show: {
+          id: req.params.id
+        }
+      },
+      relations: ["tickets", "tickets.ticketType"]
+    });
+    if (!orders) {
+      res.status(404).json({error: `no show found with id ${req.params.id}`});
+    }
+
+    res.json(orders);
+  } catch (err) {
+    if (err.stack) {
+      Logger.Error(err.stack);
+    }
+    res.status(500).json({error: "Internal server error"});
+  }
+}
+
+export async function getTicket(req: Request, res: Response) {
+  // Ensure at least 6 characters long.
+  if (!/^[a-zA-Z0-9-]{6,}$/.test(req.params.id)) {
     res.status(400).json({error: "invalid ticket ID"});
     return;
   }
+
+  // IDs are in lower case format.
+  const id = req.params.id.toLowerCase();
+
+  try {
+    const repo = getRepository(Ticket);
+    const ticket: Ticket[] = await repo.find({
+      where: {
+        id: StartsWith(id)
+      }
+    });
+    if (!ticket) {
+      res.status(404).json({error: `no ticket found with id ${req.params.id}`});
+    }
+
+    res.json(ticket);
+  } catch (err) {
+    if (err.stack) {
+      Logger.Error(err.stack);
+    }
+    res.status(500).json({error: "Internal server error"});
+  }
+}
+
+export async function checkInTicket(req: Request, res: Response) {
+  // Ensure at least 6 characters long.
+  if (!/^[a-zA-Z0-9-]{6,}$/.test(req.params.id)) {
+    res.status(400).json({error: "invalid ticket ID"});
+    return;
+  }
+
+  // IDs are in lower case format.
+  const id = req.params.id.toLowerCase();
 
   try {
     const repo = getRepository(Ticket);
     const ticket: Ticket = await repo.findOne({
       where: {
-        id: req.params.id
+        id: StartsWith(id)
       }
     });
     if (!ticket) {
@@ -58,6 +121,43 @@ export async function checkInTicket(req: Request, res: Response) {
     }
 
     ticket.checkInTime = new Date();
+    await repo.save(ticket);
+
+    res.json({success: true});
+  } catch (err) {
+    if (err.stack) {
+      Logger.Error(err.stack);
+    }
+    res.status(500).json({error: "Internal server error"});
+  }
+}
+
+export async function reverseCheckInTicket(req: Request, res: Response) {
+  // Ensure at least 6 characters long.
+  if (!/^[a-zA-Z0-9-]{6,}$/.test(req.params.id)) {
+    res.status(400).json({error: "invalid ticket ID"});
+    return;
+  }
+
+  // IDs are in lower case format.
+  const id = req.params.id.toLowerCase();
+
+  try {
+    const repo = getRepository(Ticket);
+    const ticket: Ticket = await repo.findOne({
+      where: {
+        id: StartsWith(id)
+      }
+    });
+    if (!ticket) {
+      res.status(404).json({error: `no ticket found with id ${req.params.id}`});
+    }
+
+    if (!ticket.checkInTime) {
+      res.status(409).json({error: `ticket has not been checked in (or check in has been reversed)`});
+    }
+
+    ticket.checkInTime = null;
     await repo.save(ticket);
 
     res.json({success: true});

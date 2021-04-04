@@ -70,7 +70,7 @@ export async function CompleteDetails(req: Request, res: Response) {
       console.log(`\nTicket: `, ticketAlreadyBooked, "\n");
 
       if (ticketAlreadyBooked) {
-        res.status(409).json({error: `Seat {t.seatSum} already booked`});
+        res.status(409).json({error: `Seat ${t.seatNum} already booked`});
         return;
       }
 
@@ -179,7 +179,7 @@ export async function SetupSquare(req: Request, res: Response) {
     // checkoutId: self-explanatory
     // referenceId: our own order ID
     // transactionId: Square's order ID
-    body.redirectUrl = `${process.env.BACKEND_URL}/square-checkout-callback.html`;
+    body.redirectUrl = `${process.env.FRONTEND_URL}/square-checkout-callback.html`;
 
     // Send request to Square API
     Logger.Info(JSON.stringify(body));
