@@ -1,4 +1,6 @@
-import React from 'react'
+import React from 'react';
+import dayjs from 'dayjs';
+import {Link} from 'react-router-dom';
 import {
   Container,
   Divider,
@@ -12,7 +14,8 @@ import {
   Form,
   Radio,
   Table,
-  Message
+  Message,
+  Button
 } from 'semantic-ui-react';
 
 import { useTable, useExpanded } from 'react-table';
@@ -34,6 +37,10 @@ const columns = [{
     </span>
   ),
 }, {
+  Header: 'Order ID',
+  accessor: 'id',
+  Cell: a => a.value ? a.value.slice(0, 6).toUpperCase() : ''
+}, {
   Header: 'Name',
   accessor: 'name', // accessor is the "key" in the data
 }, {
@@ -52,10 +59,18 @@ const columns = [{
   Cell: props => `$${(props.value / 100).toFixed(2)}`
 }, {
   Header: 'Paid?',
-  accessor: d => (typeof d.paid === 'boolean' ? d.paid.toString() : '')
+  accessor: d => (d.paid === true ? 'Yes' : d.id ?
+  <Button>
+    <Link to={`/override-payment/${d.id}`}>
+    Override Payment
+    </Link>
+  </Button> : '')
 }];
 
 const subColumns = [{
+  Header: 'Ticket ID',
+  accessor: a => a.id.slice(0, 8).toUpperCase(),
+}, {
   Header: 'Name',
   accessor: 'name', // accessor is the "key" in the data
 }, {
@@ -66,7 +81,10 @@ const subColumns = [{
   accessor: 'postcode'
 }, {
   Header: 'Type',
-  accessor: 'ticketType.description'
+  accessor: 'ticketType.description',
+}, {
+  Header: 'Checked in?',
+  accessor: a => (a.checkInTime ? dayjs(a.checkInTime).format('ddd DD MMM YYYY hh:mm:ss') : "No")
 }];
 
 function MySubTable({ data, columns }) {
@@ -200,6 +218,24 @@ class FindBooking extends React.Component {
   searchChange = (e, { value }) => this.setState({ search: value });
   handleChange = (e, { value }) => this.setState({ searchType: value });
 
+  async checkIn(ticketId: string) {
+    // TODO: use proper ID
+    const showRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/tickets/${ticketId}/check-in`, {method: 'POST', credentials: 'include'});
+
+    if (showRes.status === 200 && this.state.showId) {
+      await this.fetchTickets(this.state.showId);
+    }
+  }
+
+  async reverseCheckIn(ticketId: string) {
+    // TODO: use proper ID
+    const showRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/tickets/${ticketId}/check-in-reverse`, {method: 'POST', credentials: 'include'});
+
+    if (showRes.status === 200 && this.state.showId) {
+      await this.fetchTickets(this.state.showId);
+    }
+  }
+
   async fetchTickets(showId) {
     const showRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/shows/${showId}/tickets`, {credentials: 'include'});
 
@@ -237,7 +273,9 @@ class FindBooking extends React.Component {
     const { nights, data, searchType, search } = this.state;
 
     // TODO: check if react-table filter will do a better job
-    const fuse = new Fuse(data, { keys: [ searchTypeToCol[searchType] ] });
+    const keys = [ searchTypeToCol[searchType] ];
+    if (searchType === 'name' || searchType === 'phone') keys.push(`tickets.${searchTypeToCol[searchType]}`);
+    const fuse = new Fuse(data, { keys });
     // Display all results if no search string.
     const filteredData = search ? fuse.search(search).map(a => a.item) : data;
     console.log(this.state);

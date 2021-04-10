@@ -33,17 +33,11 @@ class FindBooking extends React.Component {
 
   searchChange = (e, { value }) => this.setState({ search: value });
 
-  onSubmitTicketId = e => {
+  onSubmit = e => {
     //if (this.state.search !== this.state.submittedSearch) {
       this.fetchTickets(this.state.search);
-
-    this.setState({ submittedSearch: this.state.search });
+      this.setState({ submittedSearch: this.state.search });
     //}
-  }
-
-  onSubmitOrderId = e => {
-    this.fetchOrder(this.state.search);
-    this.setState({ submittedSearch: this.state.search });
   }
 
   handleScan = s => {
@@ -62,11 +56,7 @@ class FindBooking extends React.Component {
     const showRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/tickets/${ticketId}/check-in`, {method: 'POST', credentials: 'include'});
 
     if (showRes.status === 200) {
-      if (this.state.inputMethod === 'order_id') {
-        await this.fetchOrder(this.state.submittedSearch);
-      } else {
-        await this.fetchTickets(ticketId);
-      }
+      await this.fetchTickets(ticketId);
     }
   }
 
@@ -75,11 +65,7 @@ class FindBooking extends React.Component {
     const showRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/tickets/${ticketId}/check-in-reverse`, {method: 'POST', credentials: 'include'});
 
     if (showRes.status === 200) {
-      if (this.state.inputMethod === 'order_id') {
-        await this.fetchOrder(this.state.submittedSearch);
-      } else {
-        await this.fetchTickets(ticketId);
-      }
+      await this.fetchTickets(ticketId);
     }
   }
 
@@ -96,19 +82,6 @@ class FindBooking extends React.Component {
     }
   }
 
-  async fetchOrder(orderId: string) {
-    // TODO: use proper ID
-    const showRes = await fetch(`${process.env.REACT_APP_API_URL}/admin/order/${orderId}`, {credentials: 'include'});
-
-    if (showRes.status === 200) {
-      const data = await showRes.json();
-      this.setState({tickets: data.tickets});
-    } else if (showRes.status === 404) {
-      // TODO: should this return 200 and an empty array anyway?
-      this.setState({tickets: []});
-    }
-  }
-
   render() {
     const {tickets, inputMethod, search, submittedSearch} = this.state;
 
@@ -118,7 +91,7 @@ class FindBooking extends React.Component {
       <Table celled>
       <Table.Header>
           <Table.Row>
-              <Table.HeaderCell>Ticket ID</Table.HeaderCell>
+              <Table.HeaderCell>ID</Table.HeaderCell>
               <Table.HeaderCell>Name</Table.HeaderCell>
               <Table.HeaderCell>Seat num</Table.HeaderCell>
               <Table.HeaderCell>Checked in?</Table.HeaderCell>
@@ -131,7 +104,7 @@ class FindBooking extends React.Component {
             <Table.Cell>{a.id}</Table.Cell>
             <Table.Cell>{a.name}</Table.Cell>
             <Table.Cell>{a.seat ? a.seat.seatNum : '???'}</Table.Cell>
-            <Table.Cell>{a.checkInTime ? dayjs(a.checkInTime).format('ddd DD MMM YYYY HH:mm:ss') : "no"}</Table.Cell>
+            <Table.Cell>{a.checkInTime ? dayjs(a.checkInTime).format('ddd DD MMM YYYY hh:mm:ss') : "no"}</Table.Cell>
             <Table.Cell>
               {a.checkInTime ?
               <Button onClick={() => this.reverseCheckIn(a.id)}>Reverse</Button>
@@ -162,22 +135,14 @@ class FindBooking extends React.Component {
           style={{ width: '100%' }}
         />
       </div>;
-    } else if (inputMethod === 'order_id') {
-      entryInput = (
-        <Form onSubmit={this.onSubmitOrderId}>
-          <Form.Input icon={{ name: 'search', circular: true, link: true, onClick: this.onSubmitOrderId }}
-            value={search} placeholder='Order ID...' onChange={this.searchChange} />
-        </Form>
-      );
     } else {
       entryInput = (
-        <Form onSubmit={this.onSubmitTicketId}>
-          <Form.Input icon={{ name: 'search', circular: true, link: true, onClick: this.onSubmitTicketId }}
+        <Form onSubmit={this.onSubmit}>
+          <Form.Input icon={{ name: 'search', circular: true, link: true, onClick: this.onSubmit }}
             value={search} placeholder='Ticket ID...' onChange={this.searchChange} />
         </Form>
       );
     }
-
 
     return (
       <React.Fragment>
@@ -199,15 +164,6 @@ class FindBooking extends React.Component {
               name='radioGroup'
               value='id'
               checked={inputMethod === 'id'}
-              onChange={this.handleChange}
-            />
-          </Form.Field>
-          <Form.Field>
-            <Radio
-              label='Order ID'
-              name='radioGroup'
-              value='order_id'
-              checked={inputMethod === 'order_id'}
               onChange={this.handleChange}
             />
           </Form.Field>

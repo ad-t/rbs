@@ -1,10 +1,11 @@
 import {
-  Column, CreateDateColumn, UpdateDateColumn, Entity,
+  Column, CreateDateColumn, UpdateDateColumn, Entity, JoinColumn,
   ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, LessThan
 } from "typeorm";
 import { Payment } from "./payment";
 import { Show } from "./show";
 import { Ticket } from "./ticket";
+import { Discount } from "./discount";
 
 @Entity()
 export class Order {
@@ -43,6 +44,13 @@ export class Order {
 
   @Column({nullable: true})
   public paidAt: Date;
+
+  @Column({length: 20, nullable: true})
+  public voucherCode: string;
+
+  @ManyToOne(type => Discount, { nullable: true })
+  @JoinColumn({ name: "voucherCode" })
+  public voucher: Discount;
 
   @OneToOne((type) => Payment, (payment) => payment.order, {cascade: true})
   public payment: Payment;

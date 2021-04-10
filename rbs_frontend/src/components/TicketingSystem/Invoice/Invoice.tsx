@@ -13,7 +13,7 @@ import TicketholderDetails from '../TicketholderDetails';
 
 // Import our interface
 import { ITicket, ITicketDetails } from '../../../types/tickets';
-
+import { IDiscount } from "../../../types/discount";
 import SquareButton from './SquareButton';
 
 declare var paypal : any;
@@ -23,6 +23,7 @@ interface Prop {
   selectedShow: number;
   tickets: ITicket[];
   ticketDetails: ITicketDetails[];
+  discount: IDiscount | null;
   updateTicketDetails(tickets: ITicketDetails[]): void;
   updatePayment(details: any): void;
 }
@@ -36,6 +37,7 @@ interface State {
   hasClickedPayment: boolean;
 }
 
+// TODO: rename class and file to Checkout
 export default class Ticket extends React.Component<Prop, State> {
   state = {
     orderID: '',
@@ -87,6 +89,7 @@ export default class Ticket extends React.Component<Prop, State> {
         "name": this.state.name,
         "email": this.state.email,
         "phone": this.state.phone,
+        "voucherCode": this.props.discount?.code,
         seats
       })
     });
@@ -159,7 +162,7 @@ export default class Ticket extends React.Component<Prop, State> {
   };
 
   private handlingFee(price: number) {
-    return 2.19;
+    return !!this.props.discount?.waiveHandlingFee ? 0 : 2.19;
   }
 
   async onPaypalApprove(data: any, actions: any) {
@@ -343,11 +346,13 @@ export default class Ticket extends React.Component<Prop, State> {
               <li>Mask wearing within the theatre is currently compulsory at all times, except for momentary eating or drinking or if you have a relevant medical condition.</li>
               <li>Do <strong>not</strong> attend if you have symptoms of COVID-19, or you are required to self-isolate or quarantine.</li>
               <li>You will follow the <a href="https://hospitality.unsw.edu.au/storage/app/media/COVIDSafe/COVIDSafe%20Conditions%20of%20Entry.pdf" target="_blank">UNSW Hospitality conditions of entry</a> at all times.</li>
+              <li><strong>Strobe lighting</strong> may be used in this performance. Please contact us if you have any concerns.</li>
               <li>Arc tickets may require proof of Arc membership upon entry.</li>
               <li>Ticket exchanges may be available (subject to capacity). Please contact us ASAP if you need to reschedule.</li>
               <li>Tickets will be refunded in full (minus handling fees and surcharges) if the event is cancelled, or you are required to
               self-isolate due to COVID-19 regulations. Any other refunds will be at our sole discretion.
               (This does not affect your rights under Australian Consumer Law.)</li>
+              <li>For further information, contact us on <a href="https://www.facebook.com/MedRevue">Facebook</a> or email ticketing@medrevue.org.</li>
               </ul>
             </Grid.Column>
           </Grid>

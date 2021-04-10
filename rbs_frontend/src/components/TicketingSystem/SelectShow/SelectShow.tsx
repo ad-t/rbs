@@ -39,15 +39,19 @@ export default class SelectShow extends React.Component<Props, State> {
 
     showNights.forEach((e: ShowNight) => {
       console.log(e);
+      const ratio = e.reservedSeats / e.totalSeats;
+      if (moment(e.time).valueOf() + 60 * 60 * 1000 < Date.now()) return;
       btnElms.push(
         <Button
           key={e.id}
           size='large'
           fluid
-          primary
+          color={ratio < 0.7 ? 'blue' : ratio < 0.9 ? 'yellow' : 'red'}
+          style={{margin: "1em 0"}}
           onClick={() => this.props.updateShow(e.id, moment(e.time).format('DD MMMM YYYY'))}
+          disabled={e.reservedSeats >= e.totalSeats && !window.location.pathname.includes('foh')}
         >
-          {moment(e.time).format('h:mma - ddd DD MMMM YYYY')}
+          {moment(e.time).format('h:mma - ddd DD MMMM YYYY')}{e.reservedSeats >= e.totalSeats && !window.location.pathname.includes('foh') ? ': SOLD OUT' : ''}
         </Button>
       )
     });

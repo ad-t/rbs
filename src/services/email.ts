@@ -29,7 +29,7 @@ async function getTemplate(name: string) {
   return templateCache[name];
 }
 
-export async function sendEmail(templateName: string, details: IDetails, data: object) {
+export async function sendEmail(templateName: string, details: IDetails, data: object, attachments?: any[]) {
   // Don't attempt to send email if not configured.
   if (!process.env.MAIL_HOST) {
     return;
@@ -51,7 +51,8 @@ export async function sendEmail(templateName: string, details: IDetails, data: o
     to: details.to,
     bcc: details.bcc || undefined,
     subject: details.subject,
-    html: template(data)
+    html: template(data),
+    attachments
   };
 
   transport.sendMail(message);

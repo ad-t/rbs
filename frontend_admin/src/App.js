@@ -4,6 +4,8 @@ import Welcome from './Welcome';
 import Bookings from './Bookings';
 import FindBooking from './FindBooking';
 import ManualBooking from './ManualBooking';
+import OverridePayment from './OverridePayment';
+import ReallocateSeat from './ReallocateSeat';
 import { Route, Redirect, Switch } from "react-router-dom";
 import { AdminRoute } from './AdminRoute';
 
@@ -30,6 +32,8 @@ class App extends Component {
         <Route path="/manual-booking">
           <ManualBooking />
         </Route>
+        <Route path="/override-payment/:orderId" component={OverridePayment} />
+        <Route path="/reallocate-seat/:ticketId" component={ReallocateSeat} />
         <Route path="/" exact>
           <Redirect to="/welcome" />
         </Route>

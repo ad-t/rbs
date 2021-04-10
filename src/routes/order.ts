@@ -12,6 +12,7 @@ import { Payment } from "../entity/payment";
 import Logger from "../logging";
 import { IItemDetail, orderCreateRequestBody, paypalClient, paypalFee } from "../services/paypal";
 import { orderCreateRequestBody as squareOrderCreateRequestBody, squareClient, squareFee } from "../services/square";
+import generatePdf from "../services/ticket-pdf";
 
 interface ITicketDetails {
   id: string;
@@ -112,7 +113,7 @@ export async function SetupSquare(req: Request, res: Response) {
     const conn = getConnection();
     const order: Order = await conn.getRepository(Order).findOne(
       {id: req.params.id},
-      {relations: ["show", "show.production", "payment", "tickets", "tickets.ticketType"]}
+      {relations: ["show", "show.production", "payment", "tickets", "tickets.ticketType", "voucher"]}
     );
     if (!order) {
       res.status(404).json({error: `No order found with id ${req.params.id}`});
@@ -129,15 +130,17 @@ export async function SetupSquare(req: Request, res: Response) {
 
     // If paypal has already been set up for this order,
     // return existing paypal id
+    /*
     if (order.payment && order.payment.method === PaymentMethod.SQUARE) {
       res.json({paypalOrderID: order.payment.transactionID});
       return;
     }
+    */
     const show = order.show;
     const prod = show.production;
 
     const subtotal = AUD(order.subtotalPrice);
-    const fee = squareFee(subtotal);
+    const fee = !!order.voucher?.waiveHandlingFee ? 0 : squareFee(subtotal);
     const totalPrice = subtotal.add(fee);
     console.log(subtotal, fee, totalPrice);
 
@@ -157,7 +160,8 @@ export async function SetupSquare(req: Request, res: Response) {
     // https://github.com/square/square-nodejs-sdk/blob/master/doc/api/checkout.md
     const details: CreateOrderRequest = squareOrderCreateRequestBody(
       order.id, prod.title, prod.year.toString(), prod.subtitle, show.time, subtotal,
-      itemDetails.values());
+      itemDetails.values(),
+      !!order.voucher?.waiveHandlingFee);
     Logger.Info(JSON.stringify(details));
 
     // TODO: review what would be the best idempotency key
@@ -288,6 +292,34 @@ export async function SetupPaypal(req: Request, res: Response) {
   }
 }
 
+function emailPaymentConfirmation(order: Order) {
+  const show = order.show;
+  const production = show.production;
+
+  sendEmail("order_complete", {
+    from: {
+      name: production.title,
+      address: production.email,
+    },
+    to: {
+      name: order.name,
+      address: order.email
+    },
+    bcc: production.email,
+    subject: `${production.title} ${production.year} - Payment Confirmation`
+  }, {
+    order,
+    show,
+    production,
+    misc: {
+      shortId: order.id.slice(0, 6).toUpperCase(),
+      price: `$${(order.payment.totalPrice / 100).toFixed(2)}`,
+      time: show.time.toLocaleString('en-AU', { timeZone: 'Australia/Sydney' }),
+      voucherCode: order.voucher?.code
+    }
+  });
+}
+
 export async function PaypalCaptureOrder(req: Request, res: Response) {
   try {
     const conn = getConnection();
@@ -323,30 +355,7 @@ export async function PaypalCaptureOrder(req: Request, res: Response) {
     order.paidAt = new Date();
     await repo.save(order);
 
-    const show = order.show;
-    const production = show.production;
-
-    sendEmail("order_complete", {
-      from: {
-        name: production.title,
-        address: production.email,
-      },
-      to: {
-        name: order.name,
-        address: order.email
-      },
-      bcc: production.email,
-      subject: `${production.title} ${production.year} - Payment Confirmation`
-    }, {
-      order,
-      show,
-      production,
-      misc: {
-        shortId: order.id.slice(0, 6).toUpperCase(),
-        price: `$${(order.payment.totalPrice / 100).toFixed(2)}`,
-        time: show.time.toLocaleString('en-AU', { timeZone: 'Australia/Sydney' })
-      }
-    });
+    emailPaymentConfirmation(order);
 
     // TODO send email
     res.json({success: true});
@@ -357,13 +366,15 @@ export async function PaypalCaptureOrder(req: Request, res: Response) {
   }
 }
 
+
+
 export async function SquareVerifyPayment(req: Request, res: Response) {
   try {
     const conn = getConnection();
     const repo = conn.getRepository(Order);
     // get order and paypalorder
     const order: Order = await repo.findOne(
-      req.params.id, {relations: ["payment", "show", "show.production"]}
+      req.params.id, {relations: ["payment", "show", "show.production", "voucher", "tickets", "tickets.ticketType", "tickets.seat"]}
     );
     if (!order) {
       res.status(404).json({error: "order not found"});
@@ -424,10 +435,21 @@ export async function SquareVerifyPayment(req: Request, res: Response) {
     await repo.save(order);
 
     // Send email
-    const show = order.show;
-    const production = show.production;
+    emailPaymentConfirmation(order);
 
-    sendEmail("order_complete", {
+    // Email tickets
+    const attachments = [];
+
+    for (const ticket of order.tickets) {
+      attachments.push({
+        filename: `${ticket.id.slice(0, 8).toUpperCase()}-${ticket.seat.seatNum}.pdf`,
+        content: await generatePdf(order, ticket)
+      });
+    }
+
+    const production = order.show.production;
+
+    sendEmail("entry_passes", {
       from: {
         name: production.title,
         address: production.email,
@@ -437,17 +459,10 @@ export async function SquareVerifyPayment(req: Request, res: Response) {
         address: order.email
       },
       bcc: production.email,
-      subject: `${production.title} ${production.year} - Payment Confirmation`
+      subject: `${production.title} ${production.year} - Entry Passes`
     }, {
-      order,
-      show,
-      production,
-      misc: {
-        shortId: order.id.slice(0, 6).toUpperCase(),
-        price: `$${(order.payment.totalPrice / 100).toFixed(2)}`,
-        time: show.time.toLocaleString('en-AU', { timeZone: 'Australia/Sydney' })
-      }
-    });
+      order
+    }, attachments);
 
     res.json({success: true});
 
@@ -459,6 +474,35 @@ export async function SquareVerifyPayment(req: Request, res: Response) {
     }
 
     Logger.Error(err.stack);
+    res.status(500).json({error: "Internal server error"});
+  }
+}
+
+export async function sendPaymentConfirmation(req: Request, res: Response) {
+  try {
+    const conn = getConnection();
+    const repo = conn.getRepository(Order);
+    // get order and paypalorder
+    const order: Order = await repo.findOne(
+      req.params.id, {relations: ["payment", "show", "show.production"]}
+    );
+
+    if (!order) {
+      res.status(404).json({error: "order not found"});
+      return;
+    }
+
+    if (!order.paid) {
+      res.status(409).json({error: "order not paid yet"});
+      return;
+    }
+
+    emailPaymentConfirmation(order);
+    res.json({success:true});
+  } catch (e) {
+    if (e && e.stack) {
+      Logger.Error(e.stack);
+    }
     res.status(500).json({error: "Internal server error"});
   }
 }

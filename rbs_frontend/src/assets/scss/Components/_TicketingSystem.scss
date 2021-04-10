@@ -31,15 +31,8 @@
 }
 
 .btn-controls {
-  bottom: 0.5em;
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width: 100%;
-  padding: 1em;
-
-  .ui.primary.button { margin: 0; }
+  margin: 1em;
+  padding-bottom: 2em;
 }
 
 .tickets-list { padding: 0 1em; }

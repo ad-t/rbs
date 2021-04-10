@@ -8,18 +8,20 @@ import TicketNoControl from '../TicketNoControl';
 
 // Import our interface
 import { ITicket, ITicketDetails } from '../../../types/tickets';
+import { IDiscount } from "../../../types/discount";
 
 interface Prop {
   // TODO: make this into a proper React type
   tickets: ITicket[];
   ticketDetails: ITicketDetails[];
+  discount: IDiscount | null,
   showStr: string;
   details: any;
 }
 
 export default class ConfirmOrder extends React.Component<Prop, {}> {
   render() {
-    const { details, tickets, ticketDetails } = this.props;
+    const { details, tickets, ticketDetails, discount } = this.props;
 
     console.log(details);
 
@@ -78,6 +80,9 @@ export default class ConfirmOrder extends React.Component<Prop, {}> {
             <p>A copy of this booking confirmation has been sent to <strong>{details.email}</strong>.</p>
             <p>Venue: UNSW Science Theatre</p>
             <p>Time: {this.props.showStr}, doors open 7pm</p>
+            {!!discount ?
+              <p>Voucher code: {discount.code}</p>
+            : null}
             <p>No GST applies for this purchase.</p>
           </div>
         </div>

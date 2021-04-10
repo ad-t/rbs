@@ -79,10 +79,11 @@ export async function ReserveSeats(req: Request, res: Response): Promise<void> {
     let name: string;
     let phone: string;
     let email: string;
+    let voucherCode: string;
     let seats: any[];
     let totalSeats = 0;
     try {
-      ({name, phone, email, seats} = req.body);
+      ({name, phone, email, voucherCode, seats} = req.body);
       validateName(name);
       validatePhone(phone);
       validateEmail(email);
@@ -144,6 +145,7 @@ export async function ReserveSeats(req: Request, res: Response): Promise<void> {
       order.show = show;
       order.numSeats = totalSeats;
       order.subtotalPrice = subtotal;
+      order.voucherCode = voucherCode;
       order.tickets = [];
       // NOTE: if we ever split up seat reserving and detail collection,
       // make sure to change this to false.

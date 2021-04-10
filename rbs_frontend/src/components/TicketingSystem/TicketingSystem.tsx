@@ -10,6 +10,7 @@ import SelectSeats from './SelectSeats';
 import Invoice from './Invoice';
 import ConfirmOrder from './ConfirmOrder';
 import { ITicket, ITicketDetails } from '../../types/tickets';
+import { IDiscount } from '../../types/discount';
 
 interface Props {};
 interface State {
@@ -18,6 +19,7 @@ interface State {
   showStr: string;
   tickets: ITicket[];
   ticketDetails: ITicketDetails[];
+  discount: IDiscount | null;
   details: any;
 };
 
@@ -36,6 +38,7 @@ export default class TicketingSystem extends React.Component<Props, State> {
     showStr: '',
     tickets: [] as ITicket[],
     ticketDetails: [] as ITicketDetails[],
+    discount: null,
     details: null
   };
 
@@ -47,7 +50,7 @@ export default class TicketingSystem extends React.Component<Props, State> {
     // If selected show is different, reset ticket quantities and details.
     // This is because e.g. ticket types and available seats might be different.
     if (selectedShow !== this.state.selectedShow) {
-      this.setState({ tickets: [], ticketDetails: [] });
+      this.setState({ tickets: [], ticketDetails: [], discount: null });
     }
     this.setState({ currentId: BOOK_TICKETS, selectedShow, showStr });
   }
@@ -62,6 +65,10 @@ export default class TicketingSystem extends React.Component<Props, State> {
 
   updateTicketDetails = (ticketDetails: ITicketDetails[]) => {
     this.setState({ ticketDetails });
+  }
+
+  updateDiscount = (discount: IDiscount | null) => {
+    this.setState({ discount });
   }
 
   goToInvoice = () => {
@@ -93,20 +100,25 @@ export default class TicketingSystem extends React.Component<Props, State> {
         displayElm = <SelectShow updateShow={this.updateShow} />;
         break;
       case BOOK_TICKETS:
-        displayElm = <BookTickets selectedShow={selectedShow} tickets={this.state.tickets} ticketDetails={this.state.ticketDetails}
-          updateTickets={this.updateTickets} updateTicketDetails={this.updateTicketDetails} next={this.goToSelectSeats} />;
+        displayElm = <BookTickets selectedShow={selectedShow} tickets={this.state.tickets} ticketDetails={this.state.ticketDetails} discount={this.state.discount}
+          updateTickets={this.updateTickets} updateTicketDetails={this.updateTicketDetails}
+          updateDiscount={this.updateDiscount}
+          next={this.goToSelectSeats} />;
         break;
       case SELECT_SEATS:
         displayElm = <SelectSeats tickets={this.state.tickets} ticketDetails={this.state.ticketDetails}
+          discount={this.state.discount}
           updateTickets={this.updateTickets} updateTicketDetails={this.updateTicketDetails}
           selectedShow={selectedShow} next={this.goToInvoice} />;
         break;
       case INVOICE:
-        displayElm = <Invoice tickets={this.state.tickets} ticketDetails={this.state.ticketDetails}
+        displayElm = <Invoice tickets={this.state.tickets} ticketDetails={this.state.ticketDetails} discount={this.state.discount}
           updateTicketDetails={this.updateTicketDetails} selectedShow={selectedShow} updatePayment={this.updatePayment}/>;
         break;
       case CONFIRM:
-        displayElm = <ConfirmOrder showStr={this.state.showStr} tickets={this.state.tickets} ticketDetails={this.state.ticketDetails} details={this.state.details}/>;
+        displayElm = <ConfirmOrder showStr={this.state.showStr} tickets={this.state.tickets}
+          ticketDetails={this.state.ticketDetails} details={this.state.details}
+          discount={this.state.discount} />;
         break;
     }
 

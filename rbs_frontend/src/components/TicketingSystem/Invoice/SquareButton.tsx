@@ -25,7 +25,7 @@ export default class SquareButton extends React.Component<Prop, State> {
 
     return (
       <div>
-      <Button primary size='big' style={{height: "45px", padding: "0 0 2px 0"}} fluid onClick={async () => {(await setupSquare()) && this.setOpen(true)}}>
+      <Button primary size='big' style={{height: "45px", padding: "0 12px 2px 12px"}} fluid onClick={async () => {(await setupSquare()) && this.setOpen(true)}}>
         Pay with Square <i className="icon"><Image spaced src='/square-logo.svg'/></i>
       </Button>
       <Transition

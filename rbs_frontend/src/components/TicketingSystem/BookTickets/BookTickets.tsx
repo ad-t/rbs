@@ -2,7 +2,7 @@
  * This file will handle the entire landing page.
  */
 import React from "react";
-import { Button, Divider, List, Message } from "semantic-ui-react";
+import { Button, Divider, List, Message, Form, InputOnChangeData } from "semantic-ui-react";
 import currency from "currency.js";
 
 // Import our custom element
@@ -10,20 +10,29 @@ import Ticket from "../Ticket";
 
 // Import our interface
 import { ITicket, ITicketDetails } from "../../../types/tickets";
+import { IDiscount } from "../../../types/discount";
 
 interface Prop {
   selectedShow: number;
   tickets: ITicket[];
   ticketDetails: ITicketDetails[];
+  discount: IDiscount | null,
   updateTickets(tickets: ITicket[]): void;
   updateTicketDetails(tickets: ITicketDetails[]): void;
+  updateDiscount(discount: IDiscount | null): void;
   next(): void;
 }
 
-interface State {};
+interface State {
+  voucherCode: string;
+  discountEntered: boolean;
+};
 
 export default class BookTickets extends React.Component<Prop, State> {
-  state = {};
+  state = {
+    voucherCode: "",
+    discountEntered: false
+  };
 
   componentDidMount = () => {
     if (this.props.tickets.length === 0) {
@@ -96,8 +105,31 @@ export default class BookTickets extends React.Component<Prop, State> {
     this.props.next();
   }
 
+  handleVoucherChange = (e: React.ChangeEvent<HTMLInputElement>, data: InputOnChangeData) => {
+    this.setState({voucherCode: data.value});
+  }
+
+  validateVoucherCode = async () => {
+    this.setState({ discountEntered: true });
+
+    if (!/^[A-Za-z0-9]{4,}$/.test(this.state.voucherCode)) {
+      this.props.updateDiscount(null);
+      return;
+    }
+
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/validate-discount?code=${this.state.voucherCode}&showId=${this.props.selectedShow}`);
+
+    if (res.ok) {
+      const data = await res.json();
+      this.props.updateDiscount(data.discount);
+    } else {
+      this.props.updateDiscount(null);
+    }
+  }
+
   render() {
-    const { tickets } = this.props;
+    const { tickets, discount} = this.props;
+    const { discountEntered } = this.state;
     const ticketElms: Array<JSX.Element> = [];
     let totalPrice = currency(0);
     let totalQuantity = 0;
@@ -124,8 +156,9 @@ export default class BookTickets extends React.Component<Prop, State> {
       totalPrice = totalPrice.add(currency(ticket.price).multiply(ticket.quantity));
     }
 
+    const minGroupSize = this.props.discount?.minGroupSize || 4;
     const groupTicketsSelected = tickets.some(a => /group/i.test(a.description) && a.quantity > 0);
-    const notEnoughGroupTickets = totalQuantity < 4 && groupTicketsSelected;
+    const notEnoughGroupTickets = totalQuantity < minGroupSize && groupTicketsSelected;
     const doNotProceed = totalPrice.value <= 0 || notEnoughGroupTickets;
 
     return (
@@ -140,14 +173,28 @@ export default class BookTickets extends React.Component<Prop, State> {
         </div>
         <Divider style={{margin: "0em 1em"}}/>
         <div className="ticket-price">Subtotal: {totalPrice.format()}</div>
+        <div className="ticket-price">
+          <Form onSubmit={this.validateVoucherCode} error={discountEntered && !discount} success={!!discount}>
+          <Form.Input
+            name="voucherCode"
+            value={this.state.voucherCode}
+            onChange={this.handleVoucherChange}
+          />
+          <Form.Button>Validate Code</Form.Button>
+          <Message error color="red">Discount code is invalid or not for this show night</Message>
+          <Message success><strong>{discount?.name}:</strong> {discount?.message}</Message>
+          </Form>
+        </div>
         {notEnoughGroupTickets ? <Message color="red">Total minimum of 4 tickets required for group prices.</Message> : null}
         <div className="btn-controls">
           <Button
             primary
+            fluid
             onClick={this.reserveTickets}
             disabled={doNotProceed}
           >RESERVE TICKETS</Button>
         </div>
+
       </div>
     );
   }

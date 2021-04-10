@@ -35,7 +35,7 @@ export async function GetShows(req: Request, res: Response): Promise<void> {
     }
 
     const result = await conn.getRepository(Show).find({
-      production: { id }
+      production: { id },
     });
     res.send(result);
   } catch (error) {

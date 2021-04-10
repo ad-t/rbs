@@ -42,7 +42,8 @@ export function orderCreateRequestBody(
   subtitle: string,
   showTime: Date,
   subtotal: currency,
-  itemDetails: Iterable<IItemDetail>
+  itemDetails: Iterable<IItemDetail>,
+  waiveSurcharge: boolean
 ): CreateOrderRequest {
   const fee: currency = squareFee(subtotal);
 
@@ -78,7 +79,7 @@ export function orderCreateRequestBody(
     locationId: process.env.SQUARE_LOC_ID,
     referenceId: orderID,
     lineItems: items,
-    serviceCharges: [ surcharge ],
+    serviceCharges: waiveSurcharge ? undefined : [ surcharge ],
   };
 
   return { order };
