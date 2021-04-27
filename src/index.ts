@@ -1,8 +1,12 @@
-import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
+import dayjs from "dayjs";
+import utc from "dayjs/plugin/utc";
+import timezone from "dayjs/plugin/timezone";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
+import bodyParser = require("body-parser");
+import cron = require("node-cron");
 
 import "reflect-metadata";
 import {
@@ -10,26 +14,32 @@ import {
   createConnection,
   getConnection,
   getRepository,
+  LessThan
 } from "typeorm";
 
 import { Order } from "./entity/order";
 import { Production } from "./entity/production";
 import { Show } from "./entity/show";
-
-import * as OrderRoutes from "./routes/order";
-import * as ProductionRoutes from "./routes/production";
-import * as ShowRoutes from "./routes/show";
+import { Discount } from "./entity/discount";
 
 // libraries
-import bodyParser = require("body-parser");
 import { seedDB } from "./dev";
 import { Payment } from "./entity/payment";
 import { Ticket } from "./entity/ticket";
 import { TicketType } from "./entity/ticket_type";
+import { VenueSeat } from "./entity/venue_seat";
 import Logger from "./logging";
+
+import getMainRouter from "./main";
+import getAdminRouter from "./admin";
 
 // initialise config
 dotenv.config();
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
+// TODO: change this if we ever change
+dayjs.tz.setDefault("Australia/Sydney")
 
 const app = express();
 const API_PORT = process.env.SERVER_PORT;
@@ -55,7 +65,9 @@ const activeEntities = [
   Order,
   Payment,
   TicketType,
-  Ticket
+  Ticket,
+  VenueSeat,
+  Discount
 ];
 
 const options: ConnectionOptions = {
@@ -80,7 +92,7 @@ function genericLoggingMiddleware(req: express.Request, res: express.Response, n
   function afterResponse() {
     res.removeListener("finish", afterResponse);
     res.removeListener("close", afterResponse);
-    Logger.Info(`${res.statusCode} - ${req.path}`);
+    Logger.Info(`${req.method} ${res.statusCode} - ${req.path}`);
   }
 
   res.on("finish", afterResponse);
@@ -93,19 +105,47 @@ async function bootstrap() {
   Logger.Info("Creating database connection...");
   await createConnection(options);
   if (process.env.NODE_ENV === "development") {
-    Logger.Info("Since we're in the development environment, purge the database tables");
-    activeEntities.forEach(async (entity) => await getConnection().getRepository(entity).delete({}));
-    Logger.Info("Seeding database...");
-    await seedDB();
+    Logger.Info("Development environment: to clear the tables, go to /reset");
+  }
+  if (process.env.NODE_ENV === "test") {
+    Logger.Info("Test environment: will purge database");
+    resetDB();
   }
 }
 
-if (process.env.NODE_ENV === "development") {
-  Logger.Init();
-  app.use(cors());
-  app.use(bodyParser.json());
+async function resetDB() {
+  Logger.Info("Purging the database tables...");
+  // Can't use .clear() as TRUNCATE doesn't work with foreign key constraints.
+  /*await Promise.all(
+    activeEntities.map(async (entity) => await getRepository(entity).delete({}))
+  );*/
+  for (const entity of activeEntities) {
+    await getRepository(entity).delete({});
+  }
+  Logger.Info("Seeding database...");
+  await seedDB();
+}
+
+Logger.Init();
+app.use(bodyParser.json());
+
+
+if (process.env.NODE_ENV === "development" || process.env.NODE_ENV === "test") {
   Logger.Info(`API documentation available at ${API_HOST}:${API_PORT}/docs`);
   app.use("/docs", swaggerUi.serve, swaggerUi.setup(specs));
+
+  app.get("/reset", async function (_, res) {
+    try {
+      await resetDB();
+      res.json({success: true});
+    } catch (err) {
+      Logger.Error(err.stack);
+      res.status(500).json({error: "Internal server error"});
+    }
+  });
+
+  let now = dayjs().tz();
+  console.log(now.format());
 }
 
 app.listen(API_PORT, async () => {
@@ -113,215 +153,30 @@ app.listen(API_PORT, async () => {
   Logger.Info(`Server started at ${API_HOST}:${API_PORT}`);
 });
 
-/**
- * @swagger
- * definitions:
- *   Production:
- *     type: object
- *     properties:
- *       id:
- *         type: integer
- *       title:
- *         type: string
- *       subtitle:
- *         type: string
- *       year:
- *         type: string
- *       description:
- *         type: string
- *       shows:
- *         type: array
- *         $ref: "#/definitions/Show"
- *   Show:
- *     type: object
- *     properties:
- *       id:
- *         type: integer
- *       location:
- *         type: string
- *       time:
- *         type: string
- *       production:
- *         type: object
- *         $ref: "#/definitions/Production"
- *       seats:
- *         type: integer
- */
+if (process.env.NODE_ENV !== "test") {
+  // Remove unpaid orders if they've been left there.
+  /*
+  cron.schedule('* * * * *', async () => {
+    try {
+      const repo = getRepository(Order);
+      Logger.Info("Purging unpaid orders...");
+      const toDelete = await repo.find({
+        // FIXME: apparently this doesn't work on sqlite but does on MySQL???
+        // https://github.com/typeorm/typeorm/issues/2286
+        updatedAt: LessThan(new Date(Date.now() - 20 * 60 * 1000)),
+        paid: false
+      });
 
-/**
- * @swagger
- * /productions:
- *   get:
- *     description: List all the active productions
- *     responses:
- *       200:
- *         description: Information about the production
- *         schema:
- *           type: array
- *           items:
- *             $ref: '#/definitions/Production'
- *       400:
- *         description: Bad request
- */
-app.get("/productions/", ProductionRoutes.GetActive);
+      await repo.remove(toDelete);
+      Logger.Info(`purge: ${toDelete.length} unpaid orders removed.`);
+    } catch (e) {
+      console.error(e);
+    }
+  });
+  */
+}
 
-/**
- * @swagger
- * /productions/{id}/shows:
- *   get:
- *     description: List all the shows for an active production
- *     parameters:
- *       - in: path
- *         name: id
- *         type: integer
- *         required: true
- *         description: show id
- *     responses:
- *       200:
- *         description: Information about the showings of a specific production
- *         schema:
- *           type: object
- *           items:
- *             $ref: '#/definitions/Show'
- *       400:
- *         description: Bad request
- */
-app.get("/productions/:id/shows", ProductionRoutes.GetShows);
+app.use('/admin', getAdminRouter());
+app.use('/', getMainRouter());
 
-/**
- * @swagger
- * /shows/{id}:
- *   get:
- *     summary: Get show info and ticket types
- *     parameters:
- *       - in: path
- *         name: id
- *         type: integer
- *         required: true
- *         description: show id
- *     responses:
- *       200:
- *         description: Information about the show and ticket types
- *       404:
- *         description: Show not found
- */
-app.get("/shows/:id", ShowRoutes.GetShow);
 
-/**
- * @swagger
- * /shows/{id}/seats:
- *   post:
- *     summary: Reserve seats for a specific show
- *     consumes:
- *       - application/json
- *     parameters:
- *       - in: path
- *         name: id
- *         type: integer
- *         required: true
- *         description: show id
- *         example: 1
- *       - in: body
- *         name: reservation
- *         schema:
- *           type: object
- *           required:
- *             - name
- *             - email
- *             - phone
- *             - seats
- *           properties:
- *             name:
- *               type: string
- *               example: John Smith
- *             email:
- *               type: string
- *               example: john@example.com
- *             phone:
- *               type: string
- *               example: 0412345678
- *             seats:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   numSeats:
- *                     type: integer
- *                     example: 1
- *                   ticketType:
- *                     type: integer
- *                     example: 1
- *     responses:
- *       201:
- *         description: Seats have been reserved successfully
- *       400:
- *         description: Bad request
- *       404:
- *         description: No show with given ID
- *       409:
- *         description: Not enough available seats to fufil request
- */
-app.post("/shows/:id/seats", ShowRoutes.ReserveSeats);
-
-/**
- * @swagger
- * /orders/{id}:
- *   get:
- *     summary: Get summary of a reserved order.
- *     consumes:
- *       - application/json
- *     parameters:
- *       - in: path
- *         name: id
- *         type: string
- *         required: true
- *         description: order uuid
- *     responses:
- *       200:
- *         description: Retrieved order
- *       404:
- *         description: Order with ID not found
- */
-app.get("/orders/:id", OrderRoutes.GetOrder);
-
-/**
- * @swagger
- * /orders/{id}/paypal-setup:
- *   post:
- *     summary: Setup order with paypal
- *     consumes:
- *       - application/json
- *     parameters:
- *       - in: path
- *         name: id
- *         type: string
- *         required: true
- *         description: order uuid
- *     responses:
- *       200:
- *         description: Order has been setup
- *       404:
- *         description: Order with ID not found
- */
-app.post("/orders/:id/paypal-setup", OrderRoutes.SetupPaypal);
-
-/**
- * @swagger
- * /orders/{id}/paypal-capture:
- *   post:
- *     summary: Capture a paypal order after user has approved
- *     consumes:
- *       - application/json
- *     parameters:
- *       - in: path
- *         name: id
- *         type: string
- *         required: true
- *         description: order uuid (not paypal order id)
- *     responses:
- *       200:
- *         description: order has been captured
- *       404:
- *         description: Order with ID not found
- */
-app.post("/orders/:id/paypal-capture", OrderRoutes.PaypalCaptureOrder);

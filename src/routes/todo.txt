@@ -1,0 +1,30 @@
+Ready:
+* Basic booking
+* Different ticket types (group, arc members, etc.)
+* Payment gateways: Square, PayPal
+* Admin panel
+ - Look up by email, name, mobile phone, order/ticket ID
+ - Overview of total ticket sales/night
+ - Manually book people in with bank transfer
+* Ticket verification
+* Seatmap
+* Email confirmation (of order)
+* Forward email confirmations to exec/ticketing
+* QR code tickets and scanning
+
+Partially implemented:
+* Discount codes
+
+TODO for CSE:
+* Book multiple nights in one transaction
+
+TODO for Law:
+* Discount codes (more advanced)
+* 'Manage my booking'
+
+TODO:
+* suggested by Alicia after Med: view people not checked in
+* Better check in/lookup interface
+* Improve login authentication system
+
+- CSE: wants to see the full code
