@@ -9,8 +9,20 @@ NODE_ENV
 MYSQL_USER
 MYSQL_PASSWD
 MYSQL_DATABASE
+```
+
+For PayPal:
+
+```
 PAYPAL_CLIENT_ID
 PAYPAL_CLIENT_SECRET
+```
+
+For Square:
+
+```
+SQUARE_ACCESS_TOKEN
+SQUARE_LOC_ID
 ```
 
 Example for development:
@@ -20,7 +32,7 @@ NODE_ENV=development
 MYSQL_USER=test
 MYSQL_PASSWD=test
 MYSQL_DATABASE=rbs_test
-(insert paypal details as necessary)
+(insert PayPal/Square details as necessary)
 ```
 
 ## To set up local instance

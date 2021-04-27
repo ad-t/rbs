@@ -2,7 +2,7 @@
    "type": "sqlite",
    "database": "development",
    "synchronize": true,
-   "logging": false,
+   "logging": ["query", "error"],
    "entities": [
       "src/entity/**/*.ts"
    ],

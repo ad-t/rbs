@@ -1,5 +1,6 @@
 .landing-page {
-  background-image: url('../../img/mr20-bg2.jpg');
+  background: rgba(0, 0, 0, 0.6) url('../../img/mr20-bg2.jpg');
+  background-blend-mode: darken;
   background-position: center;
   background-size: cover;
 

@@ -1,7 +1,11 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column, CreateDateColumn, UpdateDateColumn, Entity, JoinColumn,
+  ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, LessThan
+} from "typeorm";
 import { Payment } from "./payment";
 import { Show } from "./show";
 import { Ticket } from "./ticket";
+import { Discount } from "./discount";
 
 @Entity()
 export class Order {
@@ -10,6 +14,9 @@ export class Order {
 
   @CreateDateColumn()
   public createdAt: Date;
+
+  @UpdateDateColumn()
+  public updatedAt: Date;
 
   @Column({length: 50})
   public name: string;
@@ -23,10 +30,13 @@ export class Order {
   @ManyToOne((type) => Show, (show) => show.orders, {onDelete: "SET NULL"})
   public show: Show;
 
+  @Column({default: false})
+  public detailsCompleted: boolean;
+
   @Column()
   public numSeats: number;
 
-  @Column({type: "decimal", precision: 13, scale: 2})
+  @Column()
   public subtotalPrice: number;
 
   @Column({default: false})
@@ -34,6 +44,13 @@ export class Order {
 
   @Column({nullable: true})
   public paidAt: Date;
+
+  @Column({length: 20, nullable: true})
+  public voucherCode: string;
+
+  @ManyToOne(type => Discount, { nullable: true })
+  @JoinColumn({ name: "voucherCode" })
+  public voucher: Discount;
 
   @OneToOne((type) => Payment, (payment) => payment.order, {cascade: true})
   public payment: Payment;

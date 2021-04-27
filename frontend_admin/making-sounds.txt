@@ -1,0 +1,2 @@
+Square wave, no alias
+High pass filter 2640 hz, 12 dB

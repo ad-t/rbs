@@ -8,21 +8,17 @@ interface Props {
   index: number;
   cost: number;
   description: string;
+  quantity: number;
   minPurchase: number;
+  totalTickets: number;
   updateAmount(index: number, amount: number): void;
 };
 
-interface State {
-  ticketSales: number
-}
-
-export default class Ticket extends React.Component<Props, State> {
-  state = { ticketSales: 0 };
-
+export default class Ticket extends React.Component<Props, {}> {
   modifyTicket = (value: number) => {
     // Modify the ticket sales by a value
     const { index, minPurchase } = this.props;
-    let { ticketSales } = this.state;
+    let ticketSales = this.props.quantity;
 
     ticketSales += value;
     if (ticketSales < minPurchase) {
@@ -33,12 +29,10 @@ export default class Ticket extends React.Component<Props, State> {
     }
 
     this.props.updateAmount(index, ticketSales);
-    this.setState({ ticketSales });
   }
 
   render() {
-    const { cost, description } = this.props;
-    const { ticketSales } = this.state;
+    const { cost, description, quantity: ticketSales, totalTickets } = this.props;
 
     return (
       <div className="ticket-item">
@@ -59,6 +53,7 @@ export default class Ticket extends React.Component<Props, State> {
           <Button
             className="increment"
             circular
+            disabled={totalTickets >= 10}
             onClick={() => this.modifyTicket(1)}
             icon="plus"
             positive

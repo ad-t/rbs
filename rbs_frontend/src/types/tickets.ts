@@ -10,6 +10,14 @@ export interface ITicket {
   quantity: number
 };
 
+export interface ITicketDetails {
+  typeId: number;
+  name: string;
+  postcode: string;
+  phone: string;
+  seatNum: string;
+}
+
 // This is just to create a ticket manager context. For more information, consult the context file
 export interface ITicketManager {
   addTicket(ticket: ITicket): Promise<boolean>,
