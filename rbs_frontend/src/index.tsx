@@ -14,28 +14,32 @@ import LandingPage from './components/LandingPage';
 import TicketingSystem from './components/TicketingSystem';
 
 // Import assets (e.g. scss)
-import './assets/scss/main.scss';
 import * as serviceWorker from './serviceWorker';
 
 interface State {
   tickets: Array<ITicket>;
   buyingTicket: Boolean;
-};
+}
 
 class Index extends React.Component<{}, State> {
   state: State = {
     tickets: [],
-    buyingTicket: true
-  }
+    buyingTicket: true,
+  };
 
-  toggleTickets = () => this.setState({buyingTicket: !this.state.buyingTicket});
+  toggleTickets = () =>
+    this.setState({ buyingTicket: !this.state.buyingTicket });
 
   render() {
     const { buyingTicket } = this.state;
 
     return (
       <React.Fragment>
-        {buyingTicket ? <TicketingSystem /> : <LandingPage toggleTickets={this.toggleTickets} />}
+        {buyingTicket ? (
+          <TicketingSystem />
+        ) : (
+          <LandingPage toggleTickets={this.toggleTickets} />
+        )}
       </React.Fragment>
     );
   }

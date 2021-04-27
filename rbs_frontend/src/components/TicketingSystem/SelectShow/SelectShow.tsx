@@ -10,28 +10,29 @@ interface ShowNight {
   reservedSeats: number;
   time: string;
   totalSeats: number;
-};
+}
 
 interface Props {
   updateShow(selectedShow: number): void;
-};
+}
 interface State {
-  showNights: Array<ShowNight>
-};
+  showNights: Array<ShowNight>;
+}
 
-declare var REACT_APP_PROD_ID: number;
 export default class SelectShow extends React.Component<Props, State> {
   state = {
-    showNights: []
+    showNights: [],
   };
 
-  componentDidMount = async() => {
-    const res = await fetch(`${process.env.REACT_APP_API_URL}/productions/${process.env.REACT_APP_PROD_ID}/shows`);
+  componentDidMount = async () => {
+    const res = await fetch(
+      `${process.env.REACT_APP_API_URL}/productions/${process.env.REACT_APP_PROD_ID}/shows`
+    );
     if (res.status === 200) {
       const data = await res.json();
-      this.setState({showNights: data});
+      this.setState({ showNights: data });
     }
-  }
+  };
 
   render() {
     const { showNights } = this.state;
@@ -42,22 +43,20 @@ export default class SelectShow extends React.Component<Props, State> {
       btnElms.push(
         <Button
           key={e.id}
-          size='large'
+          size="large"
           fluid
           primary
           onClick={() => this.props.updateShow(e.id)}
         >
           {moment(e.time).format('h:mmA - Do MMMM YYYY')}
         </Button>
-      )
+      );
     });
 
     return (
       <React.Fragment>
-        <div className="btn-show-nights">
-          {btnElms}
-        </div>
+        <div className="btn-show-nights">{btnElms}</div>
       </React.Fragment>
     );
   }
-};
+}

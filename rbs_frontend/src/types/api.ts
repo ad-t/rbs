@@ -1,4 +1,4 @@
-import { AxiosInstance, AxiosPromise } from 'axios';
+import { AxiosInstance } from 'axios';
 
 export interface IProductionResponse {
   uid: string;
