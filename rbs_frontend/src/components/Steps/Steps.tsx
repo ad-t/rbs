@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { IoTicket } from 'react-icons/io5';
 import { FaCreditCard, FaFileInvoice } from 'react-icons/fa';
 
-import Item from './Steps.Item';
+import Item from './StepItem';
 
 const Wrapper = styled.div`
   display: flex;
