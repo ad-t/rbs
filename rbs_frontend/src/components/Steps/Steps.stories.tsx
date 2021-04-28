@@ -3,6 +3,7 @@ import { Story } from '@storybook/react';
 import { StepItemState } from 'src/shared/enums';
 import Steps from './Steps';
 import StepItem from './StepItem';
+import StepController from './Steps.controller';
 import { createSteps } from './create';
 
 export default {
@@ -26,18 +27,14 @@ export const Modifiable: Story = () => {
     <StepItem icon="2" name="Second" />,
   ]);
 
+  const controller = new StepController();
+
   const addProgress = () => {
-    stepsState.itemsProgress = [
-      ...stepsState.itemsProgress,
-      StepItemState.IN_PROGRESS,
-    ];
+    controller.advance(stepsState);
   };
 
   const removeProgress = () => {
-    if (stepsState.itemsProgress.length) {
-      stepsState.itemsProgress.pop();
-      stepsState.itemsProgress = [...stepsState.itemsProgress];
-    }
+    controller.retreat(stepsState);
   };
 
   return (
