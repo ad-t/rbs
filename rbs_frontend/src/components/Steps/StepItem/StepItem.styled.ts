@@ -1,14 +1,17 @@
 import styled from 'styled-components';
-
 import * as variables from 'src/shared/css.variables';
 
 export const Wrapper = styled.div`
   display: flex;
   align-items: center;
-  flex-grow: 1;
 
   font-family: Karla, sans-serif;
   padding: 0.5rem;
+
+  @media (min-width: ${variables.mediaSmall}) {
+    flex-grow: 1;
+    flex-basis: 0;
+  }
 `;
 
 const Icon = styled.div`
@@ -47,7 +50,24 @@ export const InProgressName = styled.div`
   margin-left: 0.5rem;
 `;
 
+export const CompletedName = styled.div`
+  color: ${variables.grey900};
+  overflow: hidden;
+  width: 0px;
+
+  @media (min-width: ${variables.mediaSmall}) {
+    margin-left: 0.5rem;
+    width: auto;
+  }
+`;
+
 export const Name = styled.div`
   color: ${variables.grey600};
-  margin-left: 0.5rem;
+  overflow: hidden;
+  width: 0px;
+
+  @media (min-width: ${variables.mediaSmall}) {
+    margin-left: 0.5rem;
+    width: auto;
+  }
 `;

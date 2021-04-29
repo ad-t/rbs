@@ -8,6 +8,7 @@ import {
   ErroredIcon,
   InProgressName,
   Name,
+  CompletedName,
 } from './StepItem.styled';
 
 export interface StepItemProps {
@@ -16,15 +17,16 @@ export interface StepItemProps {
   state?: StepItemState;
 }
 
-function getIconElement(state: StepItemState) {
+function getIconComponent(state: StepItemState) {
   if (state === StepItemState.ERROR) return ErroredIcon;
   if (state === StepItemState.COMPLETED) return CompletedIcon;
   if (state === StepItemState.IN_PROGRESS) return InProgressIcon;
   return NotStartedIcon;
 }
 
-function getTitleElement(state: StepItemState) {
+function getTitleComponent(state: StepItemState) {
   if (state === StepItemState.NOT_STARTED) return Name;
+  if (state === StepItemState.COMPLETED) return CompletedName;
   return InProgressName;
 }
 
@@ -33,8 +35,8 @@ function Item({
   name,
   state = StepItemState.NOT_STARTED,
 }: StepItemProps) {
-  const Icon = getIconElement(state);
-  const Title = getTitleElement(state);
+  const Icon = getIconComponent(state);
+  const Title = getTitleComponent(state);
 
   return (
     <Wrapper>

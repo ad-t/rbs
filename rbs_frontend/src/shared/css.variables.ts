@@ -50,3 +50,6 @@ export const boxShadowLg =
 export const boxShadowXL =
   '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);';
 export const boxShadow2XL = '0 25px 50px -12px rgba(0, 0, 0, 0.25)';
+
+export const mediaSmall = '768px';
+export const mediaMedium = '1024px';
