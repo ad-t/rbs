@@ -1,14 +1,11 @@
 import React from 'react';
-import { Story } from '@storybook/react';
-import Row, { RowProps } from './Row';
+import Row from './Row';
 import Seat from './Seat';
 
 export default {
-  title: 'Component/Row',
-  component: Row,
+  title: 'Component/Seating/Row',
+  components: Row,
 };
-
-// const Template: Story<RowProps> = (args) => <Row {...args} />;
 
 export const MultipleRows = () => (
   <>

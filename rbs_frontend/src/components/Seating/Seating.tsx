@@ -1,5 +1,12 @@
 import React from 'react';
+import styled from 'styled-components';
 
-export default function Seating() {
-  return <div />;
+const Wrapper = styled.div``;
+
+interface SeatingProps {
+  rows: JSX.Element[] | JSX.Element;
+}
+
+export default function Seating({ rows }: SeatingProps) {
+  return <Wrapper>{rows}</Wrapper>;
 }
