@@ -22,6 +22,7 @@ const WheelchairSeat = styled(BaseSeat)`
   background: white;
   border: 0.125rem solid ${variables.blue500};
   color: ${variables.blue500};
+  cursor: pointer;
 `;
 
 const FreeSeat = styled(BaseSeat)`

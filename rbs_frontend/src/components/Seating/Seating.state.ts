@@ -12,8 +12,12 @@ export interface RowInfo {
   column3: SeatInfo[];
 }
 
-export type SeatingPlan = RowInfo[];
-
 export default class SeatingState {
-  state = mobx.observable([] as SeatingPlan);
+  seatingArrangement: RowInfo[] = [];
+  selectedSeats = mobx.observable([] as string[]);
+  maximumSelected: number;
+
+  constructor(maximumSelected: number) {
+    this.maximumSelected = maximumSelected;
+  }
 }

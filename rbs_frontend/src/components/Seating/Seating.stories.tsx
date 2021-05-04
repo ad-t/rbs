@@ -7,7 +7,18 @@ export default {
 };
 
 export const SeatingArrangement: Story = () => {
-  const { SeatingElement } = createSeating();
+  const { SeatingElement } = createSeating(5);
 
   return <SeatingElement />;
+};
+
+const Template: Story<{ maximum: number }> = ({ maximum }) => {
+  const { SeatingElement } = createSeating(maximum);
+
+  return <SeatingElement />;
+};
+
+export const ModifiableMaximumTickets = Template.bind({});
+ModifiableMaximumTickets.args = {
+  maximum: 3,
 };

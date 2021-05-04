@@ -1,7 +1,8 @@
+import * as mobx from 'mobx';
 import { SeatState, SeatType } from 'src/shared/enums';
-import SeatingState, { SeatingPlan } from './Seating.state';
+import SeatingState, { RowInfo } from './Seating.state';
 
-const seatingPlan: SeatingPlan = [
+const seatingPlan: RowInfo[] = [
   // Row AA
   {
     column1: [
@@ -2014,5 +2015,7 @@ const seatingPlan: SeatingPlan = [
 ];
 
 export default function installSeatingInfo(seatingState: SeatingState) {
-  seatingState.state.replace(seatingPlan);
+  seatingPlan.forEach((row) => {
+    seatingState.seatingArrangement.push(mobx.observable(row));
+  });
 }

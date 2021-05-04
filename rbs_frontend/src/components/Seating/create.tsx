@@ -1,63 +1,78 @@
 import React from 'react';
+import * as mobx from 'mobx';
 import * as mobxReact from 'mobx-react-lite';
-import { SeatType } from 'src/shared/enums';
+import { SeatState, SeatType } from 'src/shared/enums';
+import { ToastError } from 'src/shared/errors';
 
-import SeatingState from './Seating.state';
+import SeatingState, { SeatInfo } from './Seating.state';
 import installSeatingInfo from './Seating.service';
 
 import Row from './Row';
 import Seat from './Seat';
 import Seating from './Seating';
 
-export function createSeating() {
-  const seatingState = new SeatingState();
+export function createSeating(maximumSelected: number) {
+  const seatingState = new SeatingState(maximumSelected);
 
   installSeatingInfo(seatingState);
+
+  const onClick = mobx.action((event: React.MouseEvent<HTMLButtonElement>) => {
+    const { id } = event.currentTarget;
+    if (seatingState.selectedSeats.find((selected) => selected === id)) {
+      seatingState.selectedSeats.remove(id);
+      return;
+    }
+
+    if (seatingState.selectedSeats.length === maximumSelected) {
+      throw new ToastError(
+        'You already have selected the maximum amount of tickets.'
+      );
+    }
+
+    seatingState.selectedSeats.push(id);
+  });
+
+  function seatFactory(
+    column: JSX.Element[],
+    seat: SeatInfo,
+    rowIndex: number,
+    columnIndex: number,
+    seatIndex: number
+  ) {
+    const id = `r${rowIndex}c${columnIndex}s${seatIndex}`;
+    const isSelected = !!seatingState.selectedSeats.find(
+      (selected) => selected === id
+    );
+
+    column.push(
+      <Seat
+        id={id}
+        state={isSelected ? SeatState.RESERVED : seat.seatState}
+        wheelChair={seat.seatType === SeatType.WHEELCHAIR}
+        onClick={seat.seatState !== SeatState.TAKEN ? onClick : undefined}
+      />
+    );
+  }
 
   const SeatingElement = mobxReact.observer(() => {
     const rows: JSX.Element[] = [];
 
-    function onClick(event: React.MouseEvent<HTMLButtonElement>) {
-      console.log(event.currentTarget.id);
-    }
-
-    seatingState.state.forEach((rowInfo, rowIndex) => {
+    seatingState.seatingArrangement.forEach((rowInfo, rowIndex) => {
       const column1: JSX.Element[] = [];
       const column2: JSX.Element[] = [];
       const column3: JSX.Element[] = [];
 
-      rowInfo.column1.forEach((seat, seatIndex) => {
-        column1.push(
-          <Seat
-            id={`r${rowIndex}s${seatIndex}`}
-            state={seat.seatState}
-            wheelChair={seat.seatType === SeatType.WHEELCHAIR}
-            onClick={onClick}
-          />
-        );
-      });
+      rowInfo.column1.forEach((seat, seatIndex) =>
+        seatFactory(column1, seat, rowIndex, 1, seatIndex)
+      );
 
-      rowInfo.column2.forEach((seat, seatIndex) => {
-        column2.push(
-          <Seat
-            id={`r${rowIndex}s${column1.length + seatIndex}`}
-            state={seat.seatState}
-            wheelChair={seat.seatType === SeatType.WHEELCHAIR}
-            onClick={onClick}
-          />
-        );
-      });
+      rowInfo.column2.forEach((seat, seatIndex) =>
+        seatFactory(column2, seat, rowIndex, 2, seatIndex)
+      );
 
-      rowInfo.column3.forEach((seat, seatIndex) => {
-        column3.push(
-          <Seat
-            id={`r${rowIndex}s${column1.length + column2.length + seatIndex}`}
-            state={seat.seatState}
-            wheelChair={seat.seatType === SeatType.WHEELCHAIR}
-            onClick={onClick}
-          />
-        );
-      });
+      rowInfo.column3.forEach((seat, seatIndex) =>
+        seatFactory(column3, seat, rowIndex, 3, seatIndex)
+      );
 
       rows.push(<Row column1={column1} column2={column2} column3={column3} />);
     });

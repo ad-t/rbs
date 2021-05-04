@@ -5,7 +5,19 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   flex-flow: column;
-  padding-top: 4rem;
+
+  padding: 4rem 1rem;
+  position: relative;
+`;
+
+const FrontOfStage = styled.div`
+  font-family: Karla, sans-serif;
+  font-weight: bold;
+
+  position: absolute;
+  top: 2rem;
+  left: 50%;
+  transform: translate(-50%, -50%);
 `;
 
 interface SeatingProps {
@@ -13,5 +25,10 @@ interface SeatingProps {
 }
 
 export default function Seating({ rows }: SeatingProps) {
-  return <Wrapper>{rows}</Wrapper>;
+  return (
+    <Wrapper>
+      <FrontOfStage>Front Of Stage</FrontOfStage>
+      {rows}
+    </Wrapper>
+  );
 }
