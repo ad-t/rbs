@@ -2,25 +2,29 @@ import React from 'react';
 import styled from 'styled-components';
 
 const Wrapper = styled.div`
-  display: flex;
-  padding: 0.25rem 0;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 1rem;
+  padding: 0.35rem 0;
 `;
 
 const LeftColumn = styled.div`
   display: flex;
   transform: rotate(10deg);
   transform-origin: center right;
+  justify-self: end;
 `;
 
 const CenterColumn = styled.div`
   display: flex;
-  padding: 0 1rem;
+  justify-self: center;
 `;
 
 const RightColumn = styled.div`
   display: flex;
   transform: rotate(-10deg);
   transform-origin: center left;
+  justify-self: start;
 `;
 
 export interface RowProps {

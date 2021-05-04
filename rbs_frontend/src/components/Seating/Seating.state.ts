@@ -1,11 +1,19 @@
 import * as mobx from 'mobx';
-import { SeatState } from 'src/shared/enums';
+import { SeatState, SeatType } from 'src/shared/enums';
 
 export interface SeatInfo {
-  seatType: 'COMMON' | 'WHEELCHAIR';
+  seatType: SeatType;
   seatState: SeatState;
 }
 
-type SeatingPlan = Array<Array<SeatState>>;
+export interface RowInfo {
+  column1: SeatInfo[];
+  column2: SeatInfo[];
+  column3: SeatInfo[];
+}
 
-export default mobx.observable([] as SeatingPlan);
+export type SeatingPlan = RowInfo[];
+
+export default class SeatingState {
+  state = mobx.observable([] as SeatingPlan);
+}

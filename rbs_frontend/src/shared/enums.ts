@@ -11,3 +11,9 @@ export enum SeatState {
   RESERVED = 'RESERVED',
   FREE = 'FREE',
 }
+
+export enum SeatType {
+  WHEELCHAIR = 'WHEELCHAIR',
+  COMMON = 'COMMON',
+  NONE = 'NONE',
+}

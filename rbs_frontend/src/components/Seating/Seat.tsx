@@ -8,14 +8,14 @@ import { MdEventSeat } from 'react-icons/md';
 
 const BaseSeat = styled.button`
   border-radius: 100%;
-
   display: flex;
   align-items: center;
   justify-content: center;
 
   margin: 0.1rem;
-  height: 32px;
-  width: 32px;
+  height: 24px;
+  width: 24px;
+  padding: 0;
 `;
 
 const WheelchairSeat = styled(BaseSeat)`
@@ -61,7 +61,7 @@ const BookedSeat = styled(BaseSeat)`
   color: ${variables.green50};
 `;
 
-export interface SeatProps {
+export interface SeatProps extends React.HTMLAttributes<HTMLButtonElement> {
   state?: SeatState;
   wheelChair?: boolean;
 }
@@ -69,6 +69,7 @@ export interface SeatProps {
 export default function Seat({
   state = SeatState.FREE,
   wheelChair,
+  ...buttonProps
 }: SeatProps) {
   let Component = FreeSeat;
 
@@ -89,7 +90,7 @@ export default function Seat({
   }
 
   return (
-    <Component>
+    <Component {...buttonProps}>
       <IconComponent />
     </Component>
   );
