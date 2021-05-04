@@ -23,7 +23,7 @@ export function createSeating(maximumSelected: number) {
       return;
     }
 
-    if (seatingState.selectedSeats.length === maximumSelected) {
+    if (seatingState.userMaxedTickets()) {
       throw new ToastError(
         'You already have selected the maximum amount of tickets.'
       );
@@ -40,16 +40,28 @@ export function createSeating(maximumSelected: number) {
     seatIndex: number
   ) {
     const id = `r${rowIndex}c${columnIndex}s${seatIndex}`;
-    const isSelected = !!seatingState.selectedSeats.find(
+    const isSelected = seatingState.selectedSeats.find(
       (selected) => selected === id
     );
+    const isBooked = seatingState.bookedSeats.find(
+      (selected) => selected === id
+    );
+    const isSelectable = !isBooked && seat.seatState !== SeatState.TAKEN;
+
+    let currentState = seat.seatState;
+
+    if (isSelected) {
+      currentState = SeatState.RESERVED;
+    } else if (isBooked) {
+      currentState = SeatState.BOOKED;
+    }
 
     column.push(
       <Seat
         id={id}
-        state={isSelected ? SeatState.RESERVED : seat.seatState}
+        state={currentState}
         wheelChair={seat.seatType === SeatType.WHEELCHAIR}
-        onClick={seat.seatState !== SeatState.TAKEN ? onClick : undefined}
+        onClick={isSelectable ? onClick : undefined}
       />
     );
   }

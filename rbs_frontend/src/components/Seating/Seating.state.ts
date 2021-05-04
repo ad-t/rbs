@@ -15,9 +15,17 @@ export interface RowInfo {
 export default class SeatingState {
   seatingArrangement: RowInfo[] = [];
   selectedSeats = mobx.observable([] as string[]);
+  bookedSeats = mobx.observable([] as string[]);
   maximumSelected: number;
 
   constructor(maximumSelected: number) {
     this.maximumSelected = maximumSelected;
+  }
+
+  userMaxedTickets() {
+    return (
+      this.selectedSeats.length + this.bookedSeats.length >=
+      this.maximumSelected
+    );
   }
 }
