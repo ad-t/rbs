@@ -4,8 +4,8 @@ import * as mobxReact from 'mobx-react-lite';
 import { SeatState, SeatType } from 'src/shared/enums';
 import { ToastError } from 'src/shared/errors';
 
-import SeatingState, { SeatInfo } from './Seating.state';
-import installSeatingInfo from './Seating.service';
+import SeatingState from './Seating.state';
+import installSeatingInfo, { RowNumbers } from './Seating.service';
 
 import Row from './Row';
 import Seat from './Seat';
@@ -32,61 +32,46 @@ export function createSeating(maximumSelected: number) {
     seatingState.selectedSeats.push(id);
   });
 
-  function seatFactory(
-    column: JSX.Element[],
-    seat: SeatInfo,
-    rowIndex: number,
-    columnIndex: number,
-    seatIndex: number
-  ) {
-    const id = `r${rowIndex}c${columnIndex}s${seatIndex}`;
-    const isSelected = seatingState.selectedSeats.find(
-      (selected) => selected === id
-    );
-    const isBooked = seatingState.bookedSeats.find(
-      (selected) => selected === id
-    );
-    const isSelectable = !isBooked && seat.seatState !== SeatState.TAKEN;
-
-    let currentState = seat.seatState;
-
-    if (isSelected) {
-      currentState = SeatState.RESERVED;
-    } else if (isBooked) {
-      currentState = SeatState.BOOKED;
-    }
-
-    column.push(
-      <Seat
-        id={id}
-        state={currentState}
-        wheelChair={seat.seatType === SeatType.WHEELCHAIR}
-        onClick={isSelectable ? onClick : undefined}
-      />
-    );
-  }
-
   const SeatingElement = mobxReact.observer(() => {
     const rows: JSX.Element[] = [];
 
-    seatingState.seatingArrangement.forEach((rowInfo, rowIndex) => {
-      const column1: JSX.Element[] = [];
-      const column2: JSX.Element[] = [];
-      const column3: JSX.Element[] = [];
+    let lastSeatIndex = 0;
 
-      rowInfo.column1.forEach((seat, seatIndex) =>
-        seatFactory(column1, seat, rowIndex, 1, seatIndex)
-      );
+    RowNumbers.forEach((numbers) => {
+      const total = numbers.column1 + numbers.column2 + numbers.column3;
 
-      rowInfo.column2.forEach((seat, seatIndex) =>
-        seatFactory(column2, seat, rowIndex, 2, seatIndex)
-      );
+      const seats = seatingState.seatingArrangement
+        .slice(lastSeatIndex, lastSeatIndex + total)
+        .map((seat, index) => {
+          const id = (lastSeatIndex + index).toString();
+          const isSelected = seatingState.selectedSeats.find(
+            (seatId) => seatId === id
+          );
+          const isBooked = seatingState.bookedSeats.find(
+            (seatId) => seatId === id
+          );
+          const isClickable = !(isBooked || seat.seatState === SeatState.TAKEN);
 
-      rowInfo.column3.forEach((seat, seatIndex) =>
-        seatFactory(column3, seat, rowIndex, 3, seatIndex)
-      );
+          let seatState = seat.seatState;
 
-      rows.push(<Row column1={column1} column2={column2} column3={column3} />);
+          if (isSelected) {
+            seatState = SeatState.RESERVED;
+          } else if (isBooked) {
+            seatState = SeatState.BOOKED;
+          }
+
+          return (
+            <Seat
+              id={id}
+              state={seatState}
+              wheelChair={seat.seatType === SeatType.WHEELCHAIR}
+              onClick={isClickable ? onClick : undefined}
+            />
+          );
+        });
+
+      rows.push(<Row {...numbers} seats={seats} />);
+      lastSeatIndex += total;
     });
 
     return <Seating rows={rows} />;

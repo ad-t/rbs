@@ -6,14 +6,8 @@ export interface SeatInfo {
   seatState: SeatState;
 }
 
-export interface RowInfo {
-  column1: SeatInfo[];
-  column2: SeatInfo[];
-  column3: SeatInfo[];
-}
-
 export default class SeatingState {
-  seatingArrangement: RowInfo[] = [];
+  seatingArrangement: SeatInfo[] = [];
   selectedSeats = mobx.observable([] as string[]);
   bookedSeats = mobx.observable([] as string[]);
   maximumSelected: number;

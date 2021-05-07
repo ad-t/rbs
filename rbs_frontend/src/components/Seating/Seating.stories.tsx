@@ -26,9 +26,9 @@ ModifiableMaximumTickets.args = {
 export const BookedSeats: Story = () => {
   const { SeatingElement, seatingState } = createSeating(5);
 
-  seatingState.bookedSeats.push('r4c1s0');
-  seatingState.bookedSeats.push('r4c1s1');
-  seatingState.bookedSeats.push('r4c1s2');
+  seatingState.bookedSeats.push('111');
+  seatingState.bookedSeats.push('112');
+  seatingState.bookedSeats.push('113');
 
   return <SeatingElement />;
 };

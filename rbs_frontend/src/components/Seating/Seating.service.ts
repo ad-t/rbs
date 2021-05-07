@@ -1,6 +1,12 @@
 import * as mobx from 'mobx';
 import { SeatState, SeatType } from 'src/shared/enums';
-import SeatingState, { RowInfo } from './Seating.state';
+import SeatingState, { SeatInfo } from './Seating.state';
+
+interface RowInfo {
+  column1: SeatInfo[];
+  column2: SeatInfo[];
+  column3: SeatInfo[];
+}
 
 const seatingPlan: RowInfo[] = [
   // Row AA
@@ -2014,8 +2020,24 @@ const seatingPlan: RowInfo[] = [
   },
 ];
 
+export const RowNumbers = seatingPlan.map((row) => ({
+  column1: row.column1.length,
+  column2: row.column2.length,
+  column3: row.column3.length,
+}));
+
 export default function installSeatingInfo(seatingState: SeatingState) {
   seatingPlan.forEach((row) => {
-    seatingState.seatingArrangement.push(mobx.observable(row));
+    row.column1.forEach((seat) => {
+      seatingState.seatingArrangement.push(mobx.observable(seat));
+    });
+
+    row.column2.forEach((seat) => {
+      seatingState.seatingArrangement.push(mobx.observable(seat));
+    });
+
+    row.column3.forEach((seat) => {
+      seatingState.seatingArrangement.push(mobx.observable(seat));
+    });
   });
 }

@@ -10,14 +10,38 @@ export default {
 export const MultipleRows = () => (
   <>
     <Row
-      column1={[<Seat />, <Seat />, <Seat />, <Seat />, <Seat />]}
-      column2={[<Seat />, <Seat />, <Seat />, <Seat />, <Seat />]}
-      column3={[<Seat />, <Seat />, <Seat />, <Seat />, <Seat />]}
+      column1={3}
+      column2={4}
+      column3={3}
+      seats={[
+        <Seat />,
+        <Seat />,
+        <Seat />,
+        <Seat />,
+        <Seat />,
+        <Seat />,
+        <Seat />,
+        <Seat />,
+        <Seat />,
+        <Seat />,
+      ]}
     />
     <Row
-      column1={[<Seat />, <Seat />, <Seat />, <Seat />, <Seat />]}
-      column2={[<Seat />, <Seat />, <Seat />, <Seat />, <Seat />]}
-      column3={[<Seat />, <Seat />, <Seat />, <Seat />, <Seat />]}
+      column1={3}
+      column2={4}
+      column3={3}
+      seats={[
+        <Seat />,
+        <Seat />,
+        <Seat />,
+        <Seat />,
+        <Seat />,
+        <Seat />,
+        <Seat />,
+        <Seat />,
+        <Seat />,
+        <Seat />,
+      ]}
     />
   </>
 );

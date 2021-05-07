@@ -28,17 +28,29 @@ const RightColumn = styled.div`
 `;
 
 export interface RowProps {
-  column1: React.ReactNode;
-  column2: React.ReactNode;
-  column3: React.ReactNode;
+  column1: number;
+  column2: number;
+  column3: number;
+  seats: JSX.Element[];
 }
 
-export default function Row({ column1, column2, column3 }: RowProps) {
+export default function Row({ column1, column2, column3, seats }: RowProps) {
+  if (column1 + column2 + column3 < seats.length) {
+    throw new Error('The amount of seats specified will not will this row.');
+  }
+
+  const column1Elements = seats.slice(0, column1);
+  const column2Elements = seats.slice(column1, column1 + column2);
+  const column3Elements = seats.slice(
+    column1 + column2,
+    column1 + column2 + column3
+  );
+
   return (
     <Wrapper>
-      <LeftColumn>{column1}</LeftColumn>
-      <CenterColumn>{column2}</CenterColumn>
-      <RightColumn>{column3}</RightColumn>
+      <LeftColumn>{column1Elements}</LeftColumn>
+      <CenterColumn>{column2Elements}</CenterColumn>
+      <RightColumn>{column3Elements}</RightColumn>
     </Wrapper>
   );
 }
