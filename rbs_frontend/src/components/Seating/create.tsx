@@ -18,6 +18,7 @@ export function createSeating(maximumSelected: number) {
 
   const onClick = mobx.action((event: React.MouseEvent<HTMLButtonElement>) => {
     const { id } = event.currentTarget;
+
     if (seatingState.selectedSeats.find((selected) => selected === id)) {
       seatingState.selectedSeats.remove(id);
       return;
@@ -37,7 +38,7 @@ export function createSeating(maximumSelected: number) {
 
     let lastSeatIndex = 0;
 
-    RowNumbers.forEach((numbers) => {
+    RowNumbers.forEach((numbers, rowIndex) => {
       const total = numbers.column1 + numbers.column2 + numbers.column3;
 
       const seats = seatingState.seatingArrangement
@@ -62,6 +63,7 @@ export function createSeating(maximumSelected: number) {
 
           return (
             <Seat
+              key={id}
               id={id}
               state={seatState}
               wheelChair={seat.seatType === SeatType.WHEELCHAIR}
@@ -70,7 +72,7 @@ export function createSeating(maximumSelected: number) {
           );
         });
 
-      rows.push(<Row {...numbers} seats={seats} />);
+      rows.push(<Row key={`row-${rowIndex}`} {...numbers} seats={seats} />);
       lastSeatIndex += total;
     });
 

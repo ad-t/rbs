@@ -14,91 +14,91 @@ const seatingPlan: RowInfo[] = [
     column1: [
       {
         seatType: SeatType.WHEELCHAIR,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.WHEELCHAIR,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.WHEELCHAIR,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
     ],
     column2: [
       {
         seatType: SeatType.WHEELCHAIR,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.WHEELCHAIR,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.WHEELCHAIR,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.WHEELCHAIR,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
     ],
     column3: [
       {
         seatType: SeatType.WHEELCHAIR,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.WHEELCHAIR,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.WHEELCHAIR,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
     ],
   },
@@ -107,123 +107,123 @@ const seatingPlan: RowInfo[] = [
     column1: [
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
     ],
     column2: [
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
     ],
     column3: [
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
     ],
   },
@@ -232,123 +232,123 @@ const seatingPlan: RowInfo[] = [
     column1: [
       {
         seatType: SeatType.WHEELCHAIR,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
     ],
     column2: [
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
     ],
     column3: [
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
       {
         seatType: SeatType.COMMON,
-        seatState: SeatState.TAKEN,
+        seatState: SeatState.FREE,
       },
     ],
   },
