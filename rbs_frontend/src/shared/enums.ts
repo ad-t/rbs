@@ -6,9 +6,15 @@ export enum StepItemState {
 }
 
 export enum SeatState {
-  BOOKED = 'BOOKED',
+  // Seat has being given to a different user
   TAKEN = 'TAKEN',
+
+  // Seat has being given to the user
+  BOOKED = 'BOOKED',
+  // Seat is reserved for the user
   RESERVED = 'RESERVED',
+
+  // Seat is free
   FREE = 'FREE',
 }
 
