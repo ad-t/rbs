@@ -36,7 +36,7 @@ export interface RowProps {
 
 export default function Row({ column1, column2, column3, seats }: RowProps) {
   if (column1 + column2 + column3 < seats.length) {
-    throw new Error('The amount of seats specified will not will this row.');
+    throw new Error('The amount of seats specified will not fill this row.');
   }
 
   const column1Elements = seats.slice(0, column1);
