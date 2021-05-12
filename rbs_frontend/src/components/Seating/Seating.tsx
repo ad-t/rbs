@@ -1,13 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
 
+const SeatingWrapper = styled.div`
+  position: relative;
+  min-width: 1100px;
+  overflow: auto;
+`;
+
 const Wrapper = styled.div`
   display: flex;
   align-items: center;
   flex-flow: column;
 
   padding: 4rem 1rem;
-  position: relative;
 `;
 
 const FrontOfStage = styled.div`
@@ -26,9 +31,9 @@ interface SeatingProps {
 
 export default function Seating({ rows }: SeatingProps) {
   return (
-    <Wrapper>
+    <SeatingWrapper>
       <FrontOfStage>Front Of Stage</FrontOfStage>
-      {rows}
-    </Wrapper>
+      <Wrapper>{rows}</Wrapper>
+    </SeatingWrapper>
   );
 }
