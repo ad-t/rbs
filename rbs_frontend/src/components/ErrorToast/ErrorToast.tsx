@@ -1,20 +1,21 @@
-import React, { ErrorInfo } from 'react';
+import React, { useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-export default class ErrorToast extends React.PureComponent {
-  componentDidCatch = (error: Error, errorInfo: ErrorInfo) => {
-    console.log('Caught error');
-    console.log(error);
-    toast(`${error} ${errorInfo}`);
-  };
+export default function ErrorToast({
+  children,
+}: React.HTMLAttributes<HTMLDivElement>) {
+  useEffect(() => {
+    window.onerror = (message, _, __, ___, error) => {
+      toast(error?.message);
+      return true;
+    };
+  }, []);
 
-  render() {
-    const { children } = this.props;
-    return (
-      <>
-        {children}
-        <ToastContainer />
-      </>
-    );
-  }
+  return (
+    <>
+      {children}
+      <ToastContainer />
+    </>
+  );
 }
