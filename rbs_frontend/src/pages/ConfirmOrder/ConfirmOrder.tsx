@@ -82,7 +82,7 @@ export default function ConfirmOrder({
             </p>
             <p>Venue: UNSW Science Theatre</p>
             <p>Time: {showStr}, doors open 7pm</p>
-            {!!discount ? <p>Voucher code: {discount.code}</p> : null}
+            {discount ? <p>Voucher code: {discount.code}</p> : null}
             <p>No GST applies for this purchase.</p>
           </div>
         </div>

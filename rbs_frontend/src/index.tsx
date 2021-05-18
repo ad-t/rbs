@@ -19,10 +19,10 @@ import 'semantic-ui-css/semantic.min.css';
 
 interface State {
   tickets: Array<ITicket>;
-  buyingTicket: Boolean;
+  buyingTicket: boolean;
 }
 
-class Index extends React.Component<{}, State> {
+class Index extends React.Component<Record<string, never>, State> {
   state: State = {
     tickets: [],
     buyingTicket: false,

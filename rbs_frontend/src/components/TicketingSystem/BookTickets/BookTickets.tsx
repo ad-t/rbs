@@ -148,7 +148,7 @@ export default class BookTickets extends React.Component<Prop, State> {
     let totalPrice = currency(0);
     let totalQuantity = 0;
 
-    for (let ticket of tickets) {
+    for (const ticket of tickets) {
       totalQuantity += ticket.quantity;
     }
 

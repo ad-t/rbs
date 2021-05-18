@@ -21,7 +21,6 @@ import ConfirmOrder from '../../pages/ConfirmOrder';
 import { ITicket, ITicketDetails } from '../../types/tickets';
 import { IDiscount } from '../../types/discount';
 
-interface Props {}
 interface State {
   currentId: number;
   selectedShow: number;
@@ -38,7 +37,10 @@ const SELECT_SEATS = 2;
 const INVOICE = 3;
 const CONFIRM = 4;
 
-export default class TicketingSystem extends React.Component<Props, State> {
+export default class TicketingSystem extends React.Component<
+  Record<string, never>,
+  State
+> {
   // This may be changed during testing. Default values should be:
   // currentId: 0, selectedShow: -1
   state = {
