@@ -15,6 +15,7 @@ import TicketingSystem from './components/TicketingSystem';
 
 // Import assets (e.g. scss)
 import * as serviceWorker from './serviceWorker';
+import 'semantic-ui-css/semantic.min.css';
 
 interface State {
   tickets: Array<ITicket>;
