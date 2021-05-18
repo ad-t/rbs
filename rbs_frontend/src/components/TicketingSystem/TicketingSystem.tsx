@@ -136,16 +136,7 @@ export default class TicketingSystem extends React.Component<Props, State> {
         );
         break;
       case INVOICE:
-        displayElm = (
-          <Invoice
-            tickets={this.state.tickets}
-            ticketDetails={this.state.ticketDetails}
-            discount={this.state.discount}
-            updateTicketDetails={this.updateTicketDetails}
-            selectedShow={selectedShow}
-            updatePayment={this.updatePayment}
-          />
-        );
+        displayElm = <div>Invoice Stub</div>;
         break;
       case CONFIRM:
         displayElm = (

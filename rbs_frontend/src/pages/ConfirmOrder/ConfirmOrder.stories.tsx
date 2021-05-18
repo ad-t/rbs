@@ -4,7 +4,7 @@ import ConfirmOrder from './ConfirmOrder';
 import 'semantic-ui-css/semantic.min.css';
 
 export default {
-  title: 'Component/ConfirmOrder',
+  title: 'Page/ConfirmOrder',
   component: ConfirmOrder,
 };
 
@@ -13,6 +13,13 @@ const Template: Story = (args) => (
     tickets={[
       {
         id: 1,
+        price: 10,
+        description: 'This is a ticket',
+        minPurchaseAmount: 5,
+        quantity: 5,
+      },
+      {
+        id: 2,
         price: 10,
         description: 'This is a ticket',
         minPurchaseAmount: 5,

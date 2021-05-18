@@ -14,8 +14,7 @@ import {
   Wrapper,
 } from './Ticket.styles';
 
-export interface TicketProps {
-  id: string;
+export interface TicketProps extends React.HTMLAttributes<HTMLDivElement> {
   name: string;
   cost: number;
   minPurchase: number;
@@ -24,12 +23,12 @@ export interface TicketProps {
 }
 
 export default function Ticket({
-  id,
   name,
   cost,
   minPurchase,
   ticketAmount,
   updateTickets,
+  ...divProps
 }: TicketProps) {
   function modifyTicket(value: number) {
     // Modify the ticket sales by a value
@@ -43,7 +42,7 @@ export default function Ticket({
   }
 
   return (
-    <Wrapper>
+    <Wrapper {...divProps}>
       <Logo>
         <IoTicket />
       </Logo>
