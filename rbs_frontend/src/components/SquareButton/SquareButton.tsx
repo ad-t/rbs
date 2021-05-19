@@ -13,9 +13,34 @@ interface Prop {
 export default function SquareButton({ setupSquare }: Props) {
   const [open, setOpen] = useState(false);
 
+  async function onClick() {
+    // NOTE: hack to work around Safari refusing to open popups that are
+    // called asynchronously: https://stackoverflow.com/q/20696041/2074608
+    const win = window.open(undefined, 'square-pay', 'toolbar=no');
+    const url = await setupSquare();
+    if (!url) {
+      win?.close();
+      return;
+    }
+
+    /* NOTE: hack to detect window closed without CORS */
+    if (win) {
+      setOpen(true);
+      win.location = url;
+      const timer = setInterval(() => {
+        if (win.closed) {
+          clearInterval(timer);
+          // TODO: can we track on frontend if paid before getting backend
+          // to check?
+          this.onSquareApprove();
+        }
+      }, 1000);
+    }
+  }
+
   return (
     <div>
-    <PaymentButton onClick={async () => {(await setupSquare()) && setOpen(true)}}>
+    <PaymentButton onClick={onClick}>
       Pay with Square <img src='/square-logo.svg'/>
     </PaymentButton>
     <Transition

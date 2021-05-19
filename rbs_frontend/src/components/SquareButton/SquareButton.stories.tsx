@@ -12,7 +12,7 @@ const Template: Story<Props> = (args) => <SquareButton {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
-  setupSquare: () => { action('open'); return Promise.resolve('hello') },
+  setupSquare: () => { action('open'); return Promise.resolve('https://www.google.com') },
 };
 
 /*

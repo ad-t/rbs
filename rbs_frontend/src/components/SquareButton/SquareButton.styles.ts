@@ -15,7 +15,8 @@ export const PaymentButton = styled.button`
 
   height: 45px;
   padding: 0 25px;
-  
+  margin: auto;
+
   font-family: 'Open Sans', Helvetica, Arial, sans-serif;
   font-weight: bold;
   font-size: 16px;
@@ -29,7 +30,7 @@ export const PaymentButton = styled.button`
   &:focus {
     outline: none;
   }
-  
+
   img {
     height: 30px;
     margin-left: 10px;
