@@ -10,11 +10,11 @@ export interface TicketConfig
 }
 
 export function createTicket(props: TicketConfig) {
-  const state = new TicketState(props.initialAmount);
+  const state = new TicketState(props.initialAmount, props.cost);
   const controller = new TicketController();
 
   function updateTickets(amount: number) {
-    controller.incrementTickets(state, amount);
+    controller.incrementTickets(state, amount, props.minPurchase);
   }
 
   return {

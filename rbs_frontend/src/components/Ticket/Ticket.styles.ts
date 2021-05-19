@@ -5,7 +5,7 @@ export const Wrapper = styled.div`
   display: flex;
   align-items: center;
 
-  box-shadow: ${variables.boxShadowLg};
+  box-shadow: ${variables.boxShadowMd};
   font-family: Rubik, sans-serif;
   padding: 0.75rem;
 `;
