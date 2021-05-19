@@ -1,3 +1,14 @@
+export const blue50 = '#EFF6FF';
+export const blue100 = '#DBEAFE';
+export const blue200 = '#BFDBFE';
+export const blue300 = '#93C5FD';
+export const blue400 = '#60A5FA';
+export const blue500 = '#3B82F6';
+export const blue600 = '#2563EB';
+export const blue700 = '#1D4ED8';
+export const blue800 = '#1E40AF';
+export const blue900 = '#1E3A8A';
+
 export const red50 = '#FEF2F2';
 export const red100 = '#FEE2E2';
 export const red200 = '#FECACA';
@@ -19,6 +30,17 @@ export const green600 = '#059669';
 export const green700 = '#047857';
 export const green800 = '#065F46';
 export const green900 = '#064E3B';
+
+export const yellow50 = '#FFFBEB';
+export const yellow100 = '#FEF3C7';
+export const yellow200 = '#FDE68A';
+export const yellow300 = '#FCD34D';
+export const yellow400 = '#FBBF24';
+export const yellow500 = '#F59E0B';
+export const yellow600 = '#D97706';
+export const yellow700 = '#B45309';
+export const yellow800 = '#92400E';
+export const yellow900 = '#78350F';
 
 export const primary100 = '#DBEAFE';
 export const primary200 = '#BFDBFE';
