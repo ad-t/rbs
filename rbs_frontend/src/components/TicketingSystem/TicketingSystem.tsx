@@ -2,16 +2,12 @@
  * This file will handle information relating to the show
  */
 import React from 'react';
-import {
-  Header,
-  Icon,
-  Step,
-  Container,
-  Menu,
-  Image,
-  Dropdown,
-  List,
-} from 'semantic-ui-react';
+import { Icon, Container, Image } from 'semantic-ui-react';
+
+import { BookingHeader } from 'src/components/Header/Header';
+import { createSteps } from 'src/components/Steps/create';
+import StepItem from 'src/components/Steps/StepItem';
+import { StepItemState } from 'src/shared/enums';
 
 import BookTickets from './BookTickets';
 import SelectShow from './SelectShow';
@@ -20,6 +16,8 @@ import Invoice from './Invoice';
 import ConfirmOrder from '../../pages/ConfirmOrder';
 import { ITicket, ITicketDetails } from '../../types/tickets';
 import { IDiscount } from '../../types/discount';
+
+import LogoImage from './logo.png';
 
 interface State {
   currentId: number;
@@ -37,6 +35,19 @@ const SELECT_SEATS = 2;
 const INVOICE = 3;
 const CONFIRM = 4;
 
+const iconStyles = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  margin: 0,
+};
+
+function filterStepState(state: number, index: number) {
+  if (state === index) return StepItemState.IN_PROGRESS;
+  if (state > index) return StepItemState.COMPLETED;
+  return StepItemState.NOT_STARTED;
+}
+
 export default class TicketingSystem extends React.Component<
   Record<string, never>,
   State
@@ -52,6 +63,29 @@ export default class TicketingSystem extends React.Component<
     discount: null,
     details: null,
   };
+
+  private Steps = createSteps([
+    <StepItem
+      icon={<Icon name="bullhorn" style={iconStyles} />}
+      name="Show Night"
+    />,
+    <StepItem
+      icon={<Icon name="ticket" style={iconStyles} />}
+      name="Tickets"
+    />,
+    <StepItem
+      icon={<Icon name="map marker" style={iconStyles} />}
+      name="Seats"
+    />,
+    <StepItem
+      icon={<Icon name="payment" style={iconStyles} />}
+      name="Billing"
+    />,
+    <StepItem
+      icon={<Icon name="info" style={iconStyles} />}
+      name="Confirm Order"
+    />,
+  ]);
 
   goToSelectShow = () => {
     this.setState({ currentId: SELECT_SHOW });
@@ -90,20 +124,9 @@ export default class TicketingSystem extends React.Component<
     this.setState({ currentId: CONFIRM, details });
   };
 
-  canGoBack(from: number, to: number) {
-    return from > to && from !== CONFIRM;
-  }
-
-  goBackTo = (from: number, to: number) => {
-    if (!this.canGoBack(from, to)) {
-      return;
-    }
-
-    this.setState({ currentId: to });
-  };
-
   render() {
     const { currentId, selectedShow } = this.state;
+    const { StepsElement, stepsState } = this.Steps;
     let displayElm;
 
     switch (currentId) {
@@ -153,132 +176,39 @@ export default class TicketingSystem extends React.Component<
         break;
     }
 
-    const { canGoBack, goBackTo } = this;
-
-    console.log(canGoBack(currentId, SELECT_SEATS));
+    stepsState.itemsProgress[0] = filterStepState(currentId, 0);
+    stepsState.itemsProgress[1] = filterStepState(currentId, 1);
+    stepsState.itemsProgress[2] = filterStepState(currentId, 2);
+    stepsState.itemsProgress[3] = filterStepState(currentId, 3);
+    stepsState.itemsProgress[4] = filterStepState(currentId, 4);
 
     return (
-      <React.Fragment>
-        <Menu fixed="top" inverted>
-          <Container>
-            <Menu.Item header>
-              <Image
-                size="small"
-                src="/logo.png"
-                style={{ marginRight: '1.5em' }}
-              />
-            </Menu.Item>
-
-            <Menu.Menu position="right">
-              <Menu.Item>
-                <List>
-                  <List.Item>
-                    <strong>Med Revue 2021</strong>
-                  </List.Item>
-                  <List.Item>
-                    <strong>Need help?</strong> ticketing@medrevue.org
-                    <br />
-                    or contact us on{' '}
-                    <a href="https://www.facebook.com/MedRevue">Facebook</a>
-                  </List.Item>
-                </List>
-              </Menu.Item>
-              <Menu.Item>
-                <Image size="tiny" src="/covid-safe-logo.png" />
-              </Menu.Item>
-            </Menu.Menu>
-          </Container>
-        </Menu>
+      <>
+        <BookingHeader
+          Logo={
+            <Image
+              size="small"
+              src={LogoImage}
+              style={{ marginRight: '1.5em' }}
+            />
+          }
+          email="ticketing@medrevue.org"
+          showName="Med Revue 2021"
+        />
 
         <Container
           style={{
             position: 'relative',
-            paddingTop: '7.5em',
-            minHeight: '100%',
-            background: '#eee',
+            padding: '1rem',
           }}
         >
-          <Header as="h2" style={{ margin: 0, padding: '1em 0.5em 0em' }}>
-            <Icon name="shop" />
-            <Header.Content>
-              Med Revue 2021 Tickets
-              <Header.Subheader>
-                Place your order for a seat to Breaking Bones
-              </Header.Subheader>
-            </Header.Content>
-          </Header>
-          <div style={{ margin: '1em 1em' }}>
-            <Step.Group size="mini" widths={5} unstackable>
-              {/* FIXME: as long as onClick is present, link makes no difference */}
-              <Step
-                active={currentId === SELECT_SHOW}
-                completed={currentId > SELECT_SHOW}
-                link={canGoBack(currentId, SELECT_SHOW)}
-                onClick={
-                  canGoBack(currentId, SELECT_SHOW)
-                    ? () => goBackTo(currentId, SELECT_SHOW)
-                    : undefined
-                }
-              >
-                <Icon name="bullhorn" />
-                <Step.Content>
-                  <Step.Title>Show Night</Step.Title>
-                  <Step.Description>{this.state.showStr}</Step.Description>
-                </Step.Content>
-              </Step>
-              <Step
-                active={currentId === BOOK_TICKETS}
-                completed={currentId > BOOK_TICKETS}
-                link={canGoBack(currentId, BOOK_TICKETS)}
-                onClick={
-                  canGoBack(currentId, BOOK_TICKETS)
-                    ? () => goBackTo(currentId, BOOK_TICKETS)
-                    : undefined
-                }
-              >
-                <Icon name="ticket" />
-                <Step.Content>
-                  <Step.Title>Tickets</Step.Title>
-                </Step.Content>
-              </Step>
-              <Step
-                active={currentId === SELECT_SEATS}
-                completed={currentId > SELECT_SEATS}
-                link={canGoBack(currentId, SELECT_SEATS)}
-                onClick={
-                  canGoBack(currentId, SELECT_SEATS)
-                    ? () => goBackTo(currentId, SELECT_SEATS)
-                    : undefined
-                }
-              >
-                <Icon name="map marker" />
-                <Step.Content>
-                  <Step.Title>Seats</Step.Title>
-                </Step.Content>
-              </Step>
-              <Step
-                active={currentId === INVOICE}
-                completed={currentId > INVOICE}
-              >
-                <Icon name="payment" />
-                <Step.Content>
-                  <Step.Title>Billing</Step.Title>
-                </Step.Content>
-              </Step>
-              <Step
-                active={currentId === CONFIRM}
-                completed={currentId > CONFIRM}
-              >
-                <Icon name="info" />
-                <Step.Content>
-                  <Step.Title>Confirm Order</Step.Title>
-                </Step.Content>
-              </Step>
-            </Step.Group>
+          <div style={{ marginBottom: '2rem' }}>
+            <StepsElement />
           </div>
+
           {displayElm}
         </Container>
-      </React.Fragment>
+      </>
     );
   }
 }
