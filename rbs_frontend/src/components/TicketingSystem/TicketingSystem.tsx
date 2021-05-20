@@ -17,7 +17,7 @@ import { TicketingSystemState } from 'src/components/TicketingSystem/TicketingSy
 import { createTicket } from 'src/components/Ticket/create';
 
 import BookTickets from 'src/pages/BookTickets';
-import SelectShow from './SelectShow';
+import SelectShow from '../../pages/SelectShow';
 import SelectSeats from './SelectSeats';
 // import Invoice from './Invoice';
 import ConfirmOrder from '../../pages/ConfirmOrder';
