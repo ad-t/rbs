@@ -10,10 +10,10 @@ import { createSteps } from 'src/components/Steps/create';
 import StepItem from 'src/components/Steps/StepItem';
 import { TicketingSystemState } from 'src/components/TicketingSystem/TicketingSystem.state';
 import BookTickets from 'src/pages/BookTickets';
+import SelectShow from 'src/pages/SelectShow';
 import { installTickets } from 'src/mocks/installTickets';
 import { StepItemState, TicketSystemState } from 'src/shared/enums';
 
-import SelectShow from './SelectShow';
 import SelectSeats from './SelectSeats';
 // import Invoice from './Invoice';
 import ConfirmOrder from '../../pages/ConfirmOrder';
