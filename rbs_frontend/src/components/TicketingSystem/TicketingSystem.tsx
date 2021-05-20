@@ -11,8 +11,10 @@ import StepItem from 'src/components/Steps/StepItem';
 import { TicketingSystemState } from 'src/components/TicketingSystem/TicketingSystem.state';
 import BookTickets from 'src/pages/BookTickets';
 import SelectShow from 'src/pages/SelectShow';
+import { installShowNights } from 'src/mocks/installShows';
 import { installTickets } from 'src/mocks/installTickets';
 import { StepItemState, TicketSystemState } from 'src/shared/enums';
+import { ShowNight } from 'src/shared/types';
 
 import SelectSeats from './SelectSeats';
 // import Invoice from './Invoice';
@@ -44,7 +46,15 @@ function filterStepState(state: number, index: number) {
   if (state > index) return StepItemState.COMPLETED;
   return StepItemState.NOT_STARTED;
 }
+
 export const ticketingSystemState = new TicketingSystemState();
+
+const ShowNightWrapper = mobxReact.observer(() => (
+  <SelectShow
+    showNights={ticketingSystemState.showNights}
+    updateShow={() => console.log('Called')}
+  />
+));
 
 const BookTicketsWrapper = mobxReact.observer(() => {
   const { ticketElements, ticketStates } = ticketingSystemState;
@@ -104,8 +114,15 @@ export default class TicketingSystem extends React.Component<
   ]);
 
   componentDidMount() {
+    // eslint-disable-next-line
+    // @ts-ignore
+    window.ticketingSystemState = ticketingSystemState;
+
+    installShowNights().then((showNights: ShowNight[]) => {
+      ticketingSystemState.setShowNights(showNights);
+    });
+
     installTickets().then((tickets: ITicket[]) => {
-      console.log(tickets);
       tickets.forEach((ticket) => {
         const { Ticket, ticketState } = createTicket({
           name: ticket.description,
@@ -167,7 +184,7 @@ export default class TicketingSystem extends React.Component<
 
     switch (currentId) {
       case TicketSystemState.SELECT_SHOW:
-        displayElm = <SelectShow updateShow={this.updateShow} />;
+        displayElm = <ShowNightWrapper />;
         break;
       case TicketSystemState.BOOK_TICKETS:
         displayElm = <BookTicketsWrapper />;

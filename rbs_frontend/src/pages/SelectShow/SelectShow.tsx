@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import dayjs from 'dayjs';
-import { Button, Header } from 'semantic-ui-react';
+import { Button, Header, Loader } from 'semantic-ui-react';
 import { ShowNight } from 'src/shared/types';
 
 interface Props {
@@ -63,7 +63,11 @@ export default class SelectShow extends React.Component<Props> {
           </a>{' '}
           (parking and light rail available nearby)
         </p>
-        {btnElms}
+        {btnElms.length ? (
+          btnElms
+        ) : (
+          <Loader active content="Loading Shows" inline="centered" />
+        )}
       </div>
     );
   }

@@ -3,9 +3,13 @@ import TicketState from 'src/components/Ticket/Ticket.state';
 import { ShowNight } from 'src/shared/types';
 
 export class TicketingSystemState {
-  ticketElements = mobx.observable([] as JSX.Element[]);
-  ticketStates = mobx.observable([] as TicketState[]);
-  showNights = mobx.observable([] as ShowNight[]);
+  ticketElements: JSX.Element[] = [];
+  ticketStates: TicketState[] = [];
+  showNights: ShowNight[] = [];
+
+  constructor() {
+    mobx.makeAutoObservable(this);
+  }
 
   addTicket(element: JSX.Element, state: TicketState) {
     this.ticketElements.push(element);
@@ -13,6 +17,6 @@ export class TicketingSystemState {
   }
 
   setShowNights(showNights: ShowNight[]) {
-    this.showNights.replace(showNights);
+    this.showNights = showNights;
   }
 }
