@@ -24,6 +24,7 @@ const ticket2 = createTicket({
 
 interface StoryProps {
   totalPrice: number;
+  preventProceed: boolean;
 }
 
 const Template: Story<StoryProps> = (args) => (
@@ -33,4 +34,5 @@ const Template: Story<StoryProps> = (args) => (
 export const Default = Template.bind({});
 Default.args = {
   totalPrice: 50,
+  preventProceed: false,
 };

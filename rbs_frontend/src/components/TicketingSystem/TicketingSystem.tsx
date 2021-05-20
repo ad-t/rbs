@@ -2,18 +2,17 @@
  * This file will handle information relating to the show
  */
 import React from 'react';
+import * as mobxReact from 'mobx-react-lite';
 import { Icon, Container, Image } from 'semantic-ui-react';
-
 import { BookingHeader } from 'src/components/Header/Header';
+import { createTicket } from 'src/components/Ticket/create';
 import { createSteps } from 'src/components/Steps/create';
 import StepItem from 'src/components/Steps/StepItem';
-import { StepItemState } from 'src/shared/enums';
-import * as mobxReact from 'mobx-react-lite';
-import { installTickets } from 'src/mocks/installTickets';
 import { TicketingSystemState } from 'src/components/TicketingSystem/TicketingSystem.state';
-import { createTicket } from 'src/components/Ticket/create';
-
 import BookTickets from 'src/pages/BookTickets';
+import { installTickets } from 'src/mocks/installTickets';
+import { StepItemState, TicketSystemState } from 'src/shared/enums';
+
 import SelectShow from './SelectShow';
 import SelectSeats from './SelectSeats';
 // import Invoice from './Invoice';
@@ -24,7 +23,7 @@ import { IDiscount } from '../../types/discount';
 import LogoImage from './logo.png';
 
 interface State {
-  currentId: number;
+  currentId: TicketSystemState;
   selectedShow: number;
   showStr: string;
   tickets: ITicket[];
@@ -32,12 +31,6 @@ interface State {
   discount: IDiscount | null;
   details: any;
 }
-
-const SELECT_SHOW = 0;
-const BOOK_TICKETS = 1;
-const SELECT_SEATS = 2;
-const INVOICE = 3;
-const CONFIRM = 4;
 
 const iconStyles = {
   display: 'flex',
@@ -59,8 +52,16 @@ const BookTicketsWrapper = mobxReact.observer(() => {
     (total, state) => total + state.value * state.cost,
     0
   );
+  const preventProceed =
+    ticketStates.reduce((total, state) => total + state.value, 0) === 0;
 
-  return <BookTickets tickets={ticketElements} totalPrice={totalPrice} />;
+  return (
+    <BookTickets
+      tickets={ticketElements}
+      totalPrice={totalPrice}
+      preventProceed={preventProceed}
+    />
+  );
 });
 
 export default class TicketingSystem extends React.Component<
@@ -70,7 +71,7 @@ export default class TicketingSystem extends React.Component<
   // This may be changed during testing. Default values should be:
   // currentId: 0, selectedShow: -1
   state = {
-    currentId: 1,
+    currentId: TicketSystemState.SELECT_SHOW,
     selectedShow: -1,
     showStr: '',
     tickets: [] as ITicket[],
@@ -119,7 +120,7 @@ export default class TicketingSystem extends React.Component<
   }
 
   goToSelectShow = () => {
-    this.setState({ currentId: SELECT_SHOW });
+    this.setState({ currentId: TicketSystemState.SELECT_SHOW });
   };
 
   updateShow = (selectedShow: number, showStr: string) => {
@@ -128,11 +129,15 @@ export default class TicketingSystem extends React.Component<
     if (selectedShow !== this.state.selectedShow) {
       this.setState({ tickets: [], ticketDetails: [], discount: null });
     }
-    this.setState({ currentId: BOOK_TICKETS, selectedShow, showStr });
+    this.setState({
+      currentId: TicketSystemState.BOOK_TICKETS,
+      selectedShow,
+      showStr,
+    });
   };
 
   goToSelectSeats = () => {
-    this.setState({ currentId: SELECT_SEATS });
+    this.setState({ currentId: TicketSystemState.SELECT_SEATS });
   };
 
   updateTickets = (tickets: ITicket[]) => {
@@ -148,11 +153,11 @@ export default class TicketingSystem extends React.Component<
   };
 
   goToInvoice = () => {
-    this.setState({ currentId: INVOICE });
+    this.setState({ currentId: TicketSystemState.INVOICE });
   };
 
   updatePayment = (details: any) => {
-    this.setState({ currentId: CONFIRM, details });
+    this.setState({ currentId: TicketSystemState.CONFIRM, details });
   };
 
   render() {
@@ -161,13 +166,13 @@ export default class TicketingSystem extends React.Component<
     let displayElm;
 
     switch (currentId) {
-      case SELECT_SHOW:
+      case TicketSystemState.SELECT_SHOW:
         displayElm = <SelectShow updateShow={this.updateShow} />;
         break;
-      case BOOK_TICKETS:
+      case TicketSystemState.BOOK_TICKETS:
         displayElm = <BookTicketsWrapper />;
         break;
-      case SELECT_SEATS:
+      case TicketSystemState.SELECT_SEATS:
         displayElm = (
           <SelectSeats
             tickets={this.state.tickets}
@@ -180,10 +185,10 @@ export default class TicketingSystem extends React.Component<
           />
         );
         break;
-      case INVOICE:
+      case TicketSystemState.INVOICE:
         displayElm = <div>Invoice Stub</div>;
         break;
-      case CONFIRM:
+      case TicketSystemState.CONFIRM:
         displayElm = (
           <ConfirmOrder
             showStr={this.state.showStr}

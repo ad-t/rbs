@@ -23,9 +23,14 @@ const TicketsWrapper = styled.div`
 interface Props {
   tickets: JSX.Element[];
   totalPrice: number;
+  preventProceed: boolean;
 }
 
-export default function BookTickets({ tickets, totalPrice }: Props) {
+export default function BookTickets({
+  tickets,
+  totalPrice,
+  preventProceed = false,
+}: Props) {
   return (
     <>
       <TextWrapper>
@@ -53,7 +58,7 @@ export default function BookTickets({ tickets, totalPrice }: Props) {
         <strong>Subtotal:</strong> {totalPrice.toFixed(2)}
       </Subtotal>
       <div>
-        <Button primary fluid>
+        <Button primary fluid disabled={preventProceed}>
           RESERVE TICKETS
         </Button>
       </div>
