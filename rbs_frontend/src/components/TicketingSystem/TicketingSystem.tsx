@@ -40,7 +40,7 @@ const SELECT_SEATS = 2;
 const INVOICE = 3;
 const CONFIRM = 4;
 
-const ticketingSystemState = new TicketingSystemState();
+export const ticketingSystemState = new TicketingSystemState();
 
 const BookTicketsWrapper = mobxReact.observer(() => {
   const { ticketElements, ticketStates } = ticketingSystemState;

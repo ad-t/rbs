@@ -2,7 +2,7 @@
  * This file will handle the entire landing page.
  */
 import * as React from 'react';
-import { Button, Dimmer, Loader } from 'semantic-ui-react';
+import { Button, Loader } from 'semantic-ui-react';
 import styled from 'styled-components';
 
 const Subtotal = styled.div`
