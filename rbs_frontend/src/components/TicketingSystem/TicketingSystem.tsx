@@ -69,7 +69,6 @@ export default class TicketingSystem extends React.Component<
   };
 
   componentDidMount() {
-    console.log('Hello');
     installTickets().then((tickets: ITicket[]) => {
       console.log(tickets);
       tickets.forEach((ticket) => {

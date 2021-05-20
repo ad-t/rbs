@@ -2,7 +2,7 @@
  * This file will handle the entire landing page.
  */
 import * as React from 'react';
-import { Button } from 'semantic-ui-react';
+import { Button, Dimmer, Loader } from 'semantic-ui-react';
 import styled from 'styled-components';
 
 const Subtotal = styled.div`
@@ -42,7 +42,13 @@ export default function BookTickets({ tickets, totalPrice }: Props) {
           transaction and save!
         </p>
       </TextWrapper>
-      <TicketsWrapper>{tickets}</TicketsWrapper>
+      <TicketsWrapper>
+        {tickets.length ? (
+          tickets
+        ) : (
+          <Loader active content="Loading Tickets" inline="centered" />
+        )}
+      </TicketsWrapper>
       <Subtotal>
         <strong>Subtotal:</strong> {totalPrice.toFixed(2)}
       </Subtotal>
