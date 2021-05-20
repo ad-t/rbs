@@ -1,6 +1,3 @@
-/*
- * This file will handle the entire landing page.
- */
 import React from 'react';
 import { Button, Icon, Header, Form, Input } from 'semantic-ui-react';
 
@@ -22,7 +19,7 @@ interface OnChangeArgs {
 function TicketholderDetails(props: Props) {
   const { description, index } = props;
   const { name, postcode, phone, seatNum } = props.details;
-  
+
   const isNameInvalid = props.showErrors && !name.trim();
   const isPostcodeInvalid = props.showErrors && !/^\d{4}$/.test(postcode);
 
