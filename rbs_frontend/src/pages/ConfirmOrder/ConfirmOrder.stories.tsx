@@ -16,14 +16,12 @@ const Template: Story = (args) => (
         price: 10,
         description: 'This is a ticket',
         minPurchaseAmount: 5,
-        quantity: 5,
       },
       {
         id: 2,
         price: 10,
         description: 'This is a ticket',
         minPurchaseAmount: 5,
-        quantity: 5,
       },
     ]}
     ticketDetails={[

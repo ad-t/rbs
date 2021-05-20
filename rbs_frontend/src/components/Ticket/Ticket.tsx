@@ -31,14 +31,7 @@ export default function Ticket({
   ...divProps
 }: TicketProps) {
   function modifyTicket(value: number) {
-    // Modify the ticket sales by a value
-    let newTicketNumber = ticketAmount + value;
-    if (newTicketNumber < minPurchase) {
-      if (value > 0) newTicketNumber = minPurchase;
-      else newTicketNumber = 0;
-    }
-
-    updateTickets(newTicketNumber);
+    updateTickets(value);
   }
 
   return (

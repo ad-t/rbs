@@ -8,11 +8,15 @@ import { BookingHeader } from 'src/components/Header/Header';
 import { createSteps } from 'src/components/Steps/create';
 import StepItem from 'src/components/Steps/StepItem';
 import { StepItemState } from 'src/shared/enums';
+import * as mobxReact from 'mobx-react-lite';
+import { installTickets } from 'src/mocks/installTickets';
+import { TicketingSystemState } from 'src/components/TicketingSystem/TicketingSystem.state';
+import { createTicket } from 'src/components/Ticket/create';
 
-import BookTickets from './BookTickets';
+import BookTickets from 'src/pages/BookTickets';
 import SelectShow from './SelectShow';
 import SelectSeats from './SelectSeats';
-import Invoice from './Invoice';
+// import Invoice from './Invoice';
 import ConfirmOrder from '../../pages/ConfirmOrder';
 import { ITicket, ITicketDetails } from '../../types/tickets';
 import { IDiscount } from '../../types/discount';
@@ -47,6 +51,17 @@ function filterStepState(state: number, index: number) {
   if (state > index) return StepItemState.COMPLETED;
   return StepItemState.NOT_STARTED;
 }
+export const ticketingSystemState = new TicketingSystemState();
+
+const BookTicketsWrapper = mobxReact.observer(() => {
+  const { ticketElements, ticketStates } = ticketingSystemState;
+  const totalPrice = ticketStates.reduce(
+    (total, state) => total + state.value * state.cost,
+    0
+  );
+
+  return <BookTickets tickets={ticketElements} totalPrice={totalPrice} />;
+});
 
 export default class TicketingSystem extends React.Component<
   Record<string, never>,
@@ -55,7 +70,7 @@ export default class TicketingSystem extends React.Component<
   // This may be changed during testing. Default values should be:
   // currentId: 0, selectedShow: -1
   state = {
-    currentId: 0,
+    currentId: 1,
     selectedShow: -1,
     showStr: '',
     tickets: [] as ITicket[],
@@ -86,6 +101,22 @@ export default class TicketingSystem extends React.Component<
       name="Confirm Order"
     />,
   ]);
+
+  componentDidMount() {
+    installTickets().then((tickets: ITicket[]) => {
+      console.log(tickets);
+      tickets.forEach((ticket) => {
+        const { Ticket, ticketState } = createTicket({
+          name: ticket.description,
+          cost: ticket.price,
+          minPurchase: ticket.minPurchaseAmount,
+          initialAmount: 0,
+        });
+
+        ticketingSystemState.addTicket(<Ticket />, ticketState);
+      });
+    });
+  }
 
   goToSelectShow = () => {
     this.setState({ currentId: SELECT_SHOW });
@@ -134,18 +165,7 @@ export default class TicketingSystem extends React.Component<
         displayElm = <SelectShow updateShow={this.updateShow} />;
         break;
       case BOOK_TICKETS:
-        displayElm = (
-          <BookTickets
-            selectedShow={selectedShow}
-            tickets={this.state.tickets}
-            ticketDetails={this.state.ticketDetails}
-            discount={this.state.discount}
-            updateTickets={this.updateTickets}
-            updateTicketDetails={this.updateTicketDetails}
-            updateDiscount={this.updateDiscount}
-            next={this.goToSelectSeats}
-          />
-        );
+        displayElm = <BookTicketsWrapper />;
         break;
       case SELECT_SEATS:
         displayElm = (
