@@ -15,6 +15,8 @@ const BaseSeat = styled.button`
   margin: 0.1rem;
   height: 24px;
   width: 24px;
+  min-height: 24px;
+  min-width: 24px;
   padding: 0;
 `;
 

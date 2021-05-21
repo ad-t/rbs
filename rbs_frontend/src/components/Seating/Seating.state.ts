@@ -10,6 +10,7 @@ export default class SeatingState {
   seatingArrangement: SeatInfo[] = [];
   selectedSeats = mobx.observable([] as string[]);
   bookedSeats = mobx.observable([] as string[]);
+  takenSeats = mobx.observable([] as string[]);
   maximumSelected: number;
 
   constructor(maximumSelected: number) {

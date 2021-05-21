@@ -16,7 +16,7 @@ import { installTickets } from 'src/mocks/installTickets';
 import { StepItemState, TicketSystemState } from 'src/shared/enums';
 import { ShowNight } from 'src/shared/types';
 
-import SelectSeats from './SelectSeats';
+import SelectSeats from '../../pages/SelectSeats';
 // import Invoice from './Invoice';
 import ConfirmOrder from '../../pages/ConfirmOrder';
 import { ITicket, ITicketDetails } from '../../types/tickets';
