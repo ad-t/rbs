@@ -81,7 +81,7 @@ export default class TicketingSystem extends React.Component<
   // This may be changed during testing. Default values should be:
   // currentId: 0, selectedShow: -1
   state = {
-    currentId: TicketSystemState.SELECT_SHOW,
+    currentId: TicketSystemState.SELECT_SEATS,
     selectedShow: -1,
     showStr: '',
     tickets: [] as ITicket[],
@@ -178,7 +178,7 @@ export default class TicketingSystem extends React.Component<
   };
 
   render() {
-    const { currentId, selectedShow } = this.state;
+    const { currentId } = this.state;
     const { StepsElement, stepsState } = this.Steps;
     let displayElm;
 
@@ -190,17 +190,7 @@ export default class TicketingSystem extends React.Component<
         displayElm = <BookTicketsWrapper />;
         break;
       case TicketSystemState.SELECT_SEATS:
-        displayElm = (
-          <SelectSeats
-            tickets={this.state.tickets}
-            ticketDetails={this.state.ticketDetails}
-            discount={this.state.discount}
-            updateTickets={this.updateTickets}
-            updateTicketDetails={this.updateTicketDetails}
-            selectedShow={selectedShow}
-            next={this.goToInvoice}
-          />
-        );
+        displayElm = <SelectSeats selectedSeats={['1']} />;
         break;
       case TicketSystemState.INVOICE:
         displayElm = <div>Invoice Stub</div>;
