@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { createSeating } from 'src/components/Seating/create';
 import { Story } from '@storybook/react';
 import SelectSeats from './SelectSeats';
 import 'semantic-ui-css/semantic.min.css';
@@ -7,13 +8,8 @@ export default {
   title: 'Page/SelectSeats',
 };
 
-interface StoryProps {
-  selectedSeats: string[];
-}
+export const Default: Story = () => {
+  const { SeatingElement } = createSeating(5);
 
-const Template: Story<StoryProps> = (args) => <SelectSeats {...args} />;
-
-export const Default = Template.bind({});
-Default.args = {
-  selectedSeats: ['0', '1'],
+  return <SelectSeats SeatingSelector={<SeatingElement />} />;
 };

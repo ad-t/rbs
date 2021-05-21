@@ -2,21 +2,20 @@
  * This file will handle information relating to the show
  */
 import React from 'react';
-import * as mobxReact from 'mobx-react-lite';
 import { Icon, Container, Image } from 'semantic-ui-react';
 import { BookingHeader } from 'src/components/Header/Header';
 import { createTicket } from 'src/components/Ticket/create';
 import { createSteps } from 'src/components/Steps/create';
 import StepItem from 'src/components/Steps/StepItem';
 import { TicketingSystemState } from 'src/components/TicketingSystem/TicketingSystem.state';
-import BookTickets from 'src/pages/BookTickets';
-import SelectShow from 'src/pages/SelectShow';
-import { installShowNights } from 'src/mocks/installShows';
+import { saveShowNights } from 'src/mocks/installShows';
 import { installTickets } from 'src/mocks/installTickets';
 import { StepItemState, TicketSystemState } from 'src/shared/enums';
 import { ShowNight } from 'src/shared/types';
+import { installBookTickets } from './installBookTickets';
+import { installSelectSeat } from './installSelectSeat';
+import { installShowNights } from './installShowNights';
 
-import SelectSeats from '../../pages/SelectSeats';
 // import Invoice from './Invoice';
 import ConfirmOrder from '../../pages/ConfirmOrder';
 import { ITicket, ITicketDetails } from '../../types/tickets';
@@ -49,30 +48,9 @@ function filterStepState(state: number, index: number) {
 
 export const ticketingSystemState = new TicketingSystemState();
 
-const ShowNightWrapper = mobxReact.observer(() => (
-  <SelectShow
-    showNights={ticketingSystemState.showNights}
-    updateShow={() => console.log('Called')}
-  />
-));
-
-const BookTicketsWrapper = mobxReact.observer(() => {
-  const { ticketElements, ticketStates } = ticketingSystemState;
-  const totalPrice = ticketStates.reduce(
-    (total, state) => total + state.value * state.cost,
-    0
-  );
-  const preventProceed =
-    ticketStates.reduce((total, state) => total + state.value, 0) === 0;
-
-  return (
-    <BookTickets
-      tickets={ticketElements}
-      totalPrice={totalPrice}
-      preventProceed={preventProceed}
-    />
-  );
-});
+const { SelectSeatWrapper } = installSelectSeat();
+const BookTicketsWrapper = installBookTickets(ticketingSystemState);
+const ShowNightWrapper = installShowNights(ticketingSystemState);
 
 export default class TicketingSystem extends React.Component<
   Record<string, never>,
@@ -81,7 +59,7 @@ export default class TicketingSystem extends React.Component<
   // This may be changed during testing. Default values should be:
   // currentId: 0, selectedShow: -1
   state = {
-    currentId: TicketSystemState.SELECT_SEATS,
+    currentId: TicketSystemState.SELECT_SHOW,
     selectedShow: -1,
     showStr: '',
     tickets: [] as ITicket[],
@@ -114,11 +92,7 @@ export default class TicketingSystem extends React.Component<
   ]);
 
   componentDidMount() {
-    // eslint-disable-next-line
-    // @ts-ignore
-    window.ticketingSystemState = ticketingSystemState;
-
-    installShowNights().then((showNights: ShowNight[]) => {
+    saveShowNights().then((showNights: ShowNight[]) => {
       ticketingSystemState.setShowNights(showNights);
     });
 
@@ -182,7 +156,7 @@ export default class TicketingSystem extends React.Component<
     const { StepsElement, stepsState } = this.Steps;
     let displayElm;
 
-    switch (currentId) {
+    switch (ticketingSystemState.paymentStep) {
       case TicketSystemState.SELECT_SHOW:
         displayElm = <ShowNightWrapper />;
         break;
@@ -190,7 +164,7 @@ export default class TicketingSystem extends React.Component<
         displayElm = <BookTicketsWrapper />;
         break;
       case TicketSystemState.SELECT_SEATS:
-        displayElm = <SelectSeats selectedSeats={['1']} />;
+        displayElm = <SelectSeatWrapper />;
         break;
       case TicketSystemState.INVOICE:
         displayElm = <div>Invoice Stub</div>;
@@ -208,11 +182,26 @@ export default class TicketingSystem extends React.Component<
         break;
     }
 
-    stepsState.itemsProgress[0] = filterStepState(currentId, 0);
-    stepsState.itemsProgress[1] = filterStepState(currentId, 1);
-    stepsState.itemsProgress[2] = filterStepState(currentId, 2);
-    stepsState.itemsProgress[3] = filterStepState(currentId, 3);
-    stepsState.itemsProgress[4] = filterStepState(currentId, 4);
+    stepsState.itemsProgress[0] = filterStepState(
+      ticketingSystemState.paymentStep,
+      0
+    );
+    stepsState.itemsProgress[1] = filterStepState(
+      ticketingSystemState.paymentStep,
+      1
+    );
+    stepsState.itemsProgress[2] = filterStepState(
+      ticketingSystemState.paymentStep,
+      2
+    );
+    stepsState.itemsProgress[3] = filterStepState(
+      ticketingSystemState.paymentStep,
+      3
+    );
+    stepsState.itemsProgress[4] = filterStepState(
+      ticketingSystemState.paymentStep,
+      4
+    );
 
     return (
       <>

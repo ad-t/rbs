@@ -8,7 +8,7 @@ import { ShowNight } from 'src/shared/types';
 
 interface Props {
   showNights: ShowNight[];
-  updateShow(selectedShow: number, showStr: string): void;
+  updateShow(selectedShow: number): void;
 }
 
 export default class SelectShow extends React.Component<Props> {
@@ -35,12 +35,7 @@ export default class SelectShow extends React.Component<Props> {
           fluid
           color={ratio < 0.7 ? 'blue' : ratio < 0.9 ? 'yellow' : 'red'}
           style={{ margin: '1rem 0' }}
-          onClick={() =>
-            this.props.updateShow(
-              showNight.id,
-              dayjs(showNight.time).format('DD MMMM YYYY')
-            )
-          }
+          onClick={() => this.props.updateShow(showNight.id)}
           disabled={isSoldout}
         >
           {dayjs(showNight.time).format('h:mma - ddd DD MMMM YYYY')}

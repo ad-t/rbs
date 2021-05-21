@@ -20,7 +20,7 @@ export function createSeating(maximumSelected: number) {
     const { id } = event.currentTarget;
 
     if (seatingState.selectedSeats.find((selected) => selected === id)) {
-      seatingState.selectedSeats.remove(id);
+      (seatingState.selectedSeats as mobx.IObservableArray<string>).remove(id);
       return;
     }
 
@@ -54,7 +54,7 @@ export function createSeating(maximumSelected: number) {
           const isTaken = seatingState.takenSeats.find(
             (seatId) => seatId === id
           );
-          const isClickable = !(isBooked || seat.seatState === SeatState.TAKEN);
+          const isClickable = !(isBooked || isTaken);
 
           let seatState = seat.seatState;
 

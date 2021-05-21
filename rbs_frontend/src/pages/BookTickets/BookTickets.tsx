@@ -2,7 +2,7 @@
  * This file will handle the entire landing page.
  */
 import * as React from 'react';
-import { Button, Loader } from 'semantic-ui-react';
+import { Button, Loader, Icon } from 'semantic-ui-react';
 import styled from 'styled-components';
 
 const Subtotal = styled.div`
@@ -58,8 +58,13 @@ export default function BookTickets({
         <strong>Subtotal:</strong> {totalPrice.toFixed(2)}
       </Subtotal>
       <div>
-        <Button primary fluid disabled={preventProceed}>
-          RESERVE TICKETS
+        <Button icon labelPosition="left">
+          <Icon name="arrow left" />
+          Select show
+        </Button>
+        <Button primary icon labelPosition="right" disabled={preventProceed}>
+          Reserve tickets
+          <Icon name="arrow right" />
         </Button>
       </div>
     </>
