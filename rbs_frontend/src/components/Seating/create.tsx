@@ -51,6 +51,9 @@ export function createSeating(maximumSelected: number) {
           const isBooked = seatingState.bookedSeats.find(
             (seatId) => seatId === id
           );
+          const isTaken = seatingState.takenSeats.find(
+            (seatId) => seatId === id
+          );
           const isClickable = !(isBooked || seat.seatState === SeatState.TAKEN);
 
           let seatState = seat.seatState;
@@ -59,6 +62,8 @@ export function createSeating(maximumSelected: number) {
             seatState = SeatState.RESERVED;
           } else if (isBooked) {
             seatState = SeatState.BOOKED;
+          } else if (isTaken) {
+            seatState = SeatState.TAKEN;
           }
 
           return (

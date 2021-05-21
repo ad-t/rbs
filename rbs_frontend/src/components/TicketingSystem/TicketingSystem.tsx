@@ -18,7 +18,7 @@ import { createTicket } from 'src/components/Ticket/create';
 
 import BookTickets from 'src/pages/BookTickets';
 import SelectShow from '../../pages/SelectShow';
-import SelectSeats from './SelectSeats';
+import SelectSeats from '../../pages/SelectSeats';
 // import Invoice from './Invoice';
 import ConfirmOrder from '../../pages/ConfirmOrder';
 import { ITicket, ITicketDetails } from '../../types/tickets';
