@@ -11,7 +11,7 @@ import { ITicket } from './types/tickets';
 
 // Import subcomponents
 import LandingPage from './components/LandingPage';
-import TicketingSystem from './components/TicketingSystem';
+import { createTicketingSystem } from './components/TicketingSystem/create';
 
 // Import assets (e.g. scss)
 import * as serviceWorker from './serviceWorker';
@@ -22,6 +22,11 @@ interface State {
   buyingTicket: boolean;
 }
 
+const {
+  TicketingSystemElement,
+  ticketingSystemState,
+} = createTicketingSystem();
+
 class Index extends React.Component<Record<string, never>, State> {
   state: State = {
     tickets: [],
@@ -31,13 +36,19 @@ class Index extends React.Component<Record<string, never>, State> {
   toggleTickets = () =>
     this.setState({ buyingTicket: !this.state.buyingTicket });
 
+  componentDidMount = () => {
+    /* eslint-disable-next-line */
+    // @ts-ignore
+    window.ticketingSystemState = ticketingSystemState;
+  };
+
   render() {
     const { buyingTicket } = this.state;
 
     return (
       <React.Fragment>
         {buyingTicket ? (
-          <TicketingSystem />
+          <TicketingSystemElement />
         ) : (
           <LandingPage toggleTickets={this.toggleTickets} />
         )}
