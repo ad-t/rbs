@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { Story } from '@storybook/react';
+import { action } from '@storybook/addon-actions';
 import { createTicket } from 'src/components/Ticket/create';
 import BookTickets from './BookTickets';
 import 'semantic-ui-css/semantic.min.css';
@@ -28,7 +29,11 @@ interface StoryProps {
 }
 
 const Template: Story<StoryProps> = (args) => (
-  <BookTickets tickets={[<ticket.Ticket />, <ticket2.Ticket />]} {...args} />
+  <BookTickets
+    tickets={[<ticket.Ticket />, <ticket2.Ticket />]}
+    retract={action('Retract')}
+    {...args}
+  />
 );
 
 export const Default = Template.bind({});

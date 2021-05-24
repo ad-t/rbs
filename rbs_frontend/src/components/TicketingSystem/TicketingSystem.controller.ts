@@ -13,6 +13,11 @@ export class TicketingSystemController {
     state.ticketStates.push(ticketState);
   }
 
+  deleteTickets(state: TicketingSystemState) {
+    state.ticketElements = [];
+    state.ticketStates = [];
+  }
+
   setShowNights(state: TicketingSystemState, showNights: ShowNight[]) {
     state.showNights = showNights;
   }

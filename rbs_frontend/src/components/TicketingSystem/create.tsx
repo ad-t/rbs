@@ -13,7 +13,7 @@ import { installTickets } from 'src/mocks/installTickets';
 import { ITicket } from 'src/types/tickets';
 import { ShowNight } from 'src/shared/types';
 import SelectShow from 'src/pages/SelectShow';
-import { installBookTickets } from './installBookTickets';
+import BookTickets from 'src/pages/BookTickets';
 import { installSelectSeat } from './installSelectSeat';
 import { TicketingSystem } from './TicketingSystem';
 import { TicketingSystemController } from './TicketingSystem.controller';
@@ -35,13 +35,36 @@ export function createTicketingSystem() {
     ticketingSystemController.advanceStep(ticketingSystemState);
   });
 
+  const retract = mobx.action(() => {
+    ticketingSystemController.retractStep(ticketingSystemState);
+  });
+
   const ShowNightWrapper = mobxReact.observer(() => (
     <SelectShow
       showNights={ticketingSystemState.showNights}
       updateShow={updateShow}
     />
   ));
-  const BookTicketsWrapper = installBookTickets(ticketingSystemState);
+
+  const BookTicketsWrapper = mobxReact.observer(() => {
+    const { ticketElements, ticketStates } = ticketingSystemState;
+    const totalPrice = ticketStates.reduce(
+      (total, state) => total + state.value * state.cost,
+      0
+    );
+    const preventProceed =
+      ticketStates.reduce((total, state) => total + state.value, 0) === 0;
+
+    return (
+      <BookTickets
+        tickets={ticketElements}
+        totalPrice={totalPrice}
+        preventProceed={preventProceed}
+        retract={retract}
+      />
+    );
+  });
+
   const { SelectSeatWrapper } = installSelectSeat();
 
   const { StepsElement } = createSteps([
@@ -71,21 +94,26 @@ export function createTicketingSystem() {
     ticketingSystemController.setShowNights(ticketingSystemState, showNights);
   });
 
-  installTickets().then((tickets: ITicket[]) => {
-    tickets.forEach((ticket) => {
-      const { Ticket, ticketState } = createTicket({
-        name: ticket.description,
-        cost: ticket.price,
-        minPurchase: ticket.minPurchaseAmount,
-        initialAmount: 0,
-      });
+  mobx.autorun(() => {
+    if (userState.selectedShow !== undefined) {
+      ticketingSystemController.deleteTickets(ticketingSystemState);
+      installTickets(userState.selectedShow).then((tickets: ITicket[]) => {
+        tickets.forEach((ticket) => {
+          const { Ticket, ticketState } = createTicket({
+            name: ticket.description,
+            cost: ticket.price,
+            minPurchase: ticket.minPurchaseAmount,
+            initialAmount: 0,
+          });
 
-      ticketingSystemController.addTicket(
-        ticketingSystemState,
-        <Ticket />,
-        ticketState
-      );
-    });
+          ticketingSystemController.addTicket(
+            ticketingSystemState,
+            <Ticket />,
+            ticketState
+          );
+        });
+      });
+    }
   });
 
   const TicketingSystemElement = mobxReact.observer(() => (

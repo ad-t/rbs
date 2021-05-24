@@ -24,12 +24,14 @@ interface Props {
   tickets: JSX.Element[];
   totalPrice: number;
   preventProceed: boolean;
+  retract: () => void;
 }
 
 export default function BookTickets({
   tickets,
   totalPrice,
   preventProceed = false,
+  retract,
 }: Props) {
   return (
     <>
@@ -58,7 +60,7 @@ export default function BookTickets({
         <strong>Subtotal:</strong> {totalPrice.toFixed(2)}
       </Subtotal>
       <div>
-        <Button icon labelPosition="left">
+        <Button icon labelPosition="left" onClick={retract}>
           <Icon name="arrow left" />
           Select show
         </Button>
