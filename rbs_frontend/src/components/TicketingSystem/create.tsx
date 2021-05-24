@@ -1,17 +1,22 @@
+import * as mobx from 'mobx';
 import * as mobxReact from 'mobx-react-lite';
 import { Icon } from 'semantic-ui-react';
 import { createTicket } from 'src/components/Ticket/create';
 import { createSteps } from 'src/components/Steps/create';
 import StepItem from 'src/components/Steps/StepItem';
-import { TicketingSystemState } from 'src/components/TicketingSystem/TicketingSystem.state';
+import {
+  UserState,
+  TicketingSystemState,
+} from 'src/components/TicketingSystem/TicketingSystem.state';
 import { saveShowNights } from 'src/mocks/installShows';
 import { installTickets } from 'src/mocks/installTickets';
 import { ITicket } from 'src/types/tickets';
 import { ShowNight } from 'src/shared/types';
+import SelectShow from 'src/pages/SelectShow';
 import { installBookTickets } from './installBookTickets';
 import { installSelectSeat } from './installSelectSeat';
-import { installShowNights } from './installShowNights';
 import { TicketingSystem } from './TicketingSystem';
+import { TicketingSystemController } from './TicketingSystem.controller';
 
 const iconStyles = {
   display: 'flex',
@@ -21,10 +26,23 @@ const iconStyles = {
 };
 
 export function createTicketingSystem() {
+  const ticketingSystemController = new TicketingSystemController();
   const ticketingSystemState = new TicketingSystemState();
-  const { SelectSeatWrapper } = installSelectSeat();
+  const userState = new UserState();
+
+  const updateShow = mobx.action((showId: number) => {
+    userState.selectedShow = showId;
+    ticketingSystemController.advanceStep(ticketingSystemState);
+  });
+
+  const ShowNightWrapper = mobxReact.observer(() => (
+    <SelectShow
+      showNights={ticketingSystemState.showNights}
+      updateShow={updateShow}
+    />
+  ));
   const BookTicketsWrapper = installBookTickets(ticketingSystemState);
-  const ShowNightWrapper = installShowNights(ticketingSystemState);
+  const { SelectSeatWrapper } = installSelectSeat();
 
   const { StepsElement } = createSteps([
     <StepItem
@@ -50,7 +68,7 @@ export function createTicketingSystem() {
   ]);
 
   saveShowNights().then((showNights: ShowNight[]) => {
-    ticketingSystemState.setShowNights(showNights);
+    ticketingSystemController.setShowNights(ticketingSystemState, showNights);
   });
 
   installTickets().then((tickets: ITicket[]) => {
@@ -62,16 +80,20 @@ export function createTicketingSystem() {
         initialAmount: 0,
       });
 
-      ticketingSystemState.addTicket(<Ticket />, ticketState);
+      ticketingSystemController.addTicket(
+        ticketingSystemState,
+        <Ticket />,
+        ticketState
+      );
     });
   });
 
   const TicketingSystemElement = mobxReact.observer(() => (
     <TicketingSystem
       Steps={<StepsElement />}
+      ShowNights={<ShowNightWrapper />}
       BookTickets={<BookTicketsWrapper />}
       SelectSeat={<SelectSeatWrapper />}
-      ShowNights={<ShowNightWrapper />}
       paymentStep={ticketingSystemState.paymentStep}
     />
   ));

@@ -16,68 +16,65 @@ interface TicketingSystemProps {
   paymentStep: TicketSystemState;
 }
 
-export class TicketingSystem extends React.Component<TicketingSystemProps> {
-  render() {
-    const {
-      paymentStep,
-      Steps,
-      BookTickets,
-      SelectSeat,
-      ShowNights,
-    } = this.props;
-    let displayElm;
+export function TicketingSystem({
+  paymentStep,
+  Steps,
+  BookTickets,
+  SelectSeat,
+  ShowNights,
+}: TicketingSystemProps) {
+  let displayElm;
 
-    switch (paymentStep) {
-      case TicketSystemState.SELECT_SHOW:
-        displayElm = ShowNights;
-        break;
-      case TicketSystemState.BOOK_TICKETS:
-        displayElm = BookTickets;
-        break;
-      case TicketSystemState.SELECT_SEATS:
-        displayElm = SelectSeat;
-        break;
-      case TicketSystemState.INVOICE:
-        displayElm = <div>Invoice Stub</div>;
-        break;
-      case TicketSystemState.CONFIRM:
-        displayElm = (
-          <ConfirmOrder
-            showStr=""
-            tickets={[]}
-            ticketDetails={[]}
-            details={{}}
-            discount={null}
-          />
-        );
-        break;
-    }
-
-    return (
-      <>
-        <BookingHeader
-          Logo={
-            <Image
-              size="small"
-              src={LogoImage}
-              style={{ marginRight: '1.5em' }}
-            />
-          }
-          email="ticketing@medrevue.org"
-          showName="Med Revue 2021"
+  switch (paymentStep) {
+    case TicketSystemState.SELECT_SHOW:
+      displayElm = ShowNights;
+      break;
+    case TicketSystemState.BOOK_TICKETS:
+      displayElm = BookTickets;
+      break;
+    case TicketSystemState.SELECT_SEATS:
+      displayElm = SelectSeat;
+      break;
+    case TicketSystemState.INVOICE:
+      displayElm = <div>Invoice Stub</div>;
+      break;
+    case TicketSystemState.CONFIRM:
+      displayElm = (
+        <ConfirmOrder
+          showStr=""
+          tickets={[]}
+          ticketDetails={[]}
+          details={{}}
+          discount={null}
         />
-
-        <Container
-          style={{
-            position: 'relative',
-            padding: '1rem',
-          }}
-        >
-          <div style={{ marginBottom: '2rem' }}>{Steps}</div>
-
-          {displayElm}
-        </Container>
-      </>
-    );
+      );
+      break;
   }
+
+  return (
+    <>
+      <BookingHeader
+        Logo={
+          <Image
+            size="small"
+            src={LogoImage}
+            style={{ marginRight: '1.5em' }}
+          />
+        }
+        email="ticketing@medrevue.org"
+        showName="Med Revue 2021"
+      />
+
+      <Container
+        style={{
+          position: 'relative',
+          padding: '1rem',
+        }}
+      >
+        <div style={{ marginBottom: '2rem' }}>{Steps}</div>
+
+        {displayElm}
+      </Container>
+    </>
+  );
 }

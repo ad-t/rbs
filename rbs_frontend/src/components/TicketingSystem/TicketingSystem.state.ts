@@ -8,20 +8,18 @@ export class TicketingSystemState {
   ticketStates: TicketState[] = [];
   showNights: ShowNight[] = [];
 
-  selectedShowNight: number | undefined;
-
   paymentStep = TicketSystemState.SELECT_SHOW;
 
   constructor() {
     mobx.makeAutoObservable(this);
   }
+}
 
-  addTicket(element: JSX.Element, state: TicketState) {
-    this.ticketElements.push(element);
-    this.ticketStates.push(state);
-  }
+export class UserState {
+  selectedShow: number | undefined;
+  selectedTicket: number | undefined;
 
-  setShowNights(showNights: ShowNight[]) {
-    this.showNights = showNights;
+  constructor() {
+    mobx.makeAutoObservable(this);
   }
 }
