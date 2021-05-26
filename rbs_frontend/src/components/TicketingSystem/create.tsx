@@ -1,7 +1,6 @@
 import * as mobx from 'mobx';
 import * as mobxReact from 'mobx-react-lite';
 import { Icon } from 'semantic-ui-react';
-import { createTicket } from 'src/components/Ticket/create';
 import { createSteps } from 'src/components/Steps/create';
 import StepItem from 'src/components/Steps/StepItem';
 import {
@@ -30,13 +29,38 @@ export function createTicketingSystem() {
   const ticketingSystemState = new TicketingSystemState();
   const userState = new UserState();
 
+  const { StepsElement, stepController, stepsState } = createSteps([
+    <StepItem
+      icon={<Icon name="bullhorn" style={iconStyles} />}
+      name="Show Night"
+    />,
+    <StepItem
+      icon={<Icon name="ticket" style={iconStyles} />}
+      name="Tickets"
+    />,
+    <StepItem
+      icon={<Icon name="map marker" style={iconStyles} />}
+      name="Seats"
+    />,
+    <StepItem
+      icon={<Icon name="payment" style={iconStyles} />}
+      name="Billing"
+    />,
+    <StepItem
+      icon={<Icon name="info" style={iconStyles} />}
+      name="Confirm Order"
+    />,
+  ]);
+
   const updateShow = mobx.action((showId: number) => {
     userState.selectedShow = showId;
     ticketingSystemController.advanceStep(ticketingSystemState);
+    stepController.advance(stepsState);
   });
 
   const retract = mobx.action(() => {
     ticketingSystemController.retractStep(ticketingSystemState);
+    stepController.retreat(stepsState);
   });
 
   const ShowNightWrapper = mobxReact.observer(() => (
@@ -67,29 +91,6 @@ export function createTicketingSystem() {
 
   const { SelectSeatWrapper } = installSelectSeat();
 
-  const { StepsElement } = createSteps([
-    <StepItem
-      icon={<Icon name="bullhorn" style={iconStyles} />}
-      name="Show Night"
-    />,
-    <StepItem
-      icon={<Icon name="ticket" style={iconStyles} />}
-      name="Tickets"
-    />,
-    <StepItem
-      icon={<Icon name="map marker" style={iconStyles} />}
-      name="Seats"
-    />,
-    <StepItem
-      icon={<Icon name="payment" style={iconStyles} />}
-      name="Billing"
-    />,
-    <StepItem
-      icon={<Icon name="info" style={iconStyles} />}
-      name="Confirm Order"
-    />,
-  ]);
-
   saveShowNights().then((showNights: ShowNight[]) => {
     ticketingSystemController.setShowNights(ticketingSystemState, showNights);
   });
@@ -98,20 +99,7 @@ export function createTicketingSystem() {
     if (userState.selectedShow !== undefined) {
       ticketingSystemController.deleteTickets(ticketingSystemState);
       installTickets(userState.selectedShow).then((tickets: ITicket[]) => {
-        tickets.forEach((ticket) => {
-          const { Ticket, ticketState } = createTicket({
-            name: ticket.description,
-            cost: ticket.price,
-            minPurchase: ticket.minPurchaseAmount,
-            initialAmount: 0,
-          });
-
-          ticketingSystemController.addTicket(
-            ticketingSystemState,
-            <Ticket />,
-            ticketState
-          );
-        });
+        ticketingSystemController.addTickets(ticketingSystemState, tickets);
       });
     }
   });

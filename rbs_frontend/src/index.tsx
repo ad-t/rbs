@@ -22,10 +22,7 @@ interface State {
   buyingTicket: boolean;
 }
 
-const {
-  TicketingSystemElement,
-  ticketingSystemState,
-} = createTicketingSystem();
+const { TicketingSystemElement } = createTicketingSystem();
 
 class Index extends React.Component<Record<string, never>, State> {
   state: State = {
@@ -35,12 +32,6 @@ class Index extends React.Component<Record<string, never>, State> {
 
   toggleTickets = () =>
     this.setState({ buyingTicket: !this.state.buyingTicket });
-
-  componentDidMount = () => {
-    /* eslint-disable-next-line */
-    // @ts-ignore
-    window.ticketingSystemState = ticketingSystemState;
-  };
 
   render() {
     const { buyingTicket } = this.state;
