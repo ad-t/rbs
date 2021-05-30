@@ -13,13 +13,21 @@ import {
 } from './SelectSeats.styled';
 
 interface SelectSeatsProps {
+  selectedSeats: number;
+  maxSeats: number;
   SeatingSelector: JSX.Element;
 }
 
-export default function SelectSeats({ SeatingSelector }: SelectSeatsProps) {
+export default function SelectSeats({
+  SeatingSelector,
+  maxSeats,
+  selectedSeats,
+}: SelectSeatsProps) {
   return (
     <MainWrapper>
-      <Header as="h2">Seat Selection</Header>
+      <Header as="h2">
+        Seat Selection ({selectedSeats} / {maxSeats})
+      </Header>
       <p>
         <strong>Note:</strong> tickets and seats are not reserved until payment
         is completed.

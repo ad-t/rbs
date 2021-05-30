@@ -1,4 +1,5 @@
 import * as React from 'react';
+import mobxReact from 'mobx-react-lite';
 import { createSeating } from 'src/components/Seating/create';
 import { Story } from '@storybook/react';
 import SelectSeats from './SelectSeats';
@@ -9,7 +10,15 @@ export default {
 };
 
 export const Default: Story = () => {
-  const { SeatingElement } = createSeating(5);
+  const { SeatingElement, seatingState } = createSeating(5);
 
-  return <SelectSeats SeatingSelector={<SeatingElement />} />;
+  const Element = mobxReact.observer(() => (
+    <SelectSeats
+      selectedSeats={seatingState.selectedSeats.length}
+      maxSeats={5}
+      SeatingSelector={<SeatingElement />}
+    />
+  ));
+
+  return <Element />;
 };

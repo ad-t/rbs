@@ -2,6 +2,7 @@ import * as mobx from 'mobx';
 import * as mobxReact from 'mobx-react-lite';
 import { Icon } from 'semantic-ui-react';
 import { createSteps } from 'src/components/Steps/create';
+import { createSeating } from 'src/components/Seating/create';
 import StepItem from 'src/components/Steps/StepItem';
 import {
   UserState,
@@ -13,7 +14,7 @@ import { ITicket } from 'src/types/tickets';
 import { ShowNight } from 'src/shared/types';
 import SelectShow from 'src/pages/SelectShow';
 import BookTickets from 'src/pages/BookTickets';
-import { installSelectSeat } from './installSelectSeat';
+import SelectSeats from 'src/pages/SelectSeats';
 import { TicketingSystem } from './TicketingSystem';
 import { TicketingSystemController } from './TicketingSystem.controller';
 
@@ -52,6 +53,8 @@ export function createTicketingSystem() {
     />,
   ]);
 
+  const { SeatingElement, seatingState } = createSeating(0);
+
   const updateShow = mobx.action((showId: number) => {
     userState.selectedShow = showId;
     ticketingSystemController.advanceStep(ticketingSystemState);
@@ -61,6 +64,16 @@ export function createTicketingSystem() {
   const retract = mobx.action(() => {
     ticketingSystemController.retractStep(ticketingSystemState);
     stepController.retreat(stepsState);
+  });
+
+  const selectTickets = mobx.action(() => {
+    const { ticketStates } = ticketingSystemState;
+    seatingState.maximumSelected = ticketStates.reduce(
+      (total, state) => total + state.value,
+      0
+    );
+    ticketingSystemController.advanceStep(ticketingSystemState);
+    stepController.advance(stepsState);
   });
 
   const ShowNightWrapper = mobxReact.observer(() => (
@@ -85,15 +98,18 @@ export function createTicketingSystem() {
         totalPrice={totalPrice}
         preventProceed={preventProceed}
         retract={retract}
+        advance={selectTickets}
       />
     );
   });
 
-  const { SelectSeatWrapper } = installSelectSeat();
-
-  saveShowNights().then((showNights: ShowNight[]) => {
-    ticketingSystemController.setShowNights(ticketingSystemState, showNights);
-  });
+  const SelectSeatWrapper = mobxReact.observer(() => (
+    <SelectSeats
+      selectedSeats={seatingState.selectedSeats.length}
+      maxSeats={seatingState.maximumSelected}
+      SeatingSelector={<SeatingElement />}
+    />
+  ));
 
   mobx.autorun(() => {
     if (userState.selectedShow !== undefined) {
@@ -102,6 +118,10 @@ export function createTicketingSystem() {
         ticketingSystemController.addTickets(ticketingSystemState, tickets);
       });
     }
+  });
+
+  saveShowNights().then((showNights: ShowNight[]) => {
+    ticketingSystemController.setShowNights(ticketingSystemState, showNights);
   });
 
   const TicketingSystemElement = mobxReact.observer(() => (

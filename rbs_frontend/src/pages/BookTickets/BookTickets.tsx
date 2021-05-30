@@ -25,6 +25,7 @@ interface Props {
   totalPrice: number;
   preventProceed: boolean;
   retract: () => void;
+  advance: () => void;
 }
 
 export default function BookTickets({
@@ -32,6 +33,7 @@ export default function BookTickets({
   totalPrice,
   preventProceed = false,
   retract,
+  advance,
 }: Props) {
   return (
     <>
@@ -64,7 +66,13 @@ export default function BookTickets({
           <Icon name="arrow left" />
           Select show
         </Button>
-        <Button primary icon labelPosition="right" disabled={preventProceed}>
+        <Button
+          primary
+          icon
+          labelPosition="right"
+          disabled={preventProceed}
+          onClick={advance}
+        >
           Reserve tickets
           <Icon name="arrow right" />
         </Button>

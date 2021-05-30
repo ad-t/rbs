@@ -32,6 +32,7 @@ const Template: Story<StoryProps> = (args) => (
   <BookTickets
     tickets={[<ticket.Ticket />, <ticket2.Ticket />]}
     retract={action('Retract')}
+    advance={action('Advance')}
     {...args}
   />
 );
