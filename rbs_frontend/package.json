@@ -27,7 +27,7 @@
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.0.3",
     "styled-components": "^5.2.3",
-    "typescript": "^4.2.4",
+    "typescript": "4.2.4",
     "validator": "^13.6.0"
   },
   "scripts": {
@@ -42,9 +42,11 @@
   },
   "browserslist": {
     "production": [
-      ">0.2%",
+      ">0.3% in AU",
+      "firefox esr",
       "not dead",
-      "not op_mini all"
+      "not op_mini all",
+      "not ie <= 11"
     ],
     "development": [
       "last 1 chrome version",
@@ -59,6 +61,7 @@
     "@storybook/node-logger": "^6.2.8",
     "@storybook/preset-create-react-app": "^3.1.7",
     "@storybook/react": "^6.2.8",
+    "@testing-library/jest-dom": "^5.12.0",
     "@testing-library/react": "^11.2.6",
     "@testing-library/user-event": "^13.1.5",
     "@types/styled-components": "^5.1.9",
