@@ -56,25 +56,3 @@ const ModifyButton = styled.button`
     outline: none;
   }
 `;
-
-export const DecrementButton = styled(ModifyButton)`
-  color: ${variables.red50};
-  background: ${variables.red500};
-  &:hover {
-    background: ${variables.red700};
-  }
-  &:disabled {
-    background: ${variables.red300};
-  }
-`;
-
-export const IncrementButton = styled(ModifyButton)`
-  color: ${variables.green50};
-  background: ${variables.green500};
-  &:hover {
-    background: ${variables.green700};
-  }
-  &:disabled {
-    background: ${variables.green300};
-  }
-`;
