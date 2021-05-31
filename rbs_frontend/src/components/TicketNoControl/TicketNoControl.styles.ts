@@ -33,26 +33,3 @@ export const TicketNumbers = styled.div`
   text-align: center;
   width: 16px;
 `;
-
-const ModifyButton = styled.button`
-  border: none;
-  border-radius: 50%;
-  box-shadow: ${variables.boxShadow};
-
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  height: 32px;
-  width: 32px;
-
-  &:disabled {
-    box-shadow: none;
-    cursor: default;
-  }
-  &:focus {
-    outline: none;
-  }
-`;

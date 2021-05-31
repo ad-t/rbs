@@ -4,3 +4,12 @@ export interface ShowNight {
   reservedSeats: number;
   totalSeats: number;
 }
+
+/** Details about the owner of the particular ticket */
+export interface TickerOwnerDetails {
+  typeId: number; // The type of ticket, e.g. General Ticket on Wednesday
+  name: string;
+  postcode: string;
+  phone: string;
+  seatNum: string;
+}

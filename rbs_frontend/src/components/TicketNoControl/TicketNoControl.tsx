@@ -3,7 +3,6 @@
  */
 import React from 'react';
 import { IoTicket } from 'react-icons/io5';
-import { Button, Icon } from 'semantic-ui-react';
 import {
   Logo,
   Controls,
@@ -17,7 +16,7 @@ interface Props {
   cost: number;
   description: string;
   quantity: number;
-};
+}
 
 export default function Ticket({ cost, description, quantity }: Props) {
   return (
@@ -33,4 +32,4 @@ export default function Ticket({ cost, description, quantity }: Props) {
       </Controls>
     </Wrapper>
   );
-};
+}

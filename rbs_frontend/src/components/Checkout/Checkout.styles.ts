@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { Container } from 'semantic-ui-react';
-import * as variables from 'src/shared/css.variables';
 
 export const PaymentBtnGroup = styled(Container)`
   margin-top: 1em;
@@ -8,7 +7,7 @@ export const PaymentBtnGroup = styled(Container)`
 
 export const TicketsList = styled.div`
   font-variant-numeric: tabular-nums;
-  padding: 0 1em;
+  padding: 1rem 0;
 `;
 
 export const TicketPrice = styled.div`
