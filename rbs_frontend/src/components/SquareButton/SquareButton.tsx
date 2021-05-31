@@ -79,7 +79,7 @@ export default function SquareButton({ setupSquare }: Props) {
             <Icon name='remove' /> Try another method
           </Button>
           */}
-          <Button color='blue' inverted onClick={() => setupSquare()}>
+          <Button color='blue' inverted onClick={onClick}>
             <Icon name='refresh' /> Relaunch Square
           </Button>
           </Grid>
