@@ -1,19 +1,19 @@
 /*
  * This component will return an invoice that shows what tickets were purchased from the user.
  */
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import {
   Button, Divider, Form, Header, Icon, Input,
   Grid, Container, List, Popup, Message
 } from 'semantic-ui-react';
 
-import mobx, { makeAutoObservable } from 'mobx';
+import { action as mobxAction, runInAction } from 'mobx';
 import { observer } from 'mobx-react-lite';
 
-import TicketNoControl from 'TicketNoControl';
-import TicketholderDetails from 'TicketholderDetails';
-import SquareButton from 'SquareButton';
+import TicketNoControl from '../TicketNoControl';
+import TicketholderDetails from '../TicketholderDetails';
+import SquareButton from '../SquareButton';
 
 // Import our interface
 import { ITicket, ITicketDetails } from 'src/types/tickets';
@@ -32,13 +32,13 @@ export interface CheckoutProps {
   tickets: ITicket[];
   ticketDetails: ITicketDetails[];
   discount: IDiscount | null;
-  updateTicketDetails(tickets: ITicketDetails[]): void;
   updatePayment(details: any): void;
+  state: CheckoutState;
 }
 
-export default function Checkout(props: CheckoutProps) {
-  const state = new CheckoutState();
-  
+function Checkout(props: CheckoutProps) {
+  const {state} = props;
+
   const checkValidDetails = () => {
     // TODO: improve validation
     let valid = !!(state.name && state.email && state.phone);
@@ -111,7 +111,10 @@ export default function Checkout(props: CheckoutProps) {
   };
 
   const createOrder = async () => {
-    let id = await getOrderId();
+    const id = await getOrderId();
+    // TODO: better handle missing ID
+    if (!id) return null;
+
     const setupRes = await fetch(`${process.env.REACT_APP_API_URL}/orders/${id}/paypal-setup`, {
       method: 'POST'
     });
@@ -120,7 +123,10 @@ export default function Checkout(props: CheckoutProps) {
   };
 
   const setupSquare = async () => {
-    let id = await getOrderId();
+    const id = await getOrderId();
+    // TODO: better handle missing ID
+    if (!id) return null;
+
     const setupRes = await fetch(`${process.env.REACT_APP_API_URL}/orders/${id}/square-setup`, {
       method: 'POST'
     });
@@ -130,7 +136,7 @@ export default function Checkout(props: CheckoutProps) {
 
   /* FIXME: should be configurable from server side */
   const handlingFee = (price: number) => {
-    return !!props.discount?.waiveHandlingFee ? 0 : 2.19;
+    return props.discount?.waiveHandlingFee ? 0 : 2.19;
   };
 
   const onPaypalApprove = async (data: any, actions: any) => {
@@ -171,16 +177,16 @@ export default function Checkout(props: CheckoutProps) {
   }
 
   
-  const handleChange = (e: any, { name, value }: any) => {
+  const handleChange = mobxAction((e: any, { name, value }: any) => {
     state[name] = value;
-  };
+  });
 
-  const onChange = (index: number, name: string, value: string) => {
+  const onChange = mobxAction((index: number, name: string, value: string) => {
     props.ticketDetails[index][name] = value;
-  };
+  });
 
   const { tickets, ticketDetails } = props;
-  const { name, email, phone, hasClickedPayment } = state;
+  const { name, email, phone } = state;
   const ticketElms: Array<JSX.Element> = [];
   let totalPrice = 0;
 
@@ -211,7 +217,7 @@ export default function Checkout(props: CheckoutProps) {
       <TicketholderDetails index={i}
         details={currDetails}
         description={description}
-        showErrors={hasClickedPayment}
+        showErrors={state.hasClickedPayment}
         onChange={(name, value) => onChange(copyIndex, name, value)} />
     );
   }
@@ -233,7 +239,7 @@ export default function Checkout(props: CheckoutProps) {
                 name='name'
                 onChange={handleChange}
                 defaultValue={state.name}
-                error={hasClickedPayment && !name.trim()}
+                error={state.hasClickedPayment && !name.trim()}
                 required
               />
               <Form.Input
@@ -241,7 +247,7 @@ export default function Checkout(props: CheckoutProps) {
                 name='email'
                 onChange={handleChange}
                 defaultValue={state.email}
-                error={hasClickedPayment && !/^\S+@\S+$/.test(email)}
+                error={state.hasClickedPayment && !/^\S+@\S+$/.test(email)}
                 required
               />
               <Form.Input
@@ -249,14 +255,14 @@ export default function Checkout(props: CheckoutProps) {
                 name='phone'
                 onChange={handleChange}
                 defaultValue={state.phone}
-                error={hasClickedPayment && !phone.trim()}
+                error={state.hasClickedPayment && !phone.trim()}
                 required
               />
             </Form>
 
             {detailsElms}
 
-            { hasClickedPayment && !formsAreValid ?
+            { state.hasClickedPayment && !formsAreValid ?
               <Message color='red'>Incomplete details, please fill all fields to continue.</Message>
             : undefined }
           </Grid.Column>
@@ -291,9 +297,8 @@ export default function Checkout(props: CheckoutProps) {
             <li><strong>Strobe lighting</strong> may be used in this performance. Please contact us if you have any concerns.</li>
             <li>Arc tickets may require proof of Arc membership upon entry.</li>
             <li>Ticket exchanges may be available (subject to capacity). Please contact us ASAP if you need to reschedule.</li>
-            <li>Tickets will be refunded in full (minus handling fees and surcharges) if the event is cancelled, or you are required to
-            self-isolate due to COVID-19 regulations. Any other refunds will be at our sole discretion.
-            (This does not affect your rights under Australian Consumer Law.)</li>
+            <li>Tickets will be refunded in full if the event is cancelled, or you are required to
+            self-isolate due to COVID-19 regulations. Any other refunds will be at our sole discretion (or as required under Australian Consumer Law).</li>
             <li>For further information, contact us on <a href="https://www.facebook.com/MedRevue">Facebook</a> or email ticketing@medrevue.org.</li>
             </ul>
           </Grid.Column>
@@ -305,7 +310,7 @@ export default function Checkout(props: CheckoutProps) {
             <Grid columns={1}>
               <Grid.Column>
                 <SquareButton setupSquare={ async () => {
-                  mobx.action(() => {
+                  runInAction(() => {
                     state.hasClickedPayment = true;
                   });
                   if (!formsAreValid) return null;
@@ -344,4 +349,6 @@ export default function Checkout(props: CheckoutProps) {
       </PaymentBtnGroup>
     </React.Fragment>
   );
-};
+}
+
+export default observer(Checkout);
