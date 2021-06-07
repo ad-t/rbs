@@ -35,10 +35,8 @@ const Template: Story = (args) => (
     ]}
     discount={null}
     showStr="CSE Revue"
-    details={{
-      email: 'wtf',
-      orderID: '923983',
-    }}
+    email="john.smith@example.com"
+    orderID="923983"
   />
 );
 

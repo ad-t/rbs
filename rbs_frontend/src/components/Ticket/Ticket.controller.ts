@@ -10,4 +10,8 @@ export default class TicketController {
 
     state.value = newTicketNumber;
   }
+
+  setName(state: TicketState, name: string) {
+    state.name = name;
+  }
 }

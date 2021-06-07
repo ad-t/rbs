@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import * as variables from 'src/shared/css.variables';
 
 export const PaymentButton = styled.button`
   border: none;
@@ -14,26 +13,22 @@ export const PaymentButton = styled.button`
   justify-content: center;
 
   height: 45px;
-  padding: 0 25px;
+  padding: 0 0.5rem 0 1rem;
   margin: auto;
 
-  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
-  font-weight: bold;
+  font-family: Rubik, Helvetica, Arial, sans-serif;
   font-size: 16px;
-  vertical-align: middle;
-  /*padding: 0 12px 2px 12px;*/
 
   &:disabled {
     box-shadow: none;
     cursor: default;
   }
+
   &:focus {
     outline: none;
   }
 
-  img {
-    height: 30px;
-    margin-left: 10px;
-    padding-bottom: 2px;
+  svg {
+    font-size: 3rem;
   }
 `;

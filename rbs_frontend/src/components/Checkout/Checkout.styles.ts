@@ -1,18 +1,15 @@
 import styled from 'styled-components';
-import { Container } from 'semantic-ui-react';
-import * as variables from 'src/shared/css.variables';
-
-export const PaymentBtnGroup = styled(Container)`
-  margin-top: 1em;
-`;
 
 export const TicketsList = styled.div`
-  font-variant-numeric: tabular-nums;
-  padding: 0 1em;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 1fr);
+  padding: 1rem 0;
+  row-gap: 1rem;
 `;
 
 export const TicketPrice = styled.div`
-  font-size: 17px;
+  font-family: Rubik, sans-serif;
+  font-size: 16px;
   text-align: right;
-  padding: 1em;
+  padding: 1rem;
 `;

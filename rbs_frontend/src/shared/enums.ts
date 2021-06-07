@@ -23,3 +23,11 @@ export enum SeatType {
   COMMON = 'COMMON',
   NONE = 'NONE',
 }
+
+export enum TicketSystemState {
+  SELECT_SHOW = 0,
+  BOOK_TICKETS = 1,
+  SELECT_SEATS = 2,
+  INVOICE = 3,
+  CONFIRM = 4,
+}

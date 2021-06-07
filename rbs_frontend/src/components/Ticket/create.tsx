@@ -10,7 +10,12 @@ export interface TicketConfig
 }
 
 export function createTicket(props: TicketConfig) {
-  const state = new TicketState(props.initialAmount, props.cost);
+  const state = new TicketState(
+    props.id || 'unknown-ticket-id',
+    props.initialAmount,
+    props.cost,
+    props.name
+  );
   const controller = new TicketController();
 
   function updateTickets(amount: number) {
@@ -22,6 +27,7 @@ export function createTicket(props: TicketConfig) {
     Ticket: mobxReact.observer(() => (
       <Ticket
         {...props}
+        name={state.name}
         ticketAmount={state.value}
         updateTickets={updateTickets}
       />

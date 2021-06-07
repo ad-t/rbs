@@ -17,12 +17,3 @@ export interface ITicketDetails {
   phone: string;
   seatNum: string;
 }
-
-// This is just to create a ticket manager context. For more information, consult the context file
-export interface ITicketManager {
-  addTicket(ticket: ITicket): Promise<boolean>;
-  getTickets(): Array<ITicket>;
-  modifyQuantity(uid: number, amount: number): Promise<boolean>;
-  removeTicket(uid: number): Promise<boolean>;
-  removeAllTickets(): Promise<boolean>;
-}

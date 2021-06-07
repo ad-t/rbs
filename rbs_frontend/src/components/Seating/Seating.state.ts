@@ -8,12 +8,13 @@ export interface SeatInfo {
 
 export default class SeatingState {
   seatingArrangement: SeatInfo[] = [];
-  selectedSeats = mobx.observable([] as string[]);
-  bookedSeats = mobx.observable([] as string[]);
-  takenSeats = mobx.observable([] as string[]);
+  selectedSeats: string[] = [];
+  bookedSeats: string[] = [];
+  takenSeats: string[] = [];
   maximumSelected: number;
 
   constructor(maximumSelected: number) {
+    mobx.makeAutoObservable(this);
     this.maximumSelected = maximumSelected;
   }
 

@@ -4,7 +4,7 @@ import { observable, action as mobxAction } from 'mobx';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import TicketholderDetails from '../TicketholderDetails';
+import TicketholderDetails from '../TicketHolderForm';
 import ITicketDetails from 'src/types/ticket';
 
 const info = {

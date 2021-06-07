@@ -21,7 +21,7 @@ const showNights: ShowNight[] = [
   },
 ];
 
-export async function installShowNights() {
+export async function saveShowNights() {
   return new Promise<ShowNight[]>((resolve) => {
     setTimeout(() => {
       resolve(showNights);

@@ -2,301 +2,74 @@
  * This file will handle information relating to the show
  */
 import React from 'react';
-import {
-  Header,
-  Icon,
-  Step,
-  Container,
-  Menu,
-  Image,
-  List,
-} from 'semantic-ui-react';
-import * as mobxReact from 'mobx-react-lite';
-import { installTickets } from 'src/mocks/installTickets';
-import { TicketingSystemState } from 'src/components/TicketingSystem/TicketingSystem.state';
-import { createTicket } from 'src/components/Ticket/create';
+import { Container, Image } from 'semantic-ui-react';
+import { BookingHeader } from 'src/components/Header/Header';
+import { TicketSystemState } from 'src/shared/enums';
+import LogoImage from './logo.png';
 
-import BookTickets from 'src/pages/BookTickets';
-import SelectShow from '../../pages/SelectShow';
-import SelectSeats from '../../pages/SelectSeats';
-// import Invoice from './Invoice';
-import ConfirmOrder from '../../pages/ConfirmOrder';
-import { ITicket, ITicketDetails } from '../../types/tickets';
-import { IDiscount } from '../../types/discount';
-
-interface State {
-  currentId: number;
-  selectedShow: number;
-  showStr: string;
-  tickets: ITicket[];
-  ticketDetails: ITicketDetails[];
-  discount: IDiscount | null;
-  details: any;
+interface TicketingSystemProps {
+  Steps: React.ReactNode;
+  SelectSeat: React.ReactNode;
+  BookTickets: React.ReactNode;
+  ShowNights: React.ReactNode;
+  Checkout: React.ReactNode;
+  ConfirmOrder: React.ReactNode;
+  paymentStep: TicketSystemState;
 }
 
-const SELECT_SHOW = 0;
-const BOOK_TICKETS = 1;
-const SELECT_SEATS = 2;
-const INVOICE = 3;
-const CONFIRM = 4;
+export function TicketingSystem({
+  paymentStep,
+  Steps,
+  BookTickets,
+  SelectSeat,
+  ShowNights,
+  ConfirmOrder,
+  Checkout,
+}: TicketingSystemProps) {
+  let displayElm;
 
-export const ticketingSystemState = new TicketingSystemState();
+  switch (paymentStep) {
+    case TicketSystemState.SELECT_SHOW:
+      displayElm = ShowNights;
+      break;
+    case TicketSystemState.BOOK_TICKETS:
+      displayElm = BookTickets;
+      break;
+    case TicketSystemState.SELECT_SEATS:
+      displayElm = SelectSeat;
+      break;
+    case TicketSystemState.INVOICE:
+      displayElm = Checkout;
+      break;
+    case TicketSystemState.CONFIRM:
+      displayElm = ConfirmOrder;
+      break;
+  }
 
-const BookTicketsWrapper = mobxReact.observer(() => {
-  const { ticketElements, ticketStates } = ticketingSystemState;
-  const totalPrice = ticketStates.reduce(
-    (total, state) => total + state.value * state.cost,
-    0
+  return (
+    <>
+      <BookingHeader
+        Logo={
+          <Image
+            size="small"
+            src={LogoImage}
+            style={{ marginRight: '1.5em' }}
+          />
+        }
+        email="ticketing@medrevue.org"
+        showName="Med Revue 2021"
+      />
+
+      <Container
+        style={{
+          position: 'relative',
+          padding: '1rem',
+        }}
+      >
+        <div style={{ marginBottom: '2rem' }}>{Steps}</div>
+
+        {displayElm}
+      </Container>
+    </>
   );
-
-  return <BookTickets tickets={ticketElements} totalPrice={totalPrice} />;
-});
-
-export default class TicketingSystem extends React.Component<
-  Record<string, never>,
-  State
-> {
-  // This may be changed during testing. Default values should be:
-  // currentId: 0, selectedShow: -1
-  state = {
-    currentId: 1,
-    selectedShow: -1,
-    showStr: '',
-    tickets: [] as ITicket[],
-    ticketDetails: [] as ITicketDetails[],
-    discount: null,
-    details: null,
-  };
-
-  componentDidMount() {
-    installTickets().then((tickets: ITicket[]) => {
-      console.log(tickets);
-      tickets.forEach((ticket) => {
-        const { Ticket, ticketState } = createTicket({
-          name: ticket.description,
-          cost: ticket.price,
-          minPurchase: ticket.minPurchaseAmount,
-          initialAmount: 0,
-        });
-
-        ticketingSystemState.addTicket(<Ticket />, ticketState);
-      });
-    });
-  }
-
-  goToSelectShow = () => {
-    this.setState({ currentId: SELECT_SHOW });
-  };
-
-  updateShow = (selectedShow: number, showStr: string) => {
-    // If selected show is different, reset ticket quantities and details.
-    // This is because e.g. ticket types and available seats might be different.
-    if (selectedShow !== this.state.selectedShow) {
-      this.setState({ tickets: [], ticketDetails: [], discount: null });
-    }
-    this.setState({ currentId: BOOK_TICKETS, selectedShow, showStr });
-  };
-
-  goToSelectSeats = () => {
-    this.setState({ currentId: SELECT_SEATS });
-  };
-
-  updateTickets = (tickets: ITicket[]) => {
-    this.setState({ tickets });
-  };
-
-  updateTicketDetails = (ticketDetails: ITicketDetails[]) => {
-    this.setState({ ticketDetails });
-  };
-
-  updateDiscount = (discount: IDiscount | null) => {
-    this.setState({ discount });
-  };
-
-  goToInvoice = () => {
-    this.setState({ currentId: INVOICE });
-  };
-
-  updatePayment = (details: any) => {
-    this.setState({ currentId: CONFIRM, details });
-  };
-
-  canGoBack(from: number, to: number) {
-    return from > to && from !== CONFIRM;
-  }
-
-  goBackTo = (from: number, to: number) => {
-    if (!this.canGoBack(from, to)) {
-      return;
-    }
-
-    this.setState({ currentId: to });
-  };
-
-  render() {
-    const { currentId, selectedShow } = this.state;
-    let displayElm;
-
-    switch (currentId) {
-      case SELECT_SHOW:
-        displayElm = <SelectShow updateShow={this.updateShow} />;
-        break;
-      case BOOK_TICKETS:
-        displayElm = <BookTicketsWrapper />;
-        break;
-      case SELECT_SEATS:
-        displayElm = (
-          <SelectSeats
-            tickets={this.state.tickets}
-            ticketDetails={this.state.ticketDetails}
-            discount={this.state.discount}
-            updateTickets={this.updateTickets}
-            updateTicketDetails={this.updateTicketDetails}
-            selectedShow={selectedShow}
-            next={this.goToInvoice}
-          />
-        );
-        break;
-      case INVOICE:
-        displayElm = <div>Invoice Stub</div>;
-        break;
-      case CONFIRM:
-        displayElm = (
-          <ConfirmOrder
-            showStr={this.state.showStr}
-            tickets={this.state.tickets}
-            ticketDetails={this.state.ticketDetails}
-            details={this.state.details}
-            discount={this.state.discount}
-          />
-        );
-        break;
-    }
-
-    const { canGoBack, goBackTo } = this;
-
-    return (
-      <React.Fragment>
-        <Menu fixed="top" inverted>
-          <Container>
-            <Menu.Item header>
-              <Image
-                size="small"
-                src="/logo.png"
-                style={{ marginRight: '1.5em' }}
-              />
-            </Menu.Item>
-
-            <Menu.Menu position="right">
-              <Menu.Item>
-                <List>
-                  <List.Item>
-                    <strong>Med Revue 2021</strong>
-                  </List.Item>
-                  <List.Item>
-                    <strong>Need help?</strong> ticketing@medrevue.org
-                    <br />
-                    or contact us on{' '}
-                    <a href="https://www.facebook.com/MedRevue">Facebook</a>
-                  </List.Item>
-                </List>
-              </Menu.Item>
-              <Menu.Item>
-                <Image size="tiny" src="/covid-safe-logo.png" />
-              </Menu.Item>
-            </Menu.Menu>
-          </Container>
-        </Menu>
-
-        <Container
-          style={{
-            position: 'relative',
-            paddingTop: '7.5em',
-            minHeight: '100%',
-            background: '#eee',
-          }}
-        >
-          <Header as="h2" style={{ margin: 0, padding: '1em 0.5em 0em' }}>
-            <Icon name="shop" />
-            <Header.Content>
-              Med Revue 2021 Tickets
-              <Header.Subheader>
-                Place your order for a seat to Breaking Bones
-              </Header.Subheader>
-            </Header.Content>
-          </Header>
-          <div style={{ margin: '1em 1em' }}>
-            <Step.Group size="mini" widths={5} unstackable>
-              {/* FIXME: as long as onClick is present, link makes no difference */}
-              <Step
-                active={currentId === SELECT_SHOW}
-                completed={currentId > SELECT_SHOW}
-                link={canGoBack(currentId, SELECT_SHOW)}
-                onClick={
-                  canGoBack(currentId, SELECT_SHOW)
-                    ? () => goBackTo(currentId, SELECT_SHOW)
-                    : undefined
-                }
-              >
-                <Icon name="bullhorn" />
-                <Step.Content>
-                  <Step.Title>Show Night</Step.Title>
-                  <Step.Description>{this.state.showStr}</Step.Description>
-                </Step.Content>
-              </Step>
-              <Step
-                active={currentId === BOOK_TICKETS}
-                completed={currentId > BOOK_TICKETS}
-                link={canGoBack(currentId, BOOK_TICKETS)}
-                onClick={
-                  canGoBack(currentId, BOOK_TICKETS)
-                    ? () => goBackTo(currentId, BOOK_TICKETS)
-                    : undefined
-                }
-              >
-                <Icon name="ticket" />
-                <Step.Content>
-                  <Step.Title>Tickets</Step.Title>
-                </Step.Content>
-              </Step>
-              <Step
-                active={currentId === SELECT_SEATS}
-                completed={currentId > SELECT_SEATS}
-                link={canGoBack(currentId, SELECT_SEATS)}
-                onClick={
-                  canGoBack(currentId, SELECT_SEATS)
-                    ? () => goBackTo(currentId, SELECT_SEATS)
-                    : undefined
-                }
-              >
-                <Icon name="map marker" />
-                <Step.Content>
-                  <Step.Title>Seats</Step.Title>
-                </Step.Content>
-              </Step>
-              <Step
-                active={currentId === INVOICE}
-                completed={currentId > INVOICE}
-              >
-                <Icon name="payment" />
-                <Step.Content>
-                  <Step.Title>Billing</Step.Title>
-                </Step.Content>
-              </Step>
-              <Step
-                active={currentId === CONFIRM}
-                completed={currentId > CONFIRM}
-              >
-                <Icon name="info" />
-                <Step.Content>
-                  <Step.Title>Confirm Order</Step.Title>
-                </Step.Content>
-              </Step>
-            </Step.Group>
-          </div>
-          {displayElm}
-        </Container>
-      </React.Fragment>
-    );
-  }
 }

@@ -23,6 +23,8 @@ const Icon = styled.div`
 
   height: 32px;
   width: 32px;
+  min-height: 32px;
+  min-width: 32px;
 `;
 
 export const NotStartedIcon = styled(Icon)`
