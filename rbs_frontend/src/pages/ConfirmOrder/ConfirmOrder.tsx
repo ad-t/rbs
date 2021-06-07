@@ -6,31 +6,26 @@ import { Header, Segment, Grid, List } from 'semantic-ui-react';
 
 // Import our interface
 import { ITicket, ITicketDetails } from '../../types/tickets';
-import { IDiscount } from '../../types/discount';
 
 interface Props {
-  // TODO: make this into a proper React type
+  email: string;
+  orderID: string;
+  showName: string;
   tickets: ITicket[];
   ticketDetails: ITicketDetails[];
-  discount: IDiscount | null;
-  showStr: string;
-  details: any;
 }
 
 export default function ConfirmOrder({
-  details,
+  email,
+  orderID,
+  showName,
   tickets,
   ticketDetails,
-  discount,
-  showStr,
 }: Props) {
-  const orderID = details.orderID.slice(0, 6).toUpperCase();
-
   const ticketElms: Array<JSX.Element> = [];
   let totalQty = 0;
   for (let i = 0; i < tickets.length; ++i) {
     const ticket: ITicket = tickets[i];
-    console.log(ticket);
     if (!ticket.quantity) continue;
     ticketElms.push(
       <Segment>
@@ -78,11 +73,11 @@ export default function ConfirmOrder({
             </p>
             <p>
               A copy of this booking confirmation has been sent to{' '}
-              <strong>{details.email}</strong>.
+              <strong>{email}</strong>.
             </p>
-            <p>Venue: UNSW Science Theatre</p>
-            <p>Time: {showStr}, doors open 7pm</p>
-            {discount ? <p>Voucher code: {discount.code}</p> : null}
+            <p>For {showName}</p>
+            <p>At the UNSW Science Theatre</p>
+            <p>Doors open 7pm</p>
             <p>No GST applies for this purchase.</p>
           </div>
         </div>

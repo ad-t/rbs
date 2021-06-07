@@ -16,6 +16,7 @@ import { ShowNight } from 'src/shared/types';
 import SelectShow from 'src/pages/SelectShow';
 import BookTickets from 'src/pages/BookTickets';
 import SelectSeats from 'src/pages/SelectSeats';
+import ConfirmOrder from 'src/pages/ConfirmOrder';
 import { TicketingSystem } from './TicketingSystem';
 import { TicketingSystemController } from './TicketingSystem.controller';
 
@@ -130,10 +131,21 @@ export function createTicketingSystem() {
     ticketingSystemController.setShowNights(ticketingSystemState, showNights);
   });
 
-  const { CheckoutElement } = createCheckout(
+  const { CheckoutElement, checkoutState } = createCheckout(
     seatingState,
-    ticketingSystemState
+    ticketingSystemState,
+    advance
   );
+
+  const ConfirmOrderWrapper = mobxReact.observer(() => (
+    <ConfirmOrder
+      email={checkoutState.checkoutFormState?.email || ''}
+      orderID={checkoutState.orderID}
+      showName={''}
+      tickets={[]}
+      ticketDetails={[]}
+    />
+  ));
 
   const TicketingSystemElement = mobxReact.observer(() => (
     <TicketingSystem
@@ -142,6 +154,7 @@ export function createTicketingSystem() {
       BookTickets={<BookTicketsWrapper />}
       SelectSeat={<SelectSeatWrapper />}
       Checkout={<CheckoutElement />}
+      ConfirmOrder={<ConfirmOrderWrapper />}
       paymentStep={ticketingSystemState.paymentStep}
     />
   ));

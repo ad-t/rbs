@@ -14,7 +14,8 @@ import Checkout from './Checkout';
 
 export function createCheckout(
   seatingState: SeatingState,
-  ticketingSystemState: TicketingSystemState
+  ticketingSystemState: TicketingSystemState,
+  advance: () => void
 ) {
   const checkoutState = new CheckoutState();
   const { CheckoutFormElement, checkoutFormState } = createCheckoutForm();
@@ -44,7 +45,7 @@ export function createCheckout(
         <TicketNoControl
           index={index}
           cost={state.cost}
-          description="Ticket"
+          description={state.name}
           quantity={state.value}
         />
       );
@@ -72,7 +73,9 @@ export function createCheckout(
         checkoutForm={<CheckoutFormElement />}
         ticketDetailsForms={ticketHolderDetailsForms}
         ticketQuantitiesElement={ticketQuantities}
-        checkoutElement={<SquareButton setupSquare={setupSquare} />}
+        checkoutElement={
+          <SquareButton setupSquare={setupSquare} onSquareApprove={advance} />
+        }
       />
     );
   });

@@ -22,7 +22,7 @@ export const TicketHolderForm = observer(function TicketHolderForm({
   return (
     <React.Fragment>
       <Header as="h3">
-        Ticket #{index + 1}: {description} (Seat: {seatNum})
+        Ticket #{index + 1}: Seat {seatNum}
       </Header>
       <Form size="small">
         {inputName}

@@ -10,7 +10,7 @@ import ReactDOM from 'react-dom';
 import { ITicket } from './types/tickets';
 
 // Import subcomponents
-import LandingPage from './components/LandingPage';
+import LandingPage from './pages/LandingPage';
 import { createTicketingSystem } from './components/TicketingSystem/create';
 
 // Import assets (e.g. scss)

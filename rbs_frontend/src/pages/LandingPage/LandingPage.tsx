@@ -2,7 +2,7 @@
  * This file will handle the entire landing page.
  */
 import React from 'react';
-import { Button, Image, Container } from 'semantic-ui-react';
+import { Button, Image } from 'semantic-ui-react';
 
 interface Props {
   toggleTickets: () => void;

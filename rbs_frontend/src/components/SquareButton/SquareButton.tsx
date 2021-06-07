@@ -11,10 +11,14 @@ import { CgSquare } from 'react-icons/cg';
 import { PaymentButton } from './SquareButton.styles';
 
 export interface SquareProp {
+  onSquareApprove: () => void;
   setupSquare(): Promise<string | null>;
 }
 
-export default function SquareButton({ setupSquare }: SquareProp) {
+export default function SquareButton({
+  onSquareApprove,
+  setupSquare,
+}: SquareProp) {
   const [open, setOpen] = useState(false);
 
   async function onClick() {
@@ -36,7 +40,7 @@ export default function SquareButton({ setupSquare }: SquareProp) {
           clearInterval(timer);
           // TODO: can we track on frontend if paid before getting backend
           // to check?
-          // this.onSquareApprove();
+          onSquareApprove();
         }
       }, 1000);
     }

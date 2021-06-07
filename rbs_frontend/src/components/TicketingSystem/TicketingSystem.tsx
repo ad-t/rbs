@@ -5,7 +5,6 @@ import React from 'react';
 import { Container, Image } from 'semantic-ui-react';
 import { BookingHeader } from 'src/components/Header/Header';
 import { TicketSystemState } from 'src/shared/enums';
-import ConfirmOrder from '../../pages/ConfirmOrder';
 import LogoImage from './logo.png';
 
 interface TicketingSystemProps {
@@ -14,6 +13,7 @@ interface TicketingSystemProps {
   BookTickets: React.ReactNode;
   ShowNights: React.ReactNode;
   Checkout: React.ReactNode;
+  ConfirmOrder: React.ReactNode;
   paymentStep: TicketSystemState;
 }
 
@@ -23,6 +23,7 @@ export function TicketingSystem({
   BookTickets,
   SelectSeat,
   ShowNights,
+  ConfirmOrder,
   Checkout,
 }: TicketingSystemProps) {
   let displayElm;
@@ -41,15 +42,7 @@ export function TicketingSystem({
       displayElm = Checkout;
       break;
     case TicketSystemState.CONFIRM:
-      displayElm = (
-        <ConfirmOrder
-          showStr=""
-          tickets={[]}
-          ticketDetails={[]}
-          details={{}}
-          discount={null}
-        />
-      );
+      displayElm = ConfirmOrder;
       break;
   }
 

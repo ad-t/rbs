@@ -40,7 +40,7 @@ export class TicketingSystemController {
   }
 
   advanceStep(state: TicketingSystemState) {
-    if (state.paymentStep !== TicketSystemState.INVOICE) {
+    if (state.paymentStep !== TicketSystemState.CONFIRM) {
       state.paymentStep++;
     }
   }

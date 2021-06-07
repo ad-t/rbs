@@ -1,3 +1,11 @@
+export interface Production {
+  id: number;
+  title: string;
+  subtitle: string;
+  year: number;
+  description: string;
+}
+
 export interface ShowNight {
   id: number;
   time: string;
