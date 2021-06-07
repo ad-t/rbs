@@ -2,15 +2,10 @@
  * This file will handle the entire landing page.
  */
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Button, Image } from 'semantic-ui-react';
 
-interface Props {
-  toggleTickets: () => void;
-}
-export default class LandingPage extends React.Component<
-  Props,
-  Record<string, never>
-> {
+export default class LandingPage extends React.Component {
   render() {
     return (
       <div className="landing-page" style={{ flexGrow: 1 }}>
@@ -34,9 +29,9 @@ export default class LandingPage extends React.Component<
           <p>13-16 April 2021</p>
         </Container>
         */}
-          <Button primary onClick={this.props.toggleTickets}>
-            Buy Tickets
-          </Button>
+          <Link to="/tickets">
+            <Button primary>Buy Tickets</Button>
+          </Link>
           {/*
           <Button secondary>About The Show</Button>
           <Button secondary>Watch Trailer</Button>
