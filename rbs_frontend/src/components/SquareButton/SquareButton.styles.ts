@@ -13,25 +13,22 @@ export const PaymentButton = styled.button`
   justify-content: center;
 
   height: 45px;
-  padding: 0 25px;
+  padding: 0 0.5rem 0 1rem;
   margin: auto;
 
-  font-family: 'Open Sans', Helvetica, Arial, sans-serif;
-  font-weight: bold;
+  font-family: Rubik, Helvetica, Arial, sans-serif;
   font-size: 16px;
-  vertical-align: middle;
 
   &:disabled {
     box-shadow: none;
     cursor: default;
   }
+
   &:focus {
     outline: none;
   }
 
-  img {
-    height: 30px;
-    margin-left: 10px;
-    padding-bottom: 2px;
+  svg {
+    font-size: 3rem;
   }
 `;

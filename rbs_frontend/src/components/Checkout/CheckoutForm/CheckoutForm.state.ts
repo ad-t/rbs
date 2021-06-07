@@ -22,7 +22,10 @@ export class CheckoutFormState {
     this.phone = phone;
   }
 
-  submitted() {
+  validate() {
     this.hasClickedPayment = true;
+    return (
+      this.name.length > 0 && this.email.length > 0 && this.phone.length > 0
+    );
   }
 }

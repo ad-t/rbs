@@ -15,15 +15,18 @@ export function createCheckoutForm() {
       []
     );
 
+    const error =
+      checkoutFormState.hasClickedPayment && !checkoutFormState.name.trim()
+        ? { content: 'Please enter a name', pointing: 'below' }
+        : null;
+
     return (
       <Form.Input
         label="Name"
         name="name"
         onChange={handleChange}
         value={checkoutFormState.name}
-        error={
-          checkoutFormState.hasClickedPayment && !checkoutFormState.name.trim()
-        }
+        error={error}
         required
       />
     );
@@ -37,16 +40,19 @@ export function createCheckoutForm() {
       []
     );
 
+    const error =
+      checkoutFormState.hasClickedPayment &&
+      !/^\S+@\S+$/.test(checkoutFormState.email)
+        ? { content: 'Please enter a valid email address', pointing: 'below' }
+        : null;
+
     return (
       <Form.Input
         label="Email"
         name="email"
         onChange={handleChange}
         value={checkoutFormState.email}
-        error={
-          checkoutFormState.hasClickedPayment &&
-          !/^\S+@\S+$/.test(checkoutFormState.email)
-        }
+        error={error}
         required
       />
     );
@@ -60,15 +66,18 @@ export function createCheckoutForm() {
       []
     );
 
+    const error =
+      checkoutFormState.hasClickedPayment && !checkoutFormState.phone.trim()
+        ? { content: 'Please enter a phone number', pointing: 'below' }
+        : null;
+
     return (
       <Form.Input
         label="Phone"
         name="phone"
         onChange={handleChange}
         value={checkoutFormState.phone}
-        error={
-          checkoutFormState.hasClickedPayment && !checkoutFormState.phone.trim()
-        }
+        error={error}
         required
       />
     );

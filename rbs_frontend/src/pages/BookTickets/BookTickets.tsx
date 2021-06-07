@@ -62,7 +62,12 @@ export default function BookTickets({
         <strong>Subtotal:</strong> {totalPrice.toFixed(2)}
       </Subtotal>
       <div>
-        <Button icon labelPosition="left" onClick={retract}>
+        <Button
+          icon
+          labelPosition="left"
+          disabled={!tickets.length}
+          onClick={retract}
+        >
           <Icon name="arrow left" />
           Select show
         </Button>

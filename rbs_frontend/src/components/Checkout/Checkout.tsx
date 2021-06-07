@@ -5,7 +5,7 @@ import React from 'react';
 import { Header, Icon, Grid, List, Popup } from 'semantic-ui-react';
 import { observer } from 'mobx-react-lite';
 import { IDiscount } from 'src/types/discount';
-import { PaymentBtnGroup, TicketsList, TicketPrice } from './Checkout.styles';
+import { TicketsList, TicketPrice } from './Checkout.styles';
 
 export interface CheckoutProps {
   discount: IDiscount | null;
@@ -13,6 +13,7 @@ export interface CheckoutProps {
 
   checkoutForm: React.ReactNode;
   ticketDetailsForms: React.ReactNode;
+  ticketQuantitiesElement: React.ReactNode;
   checkoutElement: React.ReactNode;
 }
 
@@ -21,6 +22,7 @@ function Checkout({
   totalPrice,
   checkoutForm,
   ticketDetailsForms,
+  ticketQuantitiesElement,
   checkoutElement,
 }: CheckoutProps) {
   /* FIXME: should be configurable from server side */
@@ -87,7 +89,7 @@ function Checkout({
                 email ticketing@medrevue.org.
               </li>
             </ul>
-            <TicketsList>{ticketDetailsForms}</TicketsList>
+            <TicketsList>{ticketQuantitiesElement}</TicketsList>
             <TicketPrice>
               <List>
                 <List.Item>Subtotal: ${totalPrice.toFixed(2)}</List.Item>
@@ -112,22 +114,14 @@ function Checkout({
                   {(totalPrice + handlingFee(totalPrice)).toFixed(2)}
                 </List.Item>
               </List>
+              <p style={{ paddingBottom: '2px' }}>
+                All major credit/debit cards accepted
+              </p>
+              <Grid.Column>{checkoutElement}</Grid.Column>
             </TicketPrice>
           </Grid.Column>
         </Grid>
       </div>
-      <PaymentBtnGroup>
-        <Grid stackable columns={4} centered>
-          <Grid.Column>
-            <Grid columns={1}>
-              <Grid.Column>{checkoutElement}</Grid.Column>
-              <Grid.Column textAlign="center" style={{ paddingTop: '2px' }}>
-                <p>All major credit/debit cards accepted</p>
-              </Grid.Column>
-            </Grid>
-          </Grid.Column>
-        </Grid>
-      </PaymentBtnGroup>
     </React.Fragment>
   );
 }

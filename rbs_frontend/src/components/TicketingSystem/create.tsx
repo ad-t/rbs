@@ -56,15 +56,19 @@ export function createTicketingSystem() {
 
   const { SeatingElement, seatingState } = createSeating(0);
 
-  const updateShow = mobx.action((showId: number) => {
-    userState.selectedShow = showId;
+  const retract = mobx.action(() => {
+    ticketingSystemController.retractStep(ticketingSystemState);
+    stepController.retreat(stepsState);
+  });
+
+  const advance = mobx.action(() => {
     ticketingSystemController.advanceStep(ticketingSystemState);
     stepController.advance(stepsState);
   });
 
-  const retract = mobx.action(() => {
-    ticketingSystemController.retractStep(ticketingSystemState);
-    stepController.retreat(stepsState);
+  const updateShow = mobx.action((showId: number) => {
+    userState.selectedShow = showId;
+    advance();
   });
 
   const selectTickets = mobx.action(() => {
@@ -73,8 +77,7 @@ export function createTicketingSystem() {
       (total, state) => total + state.value,
       0
     );
-    ticketingSystemController.advanceStep(ticketingSystemState);
-    stepController.advance(stepsState);
+    advance();
   });
 
   const ShowNightWrapper = mobxReact.observer(() => (
@@ -109,6 +112,8 @@ export function createTicketingSystem() {
       selectedSeats={seatingState.selectedSeats.length}
       maxSeats={seatingState.maximumSelected}
       SeatingSelector={<SeatingElement />}
+      retract={retract}
+      advance={advance}
     />
   ));
 
@@ -125,7 +130,10 @@ export function createTicketingSystem() {
     ticketingSystemController.setShowNights(ticketingSystemState, showNights);
   });
 
-  const { CheckoutElement } = createCheckout(ticketingSystemState);
+  const { CheckoutElement } = createCheckout(
+    seatingState,
+    ticketingSystemState
+  );
 
   const TicketingSystemElement = mobxReact.observer(() => (
     <TicketingSystem

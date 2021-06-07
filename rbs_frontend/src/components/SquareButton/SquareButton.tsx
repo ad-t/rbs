@@ -7,7 +7,7 @@ import {
   Modal,
   Transition,
 } from 'semantic-ui-react';
-
+import { CgSquare } from 'react-icons/cg';
 import { PaymentButton } from './SquareButton.styles';
 
 export interface SquareProp {
@@ -20,12 +20,12 @@ export default function SquareButton({ setupSquare }: SquareProp) {
   async function onClick() {
     // NOTE: hack to work around Safari refusing to open popups that are
     // called asynchronously: https://stackoverflow.com/q/20696041/2074608
-    const win = window.open(undefined, 'square-pay', 'toolbar=no');
     const url = await setupSquare();
     if (!url) {
-      win?.close();
       return;
     }
+
+    const win = window.open(undefined, 'square-pay', 'toolbar=no');
 
     /* NOTE: hack to detect window closed without CORS */
     if (win) {
@@ -45,7 +45,7 @@ export default function SquareButton({ setupSquare }: SquareProp) {
   return (
     <div>
       <PaymentButton onClick={onClick}>
-        Pay with Square <img src="/square-logo.svg" alt="Square" />
+        Pay with Square <CgSquare />
       </PaymentButton>
       <Transition
         animation="fade"

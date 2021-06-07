@@ -3,10 +3,6 @@ import { CheckoutFormState } from 'src/components/Checkout/CheckoutForm/Checkout
 import { TicketHolderFormState } from 'src/components/TicketholderDetails/TicketHolderForm.state';
 import { TickerOwnerDetails } from 'src/shared/types';
 export class CheckoutState {
-  orderID = '';
-  name = '';
-  email = '';
-  phone = '';
   hasClickedPayment = false;
   checkoutFormState: CheckoutFormState | null = null;
   ticketDetailStates: TicketHolderFormState[] = [];
@@ -40,9 +36,5 @@ export class CheckoutState {
 
   setCheckoutFormState(state: CheckoutFormState) {
     this.checkoutFormState = state;
-  }
-
-  updateOrderID(id: string) {
-    this.orderID = id;
   }
 }

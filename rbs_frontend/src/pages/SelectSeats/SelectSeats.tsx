@@ -2,7 +2,7 @@
  * This component will return an invoice that shows what tickets were purchased from the user.
  */
 import React from 'react';
-import { Button, Header } from 'semantic-ui-react';
+import { Button, Header, Icon } from 'semantic-ui-react';
 import Seat from 'src/components/Seating/Seat';
 import { SeatState } from 'src/shared/enums';
 import {
@@ -15,13 +15,17 @@ import {
 interface SelectSeatsProps {
   selectedSeats: number;
   maxSeats: number;
-  SeatingSelector: JSX.Element;
+  SeatingSelector: React.ReactNode;
+  retract: () => void;
+  advance: () => void;
 }
 
 export default function SelectSeats({
   SeatingSelector,
   maxSeats,
   selectedSeats,
+  retract,
+  advance,
 }: SelectSeatsProps) {
   return (
     <MainWrapper>
@@ -50,9 +54,22 @@ export default function SelectSeats({
         </Legend>
       </LegendWrapper>
       <SeatingWrapper>{SeatingSelector}</SeatingWrapper>
-      <Button fluid primary>
-        Next
-      </Button>
+      <div>
+        <Button icon labelPosition="left" onClick={retract}>
+          <Icon name="arrow left" />
+          Select tickets
+        </Button>
+        <Button
+          primary
+          icon
+          labelPosition="right"
+          disabled={selectedSeats !== maxSeats}
+          onClick={advance}
+        >
+          Next
+          <Icon name="arrow right" />
+        </Button>
+      </div>
     </MainWrapper>
   );
 }

@@ -20,3 +20,13 @@ export interface Ticket {
   description: string;
   minPurchaseAmount: number;
 }
+
+export interface DiscountInfo {
+  name: string;
+  code: string;
+  message: string;
+  minGroupSize: number;
+  showId: number;
+  waiveHandlingFee: boolean;
+  partOfGroup: boolean;
+}
