@@ -11,14 +11,18 @@ import {
   Wrapper,
 } from './TicketNoControl.styles';
 
-interface Props {
+export interface TicketNoControlProps {
   index: number;
   cost: number;
   description: string;
   quantity: number;
 }
 
-export default function Ticket({ cost, description, quantity }: Props) {
+export default function Ticket({
+  cost,
+  description,
+  quantity,
+}: TicketNoControlProps) {
   return (
     <Wrapper>
       <Logo>

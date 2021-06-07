@@ -1,27 +1,24 @@
 import React from 'react';
 import { Header, Form } from 'semantic-ui-react';
 import { observer } from 'mobx-react-lite';
-import { ITicketDetails } from 'src/types/tickets';
 
 export interface TicketHolderFormProps {
   index: number;
-  details: ITicketDetails;
   description: string;
+  seatNum: string;
   inputName: JSX.Element;
   inputPostcode: JSX.Element;
   inputPhone: JSX.Element;
 }
 
 export const TicketHolderForm = observer(function TicketHolderForm({
-  description,
-  details,
   index,
+  description,
+  seatNum,
   inputName,
   inputPostcode,
   inputPhone,
 }: TicketHolderFormProps) {
-  const { seatNum } = details;
-
   return (
     <React.Fragment>
       <Header as="h3">

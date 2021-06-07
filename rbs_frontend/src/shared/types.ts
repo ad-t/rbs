@@ -13,3 +13,10 @@ export interface TickerOwnerDetails {
   phone: string;
   seatNum: string;
 }
+
+export interface Ticket {
+  id: number;
+  price: number;
+  description: string;
+  minPurchaseAmount: number;
+}

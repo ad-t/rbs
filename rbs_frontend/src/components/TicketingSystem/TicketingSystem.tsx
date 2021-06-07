@@ -9,10 +9,11 @@ import ConfirmOrder from '../../pages/ConfirmOrder';
 import LogoImage from './logo.png';
 
 interface TicketingSystemProps {
-  Steps: JSX.Element;
-  SelectSeat: JSX.Element;
-  BookTickets: JSX.Element;
-  ShowNights: JSX.Element;
+  Steps: React.ReactNode;
+  SelectSeat: React.ReactNode;
+  BookTickets: React.ReactNode;
+  ShowNights: React.ReactNode;
+  Checkout: React.ReactNode;
   paymentStep: TicketSystemState;
 }
 
@@ -22,6 +23,7 @@ export function TicketingSystem({
   BookTickets,
   SelectSeat,
   ShowNights,
+  Checkout,
 }: TicketingSystemProps) {
   let displayElm;
 
@@ -36,7 +38,7 @@ export function TicketingSystem({
       displayElm = SelectSeat;
       break;
     case TicketSystemState.INVOICE:
-      displayElm = <div>Invoice Stub</div>;
+      displayElm = Checkout;
       break;
     case TicketSystemState.CONFIRM:
       displayElm = (

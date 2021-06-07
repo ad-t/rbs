@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import * as variables from 'src/shared/css.variables';
 
 export const PaymentButton = styled.button`
   border: none;
@@ -21,7 +20,6 @@ export const PaymentButton = styled.button`
   font-weight: bold;
   font-size: 16px;
   vertical-align: middle;
-  /*padding: 0 12px 2px 12px;*/
 
   &:disabled {
     box-shadow: none;

@@ -5,7 +5,10 @@ export class TicketHolderFormState {
   postcode = '';
   phone = '';
 
-  constructor() {
+  constructor(name = '', postcode = '', phone = '') {
+    this.name = name;
+    this.postcode = postcode;
+    this.phone = phone;
     mobx.makeAutoObservable(this);
   }
 

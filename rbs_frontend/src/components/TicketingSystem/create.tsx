@@ -3,6 +3,7 @@ import * as mobxReact from 'mobx-react-lite';
 import { Icon } from 'semantic-ui-react';
 import { createSteps } from 'src/components/Steps/create';
 import { createSeating } from 'src/components/Seating/create';
+import { createCheckout } from 'src/components/Checkout/create';
 import StepItem from 'src/components/Steps/StepItem';
 import {
   UserState,
@@ -124,12 +125,15 @@ export function createTicketingSystem() {
     ticketingSystemController.setShowNights(ticketingSystemState, showNights);
   });
 
+  const { CheckoutElement } = createCheckout(ticketingSystemState);
+
   const TicketingSystemElement = mobxReact.observer(() => (
     <TicketingSystem
       Steps={<StepsElement />}
       ShowNights={<ShowNightWrapper />}
       BookTickets={<BookTicketsWrapper />}
       SelectSeat={<SelectSeatWrapper />}
+      Checkout={<CheckoutElement />}
       paymentStep={ticketingSystemState.paymentStep}
     />
   ));
