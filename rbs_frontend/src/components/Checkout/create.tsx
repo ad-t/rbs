@@ -53,8 +53,12 @@ export function createCheckout(
 
     async function setupSquare() {
       const isValid = checkoutFormState.validate();
+      const ticketHoldersFormValid = checkoutState.ticketDetailStates.reduce(
+        (prev, state) => prev && state.validate(),
+        true
+      );
 
-      if (isValid) {
+      if (isValid && ticketHoldersFormValid) {
         return Promise.resolve('https://www.google.com');
       }
 

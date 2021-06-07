@@ -20,12 +20,18 @@ export function createTicketholderDetailsForm(parameters: Parameters) {
       []
     );
 
+    const error =
+      ticketHolderFormState.isTriggered && !ticketHolderFormState.name.trim()
+        ? { content: 'Please enter a name', pointing: 'below' }
+        : null;
+
     return (
       <Form.Input
         label="Name"
         name="name"
         onChange={handleChange}
         value={ticketHolderFormState.name}
+        error={error}
         required
       />
     );
@@ -39,12 +45,19 @@ export function createTicketholderDetailsForm(parameters: Parameters) {
       []
     );
 
+    const error =
+      ticketHolderFormState.isTriggered &&
+      !ticketHolderFormState.postcode.trim()
+        ? { content: 'Please enter a postcode', pointing: 'below' }
+        : null;
+
     return (
       <Form.Input
         label="Postcode (home)"
         name="postcode"
         onChange={handleChange}
         value={ticketHolderFormState.postcode}
+        error={error}
         required
       />
     );
