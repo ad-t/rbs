@@ -7,6 +7,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { createApp } from 'src/components/App/create';
 import * as serviceWorker from './serviceWorker';
+import 'react-toastify/dist/ReactToastify.css';
 import 'semantic-ui-css/semantic.min.css';
 
 const { AppElement } = createApp();
