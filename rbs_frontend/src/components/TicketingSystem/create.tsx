@@ -1,6 +1,7 @@
 import * as mobx from 'mobx';
 import * as mobxReact from 'mobx-react-lite';
 import { Icon } from 'semantic-ui-react';
+import { ProductionState } from 'src/components/App/App.state';
 import { createSteps } from 'src/components/Steps/create';
 import { createSeating } from 'src/components/Seating/create';
 import { createCheckout } from 'src/components/Checkout/create';
@@ -27,7 +28,7 @@ const iconStyles = {
   margin: 0,
 };
 
-export function createTicketingSystem() {
+export function createTicketingSystem(productionState: ProductionState) {
   const ticketingSystemController = new TicketingSystemController();
   const ticketingSystemState = new TicketingSystemState();
   const userState = new UserState();
@@ -134,6 +135,7 @@ export function createTicketingSystem() {
   const { CheckoutElement, checkoutState } = createCheckout(
     seatingState,
     ticketingSystemState,
+    retract,
     advance
   );
 
@@ -141,7 +143,7 @@ export function createTicketingSystem() {
     <ConfirmOrder
       email={checkoutState.checkoutFormState?.email || ''}
       orderID={checkoutState.orderID}
-      showName={''}
+      showName={productionState.title || ''}
       tickets={[]}
       ticketDetails={[]}
     />

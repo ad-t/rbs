@@ -3,6 +3,7 @@
  */
 import React from 'react';
 import * as mobxReact from 'mobx-react-lite';
+import { Button, Icon } from 'semantic-ui-react';
 import { createCheckoutForm } from 'src/components/Checkout/CheckoutForm/create';
 import { createTicketholderDetailsForm } from 'src/components/TicketholderDetails/create';
 import TicketNoControl from 'src/components/TicketNoControl/TicketNoControl';
@@ -15,6 +16,7 @@ import Checkout from './Checkout';
 export function createCheckout(
   seatingState: SeatingState,
   ticketingSystemState: TicketingSystemState,
+  retract: () => void,
   advance: () => void
 ) {
   const checkoutState = new CheckoutState();
@@ -73,7 +75,13 @@ export function createCheckout(
         checkoutForm={<CheckoutFormElement />}
         ticketDetailsForms={ticketHolderDetailsForms}
         ticketQuantitiesElement={ticketQuantities}
-        checkoutElement={
+        RetreatElement={
+          <Button icon labelPosition="left" onClick={retract}>
+            <Icon name="arrow left" />
+            Select seats
+          </Button>
+        }
+        CheckoutElement={
           <SquareButton setupSquare={setupSquare} onSquareApprove={advance} />
         }
       />

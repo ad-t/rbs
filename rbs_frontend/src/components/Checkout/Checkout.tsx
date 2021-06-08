@@ -5,7 +5,7 @@ import React from 'react';
 import { Header, Icon, Grid, List, Popup } from 'semantic-ui-react';
 import { observer } from 'mobx-react-lite';
 import { IDiscount } from 'src/types/discount';
-import { TicketsList, TicketPrice } from './Checkout.styles';
+import { ButtonGroup, Gap, TicketsList, TicketPrice } from './Checkout.styles';
 
 export interface CheckoutProps {
   discount: IDiscount | null;
@@ -14,7 +14,8 @@ export interface CheckoutProps {
   checkoutForm: React.ReactNode;
   ticketDetailsForms: React.ReactNode;
   ticketQuantitiesElement: React.ReactNode;
-  checkoutElement: React.ReactNode;
+  CheckoutElement: React.ReactNode;
+  RetreatElement: React.ReactNode;
 }
 
 function Checkout({
@@ -23,12 +24,11 @@ function Checkout({
   checkoutForm,
   ticketDetailsForms,
   ticketQuantitiesElement,
-  checkoutElement,
+  CheckoutElement,
+  RetreatElement,
 }: CheckoutProps) {
   /* FIXME: should be configurable from server side */
-  const handlingFee = (price: number) => {
-    return price * (discount?.waiveHandlingFee ? 0 : 2.19);
-  };
+  const handlingFee = discount?.waiveHandlingFee ? 0 : 2.19;
 
   return (
     <React.Fragment>
@@ -104,16 +104,20 @@ function Checkout({
                   content="This covers our ticket processing, technology and support costs. This fee is only once per transaction, no matter how many tickets are purchased."
                   size="small"
                 />{' '}
-                Handling Fee: ${handlingFee(totalPrice).toFixed(2)}
+                Handling Fee: ${handlingFee.toFixed(2)}
               </List.Item>
               <List.Item>
-                Total Cost: ${(totalPrice + handlingFee(totalPrice)).toFixed(2)}
+                Total Cost: ${(totalPrice + handlingFee).toFixed(2)}
               </List.Item>
             </List>
             <p style={{ paddingBottom: '2px' }}>
               All major credit/debit cards accepted
             </p>
-            <Grid.Column>{checkoutElement}</Grid.Column>
+            <ButtonGroup>
+              {RetreatElement}
+              <Gap />
+              {CheckoutElement}
+            </ButtonGroup>
           </TicketPrice>
         </Grid.Column>
       </Grid>

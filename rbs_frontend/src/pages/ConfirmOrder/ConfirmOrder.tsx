@@ -62,10 +62,12 @@ export default function ConfirmOrder({
       <Grid.Column>
         <div className="confirmation">
           <div className="booking-info">
-            <Header as="h2">Thank you!</Header>
+            <Header as="h2">
+              Thank you, we have confirmed your booking for {showName}!
+            </Header>
             <p>
               Your payment was successful for {totalQty}{' '}
-              {totalQty > 1 ? 'tickets' : 'ticket'}.
+              {totalQty === 1 ? 'ticket' : 'tickets'}.
             </p>
             <p>Here's your booking reference &ndash; please keep it safe.</p>
             <p>
@@ -75,7 +77,6 @@ export default function ConfirmOrder({
               A copy of this booking confirmation has been sent to{' '}
               <strong>{email}</strong>.
             </p>
-            <p>For {showName}</p>
             <p>At the UNSW Science Theatre</p>
             <p>Doors open 7pm</p>
             <p>No GST applies for this purchase.</p>

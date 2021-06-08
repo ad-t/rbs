@@ -1,4 +1,19 @@
 import styled from 'styled-components';
+import * as variables from 'src/shared/css.variables';
+
+export const ButtonGroup = styled.div`
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
+
+  @media (min-width: ${variables.mediaSmall}) {
+    flex-flow: row;
+  }
+`;
+
+export const Gap = styled.div`
+  padding: 0.5rem;
+`;
 
 export const TicketsList = styled.div`
   display: grid;

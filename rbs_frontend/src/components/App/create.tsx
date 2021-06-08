@@ -8,7 +8,7 @@ import { ProductionState } from './App.state';
 export function createApp() {
   const productionState = new ProductionState();
 
-  const { TicketingSystemElement } = createTicketingSystem();
+  const { TicketingSystemElement } = createTicketingSystem(productionState);
   const LandingPageWrapper = mobxReact.observer(() => <LandingPage />);
 
   installProduction().then((production) =>
