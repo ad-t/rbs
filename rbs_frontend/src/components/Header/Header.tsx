@@ -3,18 +3,18 @@ import { Container, Menu, Image, List } from 'semantic-ui-react';
 import CovidImage from './covid-safe-logo.png';
 
 interface BookingHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
-  Logo: React.ReactNode | undefined;
   email: string;
   showName: string;
 }
 
-export function BookingHeader({ Logo, email, showName }: BookingHeaderProps) {
+export function BookingHeader({ email, showName }: BookingHeaderProps) {
   return (
     <Menu inverted>
       <Container>
-        {Logo && <Menu.Item header>{Logo}</Menu.Item>}
-
-        <Menu.Menu position="right">
+        <Menu.Menu position="left">
+          <Menu.Item>
+            <Image size="tiny" src={CovidImage} style={{ width: '64px' }} />
+          </Menu.Item>
           <Menu.Item>
             <List>
               <List.Item>
@@ -25,9 +25,6 @@ export function BookingHeader({ Logo, email, showName }: BookingHeaderProps) {
                 <a href={`mailto:${email}`}>{email}</a>
               </List.Item>
             </List>
-          </Menu.Item>
-          <Menu.Item>
-            <Image size="tiny" src={CovidImage} />
           </Menu.Item>
         </Menu.Menu>
       </Container>

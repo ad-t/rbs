@@ -12,9 +12,7 @@ interface HeaderProps {
   showName: string;
 }
 
-const Template: Story<HeaderProps> = (args) => (
-  <BookingHeader Logo={'Placeholder Logo'} {...args} />
-);
+const Template: Story<HeaderProps> = (args) => <BookingHeader {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {

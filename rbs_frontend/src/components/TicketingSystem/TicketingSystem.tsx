@@ -2,10 +2,9 @@
  * This file will handle information relating to the show
  */
 import React from 'react';
-import { Container, Image } from 'semantic-ui-react';
+import { Container } from 'semantic-ui-react';
 import { BookingHeader } from 'src/components/Header/Header';
 import { TicketSystemState } from 'src/shared/enums';
-import LogoImage from './logo.png';
 
 interface TicketingSystemProps {
   Steps: React.ReactNode;
@@ -48,17 +47,7 @@ export function TicketingSystem({
 
   return (
     <>
-      <BookingHeader
-        Logo={
-          <Image
-            size="small"
-            src={LogoImage}
-            style={{ marginRight: '1.5em' }}
-          />
-        }
-        email="ticketing@medrevue.org"
-        showName="Med Revue 2021"
-      />
+      <BookingHeader email="ticketing@medrevue.org" showName="Med Revue 2021" />
 
       <Container
         style={{
