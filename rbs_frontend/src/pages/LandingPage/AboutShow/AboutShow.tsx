@@ -3,13 +3,6 @@
  */
 import React from 'react';
 
-interface Props {};
-interface State {};
-
-export default class AboutShow extends React.Component<Props, State> {
-  render() {
-    return (
-      <div></div>
-    );
-  }
-};
+export default function AboutShow() {
+  return <div></div>;
+}

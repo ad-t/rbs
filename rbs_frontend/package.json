@@ -39,7 +39,8 @@
     "eject": "react-scripts eject",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
-    "lint:css": "stylelint './src/**/*.{ts,tsx}'"
+    "lint:eslint": "eslint \"./src/**/*.{ts,tsx}\"",
+    "lint:css": "stylelint \"./src/**/*.{ts,tsx}\""
   },
   "browserslist": {
     "production": [
