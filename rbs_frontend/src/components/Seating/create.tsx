@@ -1,8 +1,8 @@
 import React from 'react';
 import * as mobx from 'mobx';
 import * as mobxReact from 'mobx-react-lite';
+import { toast } from 'react-toastify';
 import { SeatState, SeatType } from 'src/shared/enums';
-import { ToastError } from 'src/shared/errors';
 
 import SeatingState from './Seating.state';
 import installSeatingInfo, { RowNumbers } from './Seating.service';
@@ -25,9 +25,8 @@ export function createSeating(maximumSelected: number) {
     }
 
     if (seatingState.userMaxedTickets()) {
-      throw new ToastError(
-        'You already have selected the maximum amount of tickets.'
-      );
+      toast.error('You already have selected the maximum amount of tickets.');
+      return;
     }
 
     seatingState.selectedSeats.push(id);
