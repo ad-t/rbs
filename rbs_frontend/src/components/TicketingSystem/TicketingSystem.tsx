@@ -47,7 +47,7 @@ export function TicketingSystem({
 
   return (
     <>
-      <BookingHeader email="ticketing@medrevue.org" showName="Med Revue 2021" />
+      <BookingHeader showName="Revue Booking System" />
 
       <Container
         style={{

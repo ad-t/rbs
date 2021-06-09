@@ -3,11 +3,10 @@ import { Container, Menu, Image, List } from 'semantic-ui-react';
 import CovidImage from './covid-safe-logo.png';
 
 interface BookingHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
-  email: string;
   showName: string;
 }
 
-export function BookingHeader({ email, showName }: BookingHeaderProps) {
+export function BookingHeader({ showName }: BookingHeaderProps) {
   return (
     <Menu inverted>
       <Container>
@@ -19,10 +18,6 @@ export function BookingHeader({ email, showName }: BookingHeaderProps) {
             <List>
               <List.Item>
                 <strong>{showName}</strong>
-              </List.Item>
-              <List.Item>
-                <strong>Need help?</strong>{' '}
-                <a href={`mailto:${email}`}>{email}</a>
               </List.Item>
             </List>
           </Menu.Item>
