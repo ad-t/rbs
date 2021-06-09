@@ -1,4 +1,4 @@
-export async function startSquareProcess() {
+export async function getSquareCheckoutUrl() {
   return new Promise<string>((resolve) => {
     setTimeout(
       () =>

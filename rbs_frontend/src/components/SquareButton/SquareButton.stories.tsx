@@ -1,19 +1,12 @@
 import React from 'react';
-import { Story } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import SquareButton, { SquareProp } from './SquareButton';
+import { createSquareButton } from './create';
 
 export default {
   title: 'Component/SquareButton',
-  component: SquareButton,
 };
 
-const Template: Story<SquareProp> = (args) => <SquareButton {...args} />;
-
-export const Default = Template.bind({});
-Default.args = {
-  setupSquare: () => {
-    action('open');
-    return Promise.resolve('https://www.google.com');
-  },
+export const Default = () => {
+  const { SquareButtonElement } = createSquareButton();
+  return <SquareButtonElement onClick={action('Clicked')} />;
 };

@@ -23,7 +23,7 @@ export class CheckoutFormState {
   }
 
   isEmailValid() {
-    const isEmailRegex = /^\S+@\S+$/;
+    const isEmailRegex = /\S+@\S+\.\S+/;
     return this.email.trim().length > 0 && isEmailRegex.test(this.email);
   }
 
