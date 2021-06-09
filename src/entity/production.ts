@@ -18,6 +18,9 @@ export class Production {
   @Column({ length: 255 })
   public description: string;
 
+  @Column({ length: 255 })
+  public email: string;
+
   @Column({ length: 100})
   public location: string;
 

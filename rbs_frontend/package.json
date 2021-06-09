@@ -1,0 +1,82 @@
+{
+  "name": "rbs_frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@fontsource/karla": "^4.2.2",
+    "@fontsource/rubik": "^4.2.2",
+    "@types/jest": "^26.0.22",
+    "@types/node": "^14.14.41",
+    "@types/react": "^17.0.1",
+    "@types/react-dom": "^17.0.0",
+    "@types/react-router": "^5.1.11",
+    "@types/react-router-dom": "^5.1.7",
+    "@types/validator": "^13.1.3",
+    "axios": "^0.21.1",
+    "currency.js": "^2.0.3",
+    "dayjs": "^1.10.4",
+    "lorem-ipsum": "^2.0.3",
+    "mobx": "^6.2.0",
+    "mobx-react-lite": "^3.2.0",
+    "moment": "^2.29.1",
+    "react": "^17.0.0",
+    "react-app-rewire-styled-components": "^3.0.2",
+    "react-dom": "^17.0.0",
+    "react-icons": "^4.2.0",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "^4.0.2",
+    "react-toastify": "^7.0.4",
+    "react-youtube": "^7.13.1",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^2.0.3",
+    "styled-components": "^5.2.3",
+    "typescript": "4.2.4",
+    "validator": "^13.6.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "test:nowatch": "react-scripts test --watchAll=false",
+    "eject": "react-scripts eject",
+    "storybook": "start-storybook -p 6006 -s public",
+    "build-storybook": "build-storybook -s public",
+    "lint:eslint": "eslint \"./src/**/*.{ts,tsx}\"",
+    "lint:css": "stylelint \"./src/**/*.{ts,tsx}\""
+  },
+  "browserslist": {
+    "production": [
+      ">0.3% in AU",
+      "firefox esr",
+      "not dead",
+      "not op_mini all",
+      "not ie <= 11"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@storybook/addon-actions": "^6.2.8",
+    "@storybook/addon-essentials": "^6.2.8",
+    "@storybook/addon-links": "^6.2.8",
+    "@storybook/node-logger": "^6.2.8",
+    "@storybook/preset-create-react-app": "^3.1.7",
+    "@storybook/react": "^6.2.8",
+    "@testing-library/jest-dom": "^5.12.0",
+    "@testing-library/react": "^11.2.6",
+    "@testing-library/user-event": "^13.1.5",
+    "@types/styled-components": "^5.1.9",
+    "@typescript-eslint/eslint-plugin": "^4.23.0",
+    "@typescript-eslint/parser": "^4.23.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-react-app": "^6.0.0",
+    "jest-styled-components": "^7.0.4",
+    "stylelint": "^13.12.0",
+    "stylelint-config-recommended": "^4.0.0",
+    "stylelint-config-styled-components": "^0.1.1",
+    "stylelint-processor-styled-components": "^1.10.0"
+  }
+}

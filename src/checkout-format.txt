@@ -1,0 +1,161 @@
+{
+  idempotencyKey: 'okay',
+  order: {
+    // all optional
+    order: {
+      // the real order
+      // all optional except location ID
+      id: 'who makes this id?',
+      locationId: 'huh', // required (find in dev dashboard)
+      referenceId: 'our reference, e.g. ABC123',
+      source: 'RBS online',
+      customerId: 'do we need to make a customer in Square and if so how?',
+      lineItems: [{
+        // yass bish what are we actually buying
+        // all optional except quantity
+        uid: 'Unique ID that identifies the line item only within this order',
+        name: 'Breaking Bones - Regular Ticket',
+        quantity: '3', // string
+        quantityUnit: ...,
+        note: 'Allahu akbar',
+        catalogObjectId: "I swear we don't use this",
+        variationName: 'variation?',
+        metadata: ...,
+        modifiers,
+        appliedTaxes,
+        appliedDiscounts,
+        basePriceMoney,
+        pricingBlocklists
+      }],
+      taxes: [{
+
+      }],
+      discounts: [{
+
+      }],
+      serviceCharges: [{
+
+      }],
+      fulfillments: [{
+
+      }],
+      metadata: ...,
+      version: '3', // order edited 2 times
+      pricingOptions: ...
+    },
+    locationId: 'surely we don't need this, we provide location ID anyway',
+    idempotencyKey: 'thank god this is optional'
+  },
+  // all below are optional
+  askForShippingAddress: false,
+  merchantSupportEmail: 'ticketing@medrevue.org',
+  prePopulateBuyerEmail: 'john@example.com',
+  prePopulateShippingAddress: ...,
+  redirectUrl: 'https://ticketing.medrevue.org/order-complete',
+  additionalRecipients: ...,
+  note: 'why do we need this???'
+}
+
+
+
+
+
+
+
+try {
+  const response = await client.checkoutApi.createCheckout('location_id0',
+  {
+    idempotencyKey: '86ae1696-b1e3-4328-af6d-f1e04d947ad6',
+    order: {
+      order: {
+        locationId: 'location_id',
+        referenceId: 'reference_id',
+        customerId: 'customer_id',
+        lineItems: [
+          {
+            name: 'Printed T Shirt',
+            quantity: '2',
+            appliedTaxes: [
+              {
+                taxUid: '38ze1696-z1e3-5628-af6d-f1e04d947fg3'
+              }
+            ],
+            appliedDiscounts: [
+              {
+                discountUid: '56ae1696-z1e3-9328-af6d-f1e04d947gd4'
+              }
+            ],
+            basePriceMoney: {
+              amount: 1500,
+              currency: 'USD'
+            }
+          },
+          {
+            name: 'Slim Jeans',
+            quantity: '1',
+            basePriceMoney: {
+              amount: 2500,
+              currency: 'USD'
+            }
+          },
+          {
+            name: 'Woven Sweater',
+            quantity: '3',
+            basePriceMoney: {
+              amount: 3500,
+              currency: 'USD'
+            }
+          }
+        ],
+        taxes: [
+          {
+            uid: '38ze1696-z1e3-5628-af6d-f1e04d947fg3',
+            type: 'INCLUSIVE',
+            percentage: '7.75',
+            scope: 'LINE_ITEM'
+          }
+        ],
+        discounts: [
+          {
+            uid: '56ae1696-z1e3-9328-af6d-f1e04d947gd4',
+            type: 'FIXED_AMOUNT',
+            amountMoney: {
+              amount: 100,
+              currency: 'USD'
+            },
+            scope: 'LINE_ITEM'
+          }
+        ]
+      },
+      idempotencyKey: '12ae1696-z1e3-4328-af6d-f1e04d947gd4'
+    },
+    askForShippingAddress: true,
+    merchantSupportEmail: 'merchant+support@website.com',
+    prePopulateBuyerEmail: 'example@email.com',
+    prePopulateShippingAddress: {
+      addressLine1: '1455 Market St.',
+      addressLine2: 'Suite 600',
+      locality: 'San Francisco',
+      administrativeDistrictLevel1: 'CA',
+      postalCode: '94103',
+      country: 'US',
+      firstName: 'Jane',
+      lastName: 'Doe'
+    },
+    redirectUrl: 'https://merchant.website.com/order-confirm',
+    additionalRecipients: [
+      {
+        locationId: '057P5VYJ4A5X1',
+        description: 'Application fees',
+        amountMoney: {
+          amount: 60,
+          currency: 'USD'
+        }
+      }
+    ]
+  });
+
+  console.log(response.httpResponse);
+} catch(error) {
+  console.log(error);
+}
