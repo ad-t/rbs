@@ -5,7 +5,7 @@ import React from 'react';
 import * as mobxReact from 'mobx-react-lite';
 import { Button, Icon } from 'semantic-ui-react';
 import { createCheckoutForm } from 'src/components/Checkout/CheckoutForm/create';
-import { createTicketholderDetailsForm } from 'src/components/TicketholderDetails/create';
+import { createTicketholderDetailsForm } from 'src/components/Checkout/TicketholderDetails/create';
 import TicketNoControl from 'src/components/TicketNoControl/TicketNoControl';
 import { TicketingSystemState } from 'src/components/TicketingSystem/TicketingSystem.state';
 import SeatingState from 'src/components/Seating/Seating.state';
@@ -39,12 +39,13 @@ export function createCheckout(
       });
 
       checkoutState.addTicketDetailsState(ticketHolderFormState);
-      ticketHolderDetailsForms.push(<TicketHolderFormElement />);
+      ticketHolderDetailsForms.push(<TicketHolderFormElement key={index} />);
     });
 
     ticketingSystemState.ticketStates.forEach((state, index) => {
       ticketQuantities.push(
         <TicketNoControl
+          key={index}
           index={index}
           cost={state.cost}
           description={state.name}

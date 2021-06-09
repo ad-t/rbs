@@ -21,7 +21,7 @@ export function createTicketholderDetailsForm(parameters: Parameters) {
     );
 
     const error =
-      ticketHolderFormState.isTriggered && !ticketHolderFormState.name.trim()
+      ticketHolderFormState.isTriggered && !ticketHolderFormState.isNameValid()
         ? { content: 'Please enter a name', pointing: 'below' }
         : null;
 
@@ -47,7 +47,7 @@ export function createTicketholderDetailsForm(parameters: Parameters) {
 
     const error =
       ticketHolderFormState.isTriggered &&
-      !ticketHolderFormState.postcode.trim()
+      !ticketHolderFormState.isPostcodeValid()
         ? { content: 'Please enter a postcode', pointing: 'below' }
         : null;
 

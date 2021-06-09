@@ -4,7 +4,7 @@ import { observer } from 'mobx-react-lite';
 
 export interface TicketHolderFormProps {
   index: number;
-  description: string;
+  description?: string;
   seatNum: string;
   inputName: JSX.Element;
   inputPostcode: JSX.Element;
@@ -13,7 +13,6 @@ export interface TicketHolderFormProps {
 
 export const TicketHolderForm = observer(function TicketHolderForm({
   index,
-  description,
   seatNum,
   inputName,
   inputPostcode,

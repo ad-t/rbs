@@ -48,7 +48,7 @@ export default function SquareButton({
 
   return (
     <div>
-      <PaymentButton onClick={onClick}>
+      <PaymentButton onClick={onClick} role="button">
         Pay with Square <CgSquare />
       </PaymentButton>
       <Transition
