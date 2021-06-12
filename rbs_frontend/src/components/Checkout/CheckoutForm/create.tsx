@@ -16,7 +16,7 @@ export function createCheckoutForm() {
     );
 
     const error =
-      checkoutFormState.hasClickedPayment && !checkoutFormState.name.trim()
+      checkoutFormState.hasClickedPayment && !checkoutFormState.isNameValid()
         ? { content: 'Please enter a name', pointing: 'below' }
         : null;
 
@@ -41,8 +41,7 @@ export function createCheckoutForm() {
     );
 
     const error =
-      checkoutFormState.hasClickedPayment &&
-      !/^\S+@\S+$/.test(checkoutFormState.email)
+      checkoutFormState.hasClickedPayment && !checkoutFormState.isEmailValid()
         ? { content: 'Please enter a valid email address', pointing: 'below' }
         : null;
 

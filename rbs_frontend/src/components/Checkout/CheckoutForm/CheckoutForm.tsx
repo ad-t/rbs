@@ -1,18 +1,16 @@
 import * as React from 'react';
-import { Form, Header, Message } from 'semantic-ui-react';
+import { Form, Header } from 'semantic-ui-react';
 
 interface CheckoutFormProps {
   inputName: JSX.Element;
   inputEmail: JSX.Element;
   inputPhone: JSX.Element;
-  error?: boolean;
 }
 
 export function CheckoutForm({
   inputName,
   inputEmail,
   inputPhone,
-  error,
 }: CheckoutFormProps) {
   return (
     <>
@@ -22,11 +20,6 @@ export function CheckoutForm({
         {inputEmail}
         {inputPhone}
       </Form>
-      {error && (
-        <Message color="red">
-          Incomplete details, please fill all fields to continue.
-        </Message>
-      )}
     </>
   );
 }

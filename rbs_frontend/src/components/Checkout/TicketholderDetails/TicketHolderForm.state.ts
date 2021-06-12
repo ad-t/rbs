@@ -17,8 +17,17 @@ export class TicketHolderFormState {
     this.name = name;
   }
 
+  isNameValid() {
+    return this.name.trim().length > 0;
+  }
+
   updatePostcode(postcode: string) {
     this.postcode = postcode;
+  }
+
+  isPostcodeValid() {
+    const isNumRegex = /^\d+$/;
+    return this.postcode.trim().length > 0 && isNumRegex.test(this.postcode);
   }
 
   updatePhone(phone: string) {
@@ -27,6 +36,6 @@ export class TicketHolderFormState {
 
   validate() {
     this.isTriggered = true;
-    return this.name.length > 0 && this.postcode.length > 0;
+    return this.isNameValid() && this.isPostcodeValid();
   }
 }

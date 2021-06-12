@@ -1,82 +1,69 @@
 import React from 'react';
-import { observable, action as mobxAction } from 'mobx';
-
+import * as mobx from 'mobx';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-
-import createCheckout from '../create';
-import ITicketDetails from 'src/types/ticket';
-
-
-const tickets: ITicket[] = observable([{
-  id: 1,
-  price: 20,
-  description: 'General',
-  minPurchaseAmount: 1,
-  quantity: 1,
-}]);
-
-const ticketDetails: ITicketDetails[] = observable([{
-  typeId: 1,
-  name: '',
-  postcode: '',
-  phone: '',
-  seatNum: 'r1c2s3',
-}]);
-
-const info = {
-  selectedShow: 1,
-  tickets,
-  ticketDetails,
-  discount: null
-};
+import SeatingState from 'src/components/Seating/Seating.state';
+import { TicketingSystemState } from 'src/components/TicketingSystem/TicketingSystem.state';
+import { createCheckout } from '../create';
 
 describe('Testing <Checkout />', () => {
-  it('Be able to update details as they are typed in', () => {
-    const mockUpdateTicketDetails = jest.fn();
-    const mockUpdatePayment = jest.fn();
+  const ticketingSystemState = new TicketingSystemState();
 
-    const checkout = createCheckout({
-      ...info,
-      updatePayment: mobxAction(mockUpdatePayment),
-    });
-    const { getAllByRole } = render(
-      <checkout.Checkout />
+  it('Be able to render the correct amount of ticket holder detail forms', () => {
+    const seatingState = new SeatingState(5);
+    mobx.action(() => {
+      seatingState.selectedSeats = ['10'];
+    })();
+
+    const { CheckoutElement } = createCheckout(
+      seatingState,
+      ticketingSystemState,
+      jest.fn(),
+      jest.fn()
     );
 
+    const { getAllByRole } = render(<CheckoutElement />);
     const inputs = getAllByRole('textbox');
 
-    userEvent.type(inputs[3], 'Bob Jane');
-    expect(ticketDetails[0].name).toEqual('Bob Jane');
-    userEvent.type(inputs[4], '2000');
-    expect(ticketDetails[0].postcode).toEqual('2000');
-    userEvent.type(inputs[5], '0491570006');
-    expect(ticketDetails[0].phone).toEqual('0491570006');
+    expect(inputs.length).toBe(6);
   });
 
-  it('Shows error on invalid postcode', () => {
-    const mockUpdatePayment = jest.fn();
+  /**
+   * Further DI will need to take place to ensure that we are able to test this effectively
+   */
 
-    const details: ITicketDetails = observable({
-      name: 'Hello',
-      postcode: '',
-      phone: '',
-      seatNum: 'r1c3s4',
-    });
+  // it('Be able to advance when details are entered', () => {
+  //   const mockRetract = jest.fn();
+  //   const mockAdvance = jest.fn();
 
-    const checkout = createCheckout({
-      ...info,
-      ticketDetails: details,
-      updatePayment: mobxAction(mockUpdatePayment),
-    });
-    checkout.state.hasClickedPayment = true;
-    const { getAllByRole } = render(
-      <checkout.Checkout />
-    );
+  //   const seatingState = new SeatingState(5);
+  //   mobx.action(() => {
+  //     seatingState.selectedSeats = ['10'];
+  //   })();
 
-    const inputs = getAllByRole('textbox');
+  //   const { CheckoutElement } = createCheckout(
+  //     seatingState,
+  //     ticketingSystemState,
+  //     mockRetract,
+  //     mockAdvance
+  //   );
 
-    userEvent.type(inputs[1], 'skldfjalsjdfsaf');
-    expect(inputs[1]).toBeInvalid();
-  });
+  //   const { getAllByRole } = render(<CheckoutElement />);
+  //   const inputs = getAllByRole('textbox');
+  //   const buttons = getAllByRole('button');
+
+  //   userEvent.click(buttons[0]);
+  //   expect(mockAdvance).not.toBeCalled();
+
+  //   userEvent.type(inputs[0], 'Bob Smith');
+  //   userEvent.type(inputs[1], 'bob@example.com');
+  //   userEvent.type(inputs[2], '12345678');
+
+  //   userEvent.type(inputs[3], 'John Smith');
+  //   userEvent.type(inputs[4], '0123');
+  //   userEvent.type(inputs[5], '12345678');
+
+  //   userEvent.click(buttons[1]);
+  //   expect(mockAdvance).toBeCalled();
+  // });
 });

@@ -1,6 +1,6 @@
 import * as mobx from 'mobx';
 import { CheckoutFormState } from 'src/components/Checkout/CheckoutForm/CheckoutForm.state';
-import { TicketHolderFormState } from 'src/components/TicketholderDetails/TicketHolderForm.state';
+import { TicketHolderFormState } from 'src/components/Checkout/TicketholderDetails/TicketHolderForm.state';
 import { TickerOwnerDetails } from 'src/shared/types';
 export class CheckoutState {
   orderID = '';

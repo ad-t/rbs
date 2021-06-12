@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Button,
   Header,
@@ -10,45 +10,16 @@ import {
 import { CgSquare } from 'react-icons/cg';
 import { PaymentButton } from './SquareButton.styles';
 
-export interface SquareProp {
-  onSquareApprove: () => void;
-  setupSquare(): Promise<string | null>;
+export interface SquareButtonProps
+  extends React.HTMLAttributes<HTMLButtonElement> {
+  open: boolean;
+  toggleOpen: () => void;
 }
 
-export default function SquareButton({
-  onSquareApprove,
-  setupSquare,
-}: SquareProp) {
-  const [open, setOpen] = useState(false);
-
-  async function onClick() {
-    // NOTE: hack to work around Safari refusing to open popups that are
-    // called asynchronously: https://stackoverflow.com/q/20696041/2074608
-    const win = window.open(undefined, 'square-pay', 'toolbar=no');
-    const url = await setupSquare();
-    if (!url) {
-      win?.close();
-      return;
-    }
-
-    /* NOTE: hack to detect window closed without CORS */
-    if (win) {
-      setOpen(true);
-      win.location.replace(url);
-      const timer = setInterval(() => {
-        if (win.closed) {
-          clearInterval(timer);
-          // TODO: can we track on frontend if paid before getting backend
-          // to check?
-          onSquareApprove();
-        }
-      }, 1000);
-    }
-  }
-
+export function SquareButton({ onClick, open, toggleOpen }: SquareButtonProps) {
   return (
     <div>
-      <PaymentButton onClick={onClick}>
+      <PaymentButton onClick={onClick} role="button">
         Pay with Square <CgSquare />
       </PaymentButton>
       <Transition
@@ -62,8 +33,8 @@ export default function SquareButton({
           closeOnEscape={false}
           closeOnDimmerClick={false}
           closeIcon={true}
-          onClose={() => setOpen(false)}
-          onOpen={() => setOpen(true)}
+          onClose={toggleOpen}
+          onOpen={toggleOpen}
           open={true}
           size="small"
         >
