@@ -40,7 +40,7 @@ export default function ConfirmOrder({
               <strong>{email}</strong>.
             </p>
             <Header as="h5">
-              Located at the UNSW Science Theatre. Doors open 7pm
+              Hosted at the UNSW Science Theatre. Doors open 7pm
             </Header>
             <Divider />
             <Header.Subheader>
