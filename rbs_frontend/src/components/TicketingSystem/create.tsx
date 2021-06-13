@@ -6,6 +6,7 @@ import { createSteps } from 'src/components/Steps/create';
 import { createSeating } from 'src/components/Seating/create';
 import { createCheckout } from 'src/components/Checkout/create';
 import StepItem from 'src/components/Steps/StepItem';
+import { TicketInfo } from 'src/components/TicketInfo/TicketInfo';
 import {
   UserState,
   TicketingSystemState,
@@ -139,15 +140,25 @@ export function createTicketingSystem(productionState: ProductionState) {
     advance
   );
 
-  const ConfirmOrderWrapper = mobxReact.observer(() => (
-    <ConfirmOrder
-      email={checkoutState.checkoutFormState?.email || ''}
-      orderID={checkoutState.orderID}
-      showName={productionState.title || ''}
-      tickets={[]}
-      ticketDetails={[]}
-    />
-  ));
+  const ConfirmOrderWrapper = mobxReact.observer(() => {
+    const PersonInfoList = checkoutState.ticketDetailStates.map((state) => (
+      <TicketInfo
+        name={state.name}
+        postcode={state.postcode}
+        phone={state.phone}
+        seatNumber={state.seatNum}
+      />
+    ));
+
+    return (
+      <ConfirmOrder
+        email={checkoutState.checkoutFormState?.email || ''}
+        orderID={checkoutState.orderID}
+        showName={productionState.title || ''}
+        TicketInfoElements={PersonInfoList}
+      />
+    );
+  });
 
   const TicketingSystemElement = mobxReact.observer(() => (
     <TicketingSystem

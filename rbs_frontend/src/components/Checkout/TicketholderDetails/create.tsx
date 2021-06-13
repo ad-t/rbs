@@ -10,7 +10,12 @@ type Parameters = Omit<
 >;
 
 export function createTicketholderDetailsForm(parameters: Parameters) {
-  const ticketHolderFormState = new TicketHolderFormState();
+  const ticketHolderFormState = new TicketHolderFormState(
+    '',
+    '',
+    '',
+    parameters.seatNum
+  );
 
   const InputName = mobxReact.observer(() => {
     const handleChange = React.useCallback(
@@ -84,6 +89,7 @@ export function createTicketholderDetailsForm(parameters: Parameters) {
   const TicketHolderFormElement = mobxReact.observer(() => (
     <TicketHolderForm
       {...parameters}
+      seatNum={ticketHolderFormState.seatNum}
       inputName={<InputName />}
       inputPostcode={<InputPostcode />}
       inputPhone={<InputPhone />}

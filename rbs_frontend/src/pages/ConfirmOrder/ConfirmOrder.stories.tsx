@@ -1,43 +1,16 @@
 import React from 'react';
-import { Story } from '@storybook/react';
 import ConfirmOrder from './ConfirmOrder';
-import 'semantic-ui-css/semantic.min.css';
 
 export default {
   title: 'Page/ConfirmOrder',
   component: ConfirmOrder,
 };
 
-const Template: Story = (args) => (
+export const Default = () => (
   <ConfirmOrder
-    tickets={[
-      {
-        id: 1,
-        price: 10,
-        description: 'This is a ticket',
-        minPurchaseAmount: 5,
-      },
-      {
-        id: 2,
-        price: 10,
-        description: 'This is a ticket',
-        minPurchaseAmount: 5,
-      },
-    ]}
-    ticketDetails={[
-      {
-        typeId: 1,
-        name: 'Basic Ticket',
-        postcode: '1234',
-        phone: '029678383',
-        seatNum: '10',
-      },
-    ]}
-    discount={null}
-    showStr="CSE Revue"
     email="john.smith@example.com"
     orderID="923983"
+    showName="CSE Revue"
+    TicketInfoElements={[]}
   />
 );
-
-export const Default = Template.bind({});

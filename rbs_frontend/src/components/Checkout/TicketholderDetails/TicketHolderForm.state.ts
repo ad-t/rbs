@@ -4,12 +4,14 @@ export class TicketHolderFormState {
   name = '';
   postcode = '';
   phone = '';
+  seatNum = '';
   isTriggered = false;
 
-  constructor(name = '', postcode = '', phone = '') {
+  constructor(name = '', postcode = '', phone = '', seatNum = '') {
     this.name = name;
     this.postcode = postcode;
     this.phone = phone;
+    this.seatNum = seatNum;
     mobx.makeAutoObservable(this);
   }
 

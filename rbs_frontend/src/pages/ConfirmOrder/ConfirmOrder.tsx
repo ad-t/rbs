@@ -2,67 +2,29 @@
  * This component will return an invoice that shows what tickets were purchased from the user.
  */
 import React from 'react';
-import { Header, Segment, Grid, List } from 'semantic-ui-react';
-
-// Import our interface
-import { ITicket, ITicketDetails } from '../../types/tickets';
+import { Card, Divider, Header, Grid } from 'semantic-ui-react';
 
 interface Props {
   email: string;
   orderID: string;
   showName: string;
-  tickets: ITicket[];
-  ticketDetails: ITicketDetails[];
+  TicketInfoElements: JSX.Element[];
 }
 
 export default function ConfirmOrder({
   email,
   orderID,
   showName,
-  tickets,
-  ticketDetails,
+  TicketInfoElements,
 }: Props) {
-  const ticketElms: Array<JSX.Element> = [];
-  let totalQty = 0;
-  for (let i = 0; i < tickets.length; ++i) {
-    const ticket: ITicket = tickets[i];
-    if (!ticket.quantity) continue;
-    ticketElms.push(
-      <Segment>
-        <List>
-          <List.Item>
-            <List.Icon name="ticket" />
-            <List.Content>
-              {ticket.description} - ${`${ticket.price.toFixed(2)}`}
-            </List.Content>
-          </List.Item>
-          <List.Item>
-            <List.Icon name="marker" />
-            <List.Content>{ticket.quantity}</List.Content>
-          </List.Item>
-          {ticketDetails
-            .filter((x) => x.typeId === ticket.id)
-            .map((x) => (
-              <List.Item>
-                <List.Icon name="mail" />
-                <List.Content>
-                  {x.name} ({x.seatNum})
-                </List.Content>
-              </List.Item>
-            ))}
-        </List>
-      </Segment>
-    );
-    totalQty += ticket.quantity;
-  }
+  const totalQty = TicketInfoElements.length;
 
-  // TODO: show info about tickets booked
   return (
-    <Grid columns={2} stackable>
-      <Grid.Column>
+    <Grid stackable>
+      <Grid.Column width={6}>
         <div className="confirmation">
           <div className="booking-info">
-            <Header as="h2">
+            <Header as="h3">
               Thank you, we have confirmed your booking for {showName}!
             </Header>
             <p>
@@ -77,17 +39,19 @@ export default function ConfirmOrder({
               A copy of this booking confirmation has been sent to{' '}
               <strong>{email}</strong>.
             </p>
-            <p>At the UNSW Science Theatre</p>
-            <p>Doors open 7pm</p>
-            <p>No GST applies for this purchase.</p>
+            <Header as="h5">
+              Located at the UNSW Science Theatre. Doors open 7pm
+            </Header>
+            <Divider />
+            <Header.Subheader>
+              No GST applies for this purchase.
+            </Header.Subheader>
           </div>
         </div>
       </Grid.Column>
-      <Grid.Column>
-        <Header as="h2">Tickets</Header>
-        <div className="tickets-list">
-          <Segment>{ticketElms}</Segment>
-        </div>
+      <Grid.Column width={10}>
+        <Header as="h2">Ticket holder information</Header>
+        <Card.Group>{TicketInfoElements}</Card.Group>
       </Grid.Column>
     </Grid>
   );
