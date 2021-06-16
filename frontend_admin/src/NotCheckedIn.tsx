@@ -8,42 +8,57 @@ import {
   Table,
   Message,
   Button,
+  CheckboxProps,
+  InputOnChangeData,
 } from 'semantic-ui-react';
+import { Ticket } from 'src/shared/types';
 import AdminNavbar from './Layouts/AdminNavbar';
 import AdminFooter from './Layouts/AdminFooter';
 import dayjs from 'dayjs';
 import QrReader from 'react-qr-reader';
 
-class FindBooking extends React.Component {
+interface State {
+  tickets: Ticket[];
+  inputMethod: string;
+  search: string;
+  submittedSearch: string;
+  hasScanned: boolean;
+}
+
+class FindBooking extends React.Component<{}, State> {
   state = {
-    tickets: [],
+    tickets: [] as Ticket[],
     inputMethod: 'id',
     search: '',
     submittedSearch: '',
     showId: 2,
     hasScanned: false,
   };
-  handleChange = (e, { value }) => this.setState({ inputMethod: value });
 
-  searchChange = (e, { value }) => this.setState({ search: value });
+  handleChange = (
+    _: React.FormEvent<HTMLInputElement>,
+    { value }: CheckboxProps
+  ) => this.setState({ inputMethod: value?.toString() || '' });
 
-  onSubmit = (e) => {
-    //if (this.state.search !== this.state.submittedSearch) {
+  searchChange = (
+    _: React.FormEvent<HTMLInputElement>,
+    { value }: InputOnChangeData
+  ) => this.setState({ search: value });
+
+  onSubmit = (_: React.FormEvent<HTMLFormElement>) => {
     this.fetchTickets(this.state.search);
     this.setState({ submittedSearch: this.state.search });
-    //}
   };
 
-  handleScan = (s) => {
+  handleScan = (s: string | null) => {
     if (
+      s &&
       /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(s)
     ) {
       this.fetchTickets(s);
       this.setState({ hasScanned: true, search: s, submittedSearch: s });
     }
   };
-
-  handleScanError = (e) => {};
 
   async checkIn(ticketId: string) {
     // TODO: use proper ID
@@ -107,7 +122,7 @@ class FindBooking extends React.Component {
               <Table.Row key={a.id}>
                 <Table.Cell>{a.id}</Table.Cell>
                 <Table.Cell>{a.name}</Table.Cell>
-                <Table.Cell>{a.seat ? a.seat.seatNum : '???'}</Table.Cell>
+                <Table.Cell>{a.seat ? 'a.seat.seatNum' : '???'}</Table.Cell>
                 <Table.Cell>
                   {a.checkInTime
                     ? dayjs(a.checkInTime).format('ddd DD MMM YYYY hh:mm:ss')
@@ -140,7 +155,9 @@ class FindBooking extends React.Component {
         <div>
           <QrReader
             delay={300}
-            onError={this.handleScanError}
+            onError={() => {
+              // @TODO: Add proper error handler
+            }}
             onScan={this.handleScan}
             style={{ width: '100%' }}
           />

@@ -11,6 +11,7 @@ import {
 import AdminNavbar from './Layouts/AdminNavbar';
 import AdminFooter from './Layouts/AdminFooter';
 
+//@ts-ignore
 async function sendOverride(orderId, amount, name, note) {
   if (
     typeof name !== 'string' ||
@@ -47,6 +48,7 @@ async function sendOverride(orderId, amount, name, note) {
   return showRes.ok;
 }
 
+// @ts-ignore
 const OverridePayment = ({ match: { params } }) => {
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');

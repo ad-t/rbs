@@ -1,10 +1,10 @@
 //const { NODE_ENV } = process.env
 const NODE_ENV = 'development';
 
-const isESBuild = NODE_ENV === 'build-es'
-const isUMDBuild = NODE_ENV === 'build-umd'
-const isLibBuild = NODE_ENV === 'build' || isESBuild || isUMDBuild
-const isDocsBuild = NODE_ENV === 'development' || NODE_ENV === 'production'
+const isESBuild = NODE_ENV === 'build-es';
+const isUMDBuild = NODE_ENV === 'build-umd';
+const isLibBuild = NODE_ENV === 'build' || isESBuild || isUMDBuild;
+const isDocsBuild = NODE_ENV === 'development' || NODE_ENV === 'production';
 
 const browsers = [
   'last 8 versions',
@@ -14,7 +14,7 @@ const browsers = [
   'opera > 15',
   'not ie < 11',
   'not ie_mob <= 11',
-]
+];
 
 const plugins = [
   ['@babel/plugin-proposal-class-properties', { loose: true }],
@@ -64,7 +64,7 @@ const plugins = [
       },
     },
   ],
-].filter(Boolean)
+].filter(Boolean);
 
 module.exports = () => ({
   compact: false,
@@ -77,7 +77,7 @@ module.exports = () => ({
         targets: { browsers },
       },
     ],
-    '@babel/react'
+    '@babel/react',
   ],
   plugins,
   env: {
@@ -99,4 +99,4 @@ module.exports = () => ({
       presets: [['@babel/env', { modules: false }]],
     },
   ],
-})
+});

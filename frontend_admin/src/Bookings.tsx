@@ -159,6 +159,7 @@ function MyTable({ data, columns }: { data: any; columns: any }) {
     rows,
     prepareRow,
     visibleColumns,
+    // @ts-ignore
     state: { expanded },
   } = useTable(
     {
@@ -197,13 +198,16 @@ function MyTable({ data, columns }: { data: any; columns: any }) {
                   );
                 })}
               </Table.Row>
-              {row.isExpanded ? (
-                <Table.Row>
-                  <Table.Cell colSpan={visibleColumns.length}>
-                    {renderRowSubComponent({ row })}
-                  </Table.Cell>
-                </Table.Row>
-              ) : undefined}
+              {
+                // @ts-ignore
+                row.isExpanded ? (
+                  <Table.Row>
+                    <Table.Cell colSpan={visibleColumns.length}>
+                      {renderRowSubComponent({ row })}
+                    </Table.Cell>
+                  </Table.Row>
+                ) : undefined
+              }
             </React.Fragment>
           );
         })}
@@ -315,6 +319,7 @@ class FindBooking extends React.Component {
     const { nights, data, searchType, search } = this.state;
 
     // TODO: check if react-table filter will do a better job
+    // @ts-ignore
     const keys = [searchTypeToCol[searchType]];
     if (searchType === 'name' || searchType === 'phone')
       keys.push(`tickets.${searchTypeToCol[searchType]}`);

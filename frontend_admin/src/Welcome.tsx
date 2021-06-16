@@ -10,6 +10,10 @@ interface State {
 }
 
 class Overview extends React.Component<{}, State> {
+  state = {
+    shows: [] as Show[],
+  };
+
   async componentDidMount() {
     const shows = await installShows();
     this.setState({ shows });

@@ -5,7 +5,7 @@ import Bookings from './Bookings';
 import FindBooking from './FindBooking';
 import ManualBooking from './ManualBooking';
 import OverridePayment from './OverridePayment';
-import ReallocateSeat from './ReallocateSeat';
+import { ReallocateSeat } from './ReallocateSeat';
 import { Route, Redirect, Switch } from 'react-router-dom';
 
 class App extends Component {
