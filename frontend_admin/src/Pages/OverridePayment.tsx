@@ -8,8 +8,6 @@ import {
   Message,
   InputOnChangeData,
 } from 'semantic-ui-react';
-import AdminNavbar from './Layouts/AdminNavbar';
-import AdminFooter from './Layouts/AdminFooter';
 
 //@ts-ignore
 async function sendOverride(orderId, amount, name, note) {
@@ -74,51 +72,45 @@ const OverridePayment = ({ match: { params } }) => {
   };
 
   return (
-    <div>
-      <AdminNavbar />
-
-      <Container text style={{ marginTop: '7em' }}>
-        <Header as="h1">Override Payment</Header>
-        <p>
-          <strong>Order ID: </strong> {params.orderId}
-        </p>
-        <Form
-          onSubmit={async () => {
-            setSuccess(await sendOverride(params.orderId, amount, name, note));
-            setAttempted(true);
-          }}
-          success={success}
-          error={attempted && !success}
-        >
-          <Form.Input
-            label="Overrider name"
-            name="name"
-            value={name}
-            onChange={handleChange}
-          />
-          <Form.Input
-            label="Amount Paid"
-            name="amount"
-            value={amount}
-            onChange={handleChange}
-          />
-          <Form.Field
-            control={TextArea}
-            name="note"
-            value={note}
-            onChange={handleChange}
-            label="Reason for override"
-          />
-          <Button type="submit" primary disabled={success}>
-            Submit
-          </Button>
-          <Message error>An error occurred</Message>
-          <Message success>Payment successfully overridden</Message>
-        </Form>
-      </Container>
-
-      <AdminFooter />
-    </div>
+    <Container text style={{ marginTop: '7em' }}>
+      <Header as="h1">Override Payment</Header>
+      <p>
+        <strong>Order ID: </strong> {params.orderId}
+      </p>
+      <Form
+        onSubmit={async () => {
+          setSuccess(await sendOverride(params.orderId, amount, name, note));
+          setAttempted(true);
+        }}
+        success={success}
+        error={attempted && !success}
+      >
+        <Form.Input
+          label="Overrider name"
+          name="name"
+          value={name}
+          onChange={handleChange}
+        />
+        <Form.Input
+          label="Amount Paid"
+          name="amount"
+          value={amount}
+          onChange={handleChange}
+        />
+        <Form.Field
+          control={TextArea}
+          name="note"
+          value={note}
+          onChange={handleChange}
+          label="Reason for override"
+        />
+        <Button type="submit" primary disabled={success}>
+          Submit
+        </Button>
+        <Message error>An error occurred</Message>
+        <Message success>Payment successfully overridden</Message>
+      </Form>
+    </Container>
   );
 };
 

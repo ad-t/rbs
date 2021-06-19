@@ -11,10 +11,7 @@ import {
   CheckboxProps,
   InputOnChangeData,
 } from 'semantic-ui-react';
-import { installTickets } from 'src/Api/installTickets';
 import { Ticket } from 'src/shared/types';
-import AdminNavbar from './Layouts/AdminNavbar';
-import AdminFooter from './Layouts/AdminFooter';
 import dayjs from 'dayjs';
 import QrReader from 'react-qr-reader';
 
@@ -37,37 +34,27 @@ class FindBooking extends React.Component<{}, State> {
   };
 
   handleChange = (
-    e: React.FormEvent<HTMLInputElement>,
+    _: React.FormEvent<HTMLInputElement>,
     { value }: CheckboxProps
   ) => this.setState({ inputMethod: value?.toString() || '' });
 
   searchChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    _: React.FormEvent<HTMLInputElement>,
     { value }: InputOnChangeData
   ) => this.setState({ search: value });
 
-  onSubmitTicketId = (e: React.FormEvent<HTMLFormElement>) => {
-    //if (this.state.search !== this.state.submittedSearch) {
+  onSubmit = (_: React.FormEvent<HTMLFormElement>) => {
     this.fetchTickets(this.state.search);
-
-    this.setState({ submittedSearch: this.state.search });
-    //}
-  };
-
-  onSubmitOrderId = (e: React.FormEvent<HTMLFormElement>) => {
-    this.fetchOrder(this.state.search);
     this.setState({ submittedSearch: this.state.search });
   };
 
-  handleScan = (data: string | null) => {
+  handleScan = (s: string | null) => {
     if (
-      data &&
-      /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(
-        data
-      )
+      s &&
+      /^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/.test(s)
     ) {
-      this.fetchTickets(data);
-      this.setState({ hasScanned: true, search: data, submittedSearch: data });
+      this.fetchTickets(s);
+      this.setState({ hasScanned: true, search: s, submittedSearch: s });
     }
   };
 
@@ -79,11 +66,7 @@ class FindBooking extends React.Component<{}, State> {
     );
 
     if (showRes.status === 200) {
-      if (this.state.inputMethod === 'order_id') {
-        await this.fetchOrder(this.state.submittedSearch);
-      } else {
-        await this.fetchTickets(ticketId);
-      }
+      await this.fetchTickets(ticketId);
     }
   }
 
@@ -95,29 +78,20 @@ class FindBooking extends React.Component<{}, State> {
     );
 
     if (showRes.status === 200) {
-      if (this.state.inputMethod === 'order_id') {
-        await this.fetchOrder(this.state.submittedSearch);
-      } else {
-        await this.fetchTickets(ticketId);
-      }
+      await this.fetchTickets(ticketId);
     }
   }
 
   async fetchTickets(ticketId: string) {
-    const data = await installTickets(ticketId);
-    this.setState({ tickets: data });
-  }
-
-  async fetchOrder(orderId: string) {
     // TODO: use proper ID
     const showRes = await fetch(
-      `${process.env.REACT_APP_API_URL}/admin/order/${orderId}`,
+      `${process.env.REACT_APP_API_URL}/admin/tickets/${ticketId}`,
       { credentials: 'include' }
     );
 
     if (showRes.status === 200) {
       const data = await showRes.json();
-      this.setState({ tickets: data.tickets });
+      this.setState({ tickets: data });
     } else if (showRes.status === 404) {
       // TODO: should this return 200 and an empty array anyway?
       this.setState({ tickets: [] });
@@ -134,7 +108,7 @@ class FindBooking extends React.Component<{}, State> {
         <Table celled>
           <Table.Header>
             <Table.Row>
-              <Table.HeaderCell>Ticket ID</Table.HeaderCell>
+              <Table.HeaderCell>ID</Table.HeaderCell>
               <Table.HeaderCell>Name</Table.HeaderCell>
               <Table.HeaderCell>Seat num</Table.HeaderCell>
               <Table.HeaderCell>Checked in?</Table.HeaderCell>
@@ -149,7 +123,7 @@ class FindBooking extends React.Component<{}, State> {
                 <Table.Cell>{a.seat ? 'a.seat.seatNum' : '???'}</Table.Cell>
                 <Table.Cell>
                   {a.checkInTime
-                    ? dayjs(a.checkInTime).format('ddd DD MMM YYYY HH:mm:ss')
+                    ? dayjs(a.checkInTime).format('ddd DD MMM YYYY hh:mm:ss')
                     : 'no'}
                 </Table.Cell>
                 <Table.Cell>
@@ -180,38 +154,22 @@ class FindBooking extends React.Component<{}, State> {
           <QrReader
             delay={300}
             onError={() => {
-              // TODO: Add tests
+              // @TODO: Add proper error handler
             }}
             onScan={this.handleScan}
             style={{ width: '100%' }}
           />
         </div>
       );
-    } else if (inputMethod === 'order_id') {
-      entryInput = (
-        <Form onSubmit={this.onSubmitOrderId}>
-          <Form.Input
-            icon={{
-              name: 'search',
-              circular: true,
-              link: true,
-              onClick: this.onSubmitOrderId,
-            }}
-            value={search}
-            placeholder="Order ID..."
-            onChange={this.searchChange}
-          />
-        </Form>
-      );
     } else {
       entryInput = (
-        <Form onSubmit={this.onSubmitTicketId}>
+        <Form onSubmit={this.onSubmit}>
           <Form.Input
             icon={{
               name: 'search',
               circular: true,
               link: true,
-              onClick: this.onSubmitTicketId,
+              onClick: this.onSubmit,
             }}
             value={search}
             placeholder="Ticket ID..."
@@ -222,50 +180,40 @@ class FindBooking extends React.Component<{}, State> {
     }
 
     return (
-      <React.Fragment>
-        <AdminNavbar />
+      <Container text style={{ marginTop: '7em' }}>
+        <Header as="h1">Check In Ticket</Header>
 
-        <Container text style={{ marginTop: '7em' }}>
-          <Header as="h1">Check In Ticket</Header>
+        <p>Find by:</p>
+        <Form>
+          {/*
+          <Form.Field>
+            Selected value: <b>{this.state.value}</b>
+          </Form.Field>
+          */}
+          <Form.Field>
+            <Radio
+              label="Ticket ID"
+              name="radioGroup"
+              value="id"
+              checked={inputMethod === 'id'}
+              onChange={this.handleChange}
+            />
+          </Form.Field>
+          <Form.Field>
+            <Radio
+              label="QR Code"
+              name="radioGroup"
+              value="qr"
+              checked={inputMethod === 'qr'}
+              onChange={this.handleChange}
+            />
+          </Form.Field>
+        </Form>
 
-          <p>Find by:</p>
-          <Form>
-            <Form.Field>
-              <Radio
-                label="Ticket ID"
-                name="radioGroup"
-                value="id"
-                checked={inputMethod === 'id'}
-                onChange={this.handleChange}
-              />
-            </Form.Field>
-            <Form.Field>
-              <Radio
-                label="Order ID"
-                name="radioGroup"
-                value="order_id"
-                checked={inputMethod === 'order_id'}
-                onChange={this.handleChange}
-              />
-            </Form.Field>
-            <Form.Field>
-              <Radio
-                label="QR Code"
-                name="radioGroup"
-                value="qr"
-                checked={inputMethod === 'qr'}
-                onChange={this.handleChange}
-              />
-            </Form.Field>
-          </Form>
+        <div style={{ marginTop: '0.8em' }}>{entryInput}</div>
 
-          <div style={{ marginTop: '0.8em' }}>{entryInput}</div>
-
-          {searchResults}
-        </Container>
-
-        <AdminFooter />
-      </React.Fragment>
+        {searchResults}
+      </Container>
     );
   }
 }

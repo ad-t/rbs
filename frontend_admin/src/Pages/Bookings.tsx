@@ -17,8 +17,6 @@ import {
 import { useTable, useExpanded } from 'react-table';
 //import { QuickScore } from "quick-score";
 import Fuse from 'fuse.js';
-import AdminNavbar from './Layouts/AdminNavbar';
-import AdminFooter from './Layouts/AdminFooter';
 
 const columns = [
   {
@@ -329,81 +327,75 @@ class FindBooking extends React.Component {
     console.log(this.state);
 
     return (
-      <React.Fragment>
-        <AdminNavbar />
+      <Container style={{ marginTop: '7em' }}>
+        <Header as="h1">Find Booking</Header>
 
-        <Container style={{ marginTop: '7em' }}>
-          <Header as="h1">Find Booking</Header>
-
-          <p>Select show:</p>
-          <div style={{ marginBottom: '1em' }}>
-            <Dropdown
-              placeholder="Select show night"
-              selection
-              options={nights}
-              value={this.state.showId}
-              onChange={this.onShowNightChange}
-            />
-          </div>
-
-          <p>Find by:</p>
-          <Form>
-            <Form.Field>
-              <Radio
-                label="Name"
-                name="radioGroup"
-                value="name"
-                checked={searchType === 'name'}
-                onChange={this.handleChange}
-              />
-            </Form.Field>
-            <Form.Field>
-              <Radio
-                label="Email"
-                name="radioGroup"
-                value="email"
-                checked={searchType === 'email'}
-                onChange={this.handleChange}
-              />
-            </Form.Field>
-            <Form.Field>
-              <Radio
-                label="Phone"
-                name="radioGroup"
-                value="phone"
-                checked={searchType === 'phone'}
-                onChange={this.handleChange}
-              />
-            </Form.Field>
-            <Form.Input
-              icon={{ name: 'search', circular: true, link: true }}
-              value={search}
-              placeholder="Search..."
-              onChange={this.searchChange}
-            />
-          </Form>
-
-          {/* TODO: make sortable */}
-          <MyTable
-            data={
-              filteredData.length
-                ? filteredData
-                : [
-                    {
-                      name:
-                        this.state.showId === undefined
-                          ? 'Please select a show night'
-                          : 'No tickets found for this night',
-                      subtotalPrice: 0,
-                    },
-                  ]
-            }
-            columns={columns}
+        <p>Select show:</p>
+        <div style={{ marginBottom: '1em' }}>
+          <Dropdown
+            placeholder="Select show night"
+            selection
+            options={nights}
+            value={this.state.showId}
+            onChange={this.onShowNightChange}
           />
-        </Container>
+        </div>
 
-        <AdminFooter />
-      </React.Fragment>
+        <p>Find by:</p>
+        <Form>
+          <Form.Field>
+            <Radio
+              label="Name"
+              name="radioGroup"
+              value="name"
+              checked={searchType === 'name'}
+              onChange={this.handleChange}
+            />
+          </Form.Field>
+          <Form.Field>
+            <Radio
+              label="Email"
+              name="radioGroup"
+              value="email"
+              checked={searchType === 'email'}
+              onChange={this.handleChange}
+            />
+          </Form.Field>
+          <Form.Field>
+            <Radio
+              label="Phone"
+              name="radioGroup"
+              value="phone"
+              checked={searchType === 'phone'}
+              onChange={this.handleChange}
+            />
+          </Form.Field>
+          <Form.Input
+            icon={{ name: 'search', circular: true, link: true }}
+            value={search}
+            placeholder="Search..."
+            onChange={this.searchChange}
+          />
+        </Form>
+
+        {/* TODO: make sortable */}
+        <MyTable
+          data={
+            filteredData.length
+              ? filteredData
+              : [
+                  {
+                    name:
+                      this.state.showId === undefined
+                        ? 'Please select a show night'
+                        : 'No tickets found for this night',
+                    subtotalPrice: 0,
+                  },
+                ]
+          }
+          columns={columns}
+        />
+      </Container>
     );
   }
 }

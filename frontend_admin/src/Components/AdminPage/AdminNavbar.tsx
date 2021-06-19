@@ -1,12 +1,13 @@
 import React from 'react';
 import { Container, Dropdown, Image, Menu } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
+import LogoSrc from 'src/Assets/logo.png';
 
-const AdminNavbar = () => (
+export const AdminNavbar = () => (
   <Menu fixed="top" inverted>
     <Container>
       <Menu.Item as={Link} header to="/welcome">
-        <Image size="mini" src="/logo.png" style={{ marginRight: '1.5em' }} />
+        <Image size="mini" src={LogoSrc} style={{ marginRight: '1.5em' }} />
         Admin Panel
       </Menu.Item>
       <Dropdown item simple text="Bookings">
@@ -24,15 +25,6 @@ const AdminNavbar = () => (
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
-
-      <Menu.Menu position="right">
-        <Menu.Item>
-          <strong>CSE Revue 2021</strong>
-        </Menu.Item>
-        <Menu.Item as="a">Logout</Menu.Item>
-      </Menu.Menu>
     </Container>
   </Menu>
 );
-
-export default AdminNavbar;
