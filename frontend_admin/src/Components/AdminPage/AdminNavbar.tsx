@@ -16,10 +16,8 @@ export const AdminNavbar = () => (
             Manual Booking
           </Dropdown.Item>
           <Dropdown.Item as={Link} to="/find-booking">
-            Find Booking
+            Check In Ticket
           </Dropdown.Item>
-          <Dropdown.Divider />
-          <Dropdown.Header>Super Admin</Dropdown.Header>
           <Dropdown.Item as={Link} to="/bookings">
             Bookings List
           </Dropdown.Item>

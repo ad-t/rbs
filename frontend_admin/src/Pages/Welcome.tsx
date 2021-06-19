@@ -1,26 +1,30 @@
 import React from 'react';
+import dayjs from 'dayjs';
 import styled from 'styled-components';
-import { Container, Grid, Header, Loader, Segment } from 'semantic-ui-react';
-import { installShows } from 'src/Api/installShows';
-import { Show } from 'src/shared/types';
+import {
+  Container,
+  Grid,
+  Header,
+  Loader,
+  Segment,
+  Statistic,
+} from 'semantic-ui-react';
+import { useAppSelector } from 'src/Store/hooks';
 
 const LoaderWrapper = styled.div`
   padding: 1rem;
 `;
 
-function Overview() {
-  const [shows, setShows] = React.useState<Show[]>([]);
+const StatisticWrapper = styled.div`
+  padding: 1rem;
+  text-align: center;
+`;
 
-  React.useEffect(() => {
-    async function loadShows() {
-      const shows = await installShows();
-      setShows(shows);
-    }
-    loadShows();
-  }, []);
+function Overview() {
+  const shows = useAppSelector((state) => state.shows.shows);
 
   return (
-    <Container style={{ marginTop: '7em' }}>
+    <Container style={{ marginTop: '7rem' }}>
       <Header as="h1">Dashboard Overview</Header>
       <p>Check up on ticket sales here.</p>
 
@@ -29,9 +33,12 @@ function Overview() {
           {shows.map((show, i) => (
             <Grid.Column>
               <Segment>
-                <p>Night {i + 1}</p>
-                <strong>{new Date(show.time).toLocaleString()}</strong>
-                <p>{show.reservedSeats} tickets</p>
+                <h4>
+                  Night {i + 1} - {dayjs(show.time).format('DD/MM/YYYY')}
+                </h4>
+                <StatisticWrapper>
+                  <Statistic label="Tickets" value={show.reservedSeats} />
+                </StatisticWrapper>
               </Segment>
             </Grid.Column>
           ))}
