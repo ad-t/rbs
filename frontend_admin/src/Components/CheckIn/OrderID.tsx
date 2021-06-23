@@ -10,7 +10,7 @@ import { installTickets } from 'src/Api/installTickets';
 import { DisplayTable } from 'src/Components/CheckIn/Table/Table';
 import { useAppDispatch, useAppSelector } from 'src/Store/hooks';
 import { setTickets } from 'src/Store/slices/ticketSlice';
-import { LoadStates } from 'src/shared/types';
+import { LoadStates } from 'src/shared/enums';
 
 export function OrderIDMethod() {
   const [loadState, setLoadState] = React.useState<LoadStates>(

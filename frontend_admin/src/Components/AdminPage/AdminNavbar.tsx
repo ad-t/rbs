@@ -23,6 +23,9 @@ export const AdminNavbar = () => (
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
+      <Menu.Item as={Link} header to="/seating">
+        Manage Seats
+      </Menu.Item>
     </Container>
   </Menu>
 );

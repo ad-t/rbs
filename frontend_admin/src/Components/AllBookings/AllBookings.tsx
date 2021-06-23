@@ -12,11 +12,12 @@ import {
   Button,
   InputOnChangeData,
   CheckboxProps,
+  Loader,
 } from 'semantic-ui-react';
-
 import { useTable, useExpanded } from 'react-table';
-//import { QuickScore } from "quick-score";
 import Fuse from 'fuse.js';
+import { LoadStates } from 'src/shared/enums';
+import { Show, Ticket } from 'src/shared/types';
 
 const columns = [
   {
@@ -228,24 +229,25 @@ const searchTypeToCol = {
   phone: 'phone',
 };
 
-class FindBooking extends React.Component {
+interface AllBookingsProps {
+  tickets: Ticket[];
+  shows: Show[];
+  loadingState: LoadStates;
+  ShowNightSelectorElement: JSX.Element;
+}
+
+export class AllBookings extends React.Component<AllBookingsProps> {
   state = {
-    data: [],
-    nights: [
-      {
-        key: 1,
-        text: 'Night 1 - 13 April 2021',
-        value: 1,
-      },
-    ],
     showId: undefined,
     searchType: 'name',
     search: '',
   };
+
   searchChange = (
     e: React.FormEvent<HTMLInputElement>,
     { value }: InputOnChangeData
   ) => this.setState({ search: value });
+
   handleChange = (
     e: React.FormEvent<HTMLInputElement>,
     { value }: CheckboxProps
@@ -287,59 +289,55 @@ class FindBooking extends React.Component {
     }
   }
 
-  async componentDidMount() {
-    const showRes = await fetch(
-      `${process.env.REACT_APP_API_URL}/productions/1/shows`
-    );
-
-    if (showRes.ok) {
-      const data = await showRes.json();
-      console.log(data);
-      const nights = data.map((a: any, i: any) => ({
-        key: a.id,
-        text: `Night ${i + 1} - ${new Date(a.time).toLocaleString()}`,
-        value: a.id,
-      }));
-      this.setState({ nights });
-    }
-
-    if (this.state.showId) {
-      this.fetchTickets(this.state.showId);
-    }
-  }
-
   onShowNightChange = (e: any, data: any) => {
     this.setState({ showId: data.value });
     this.fetchTickets(data.value);
   };
 
+  private Nights = this.props.shows.map((show, index) => ({
+    key: show.id,
+    text: `Night ${index + 1} - ${new Date(show.time).toLocaleString()}`,
+    value: show.id,
+  }));
+
   render() {
-    const { nights, data, searchType, search } = this.state;
+    const { searchType, search } = this.state;
+    const { loadingState, tickets, ShowNightSelectorElement } = this.props;
 
     // TODO: check if react-table filter will do a better job
     // @ts-ignore
     const keys = [searchTypeToCol[searchType]];
     if (searchType === 'name' || searchType === 'phone')
       keys.push(`tickets.${searchTypeToCol[searchType]}`);
-    const fuse = new Fuse(data, { keys });
+    const fuse = new Fuse(tickets, { keys });
     // Display all results if no search string.
-    const filteredData = search ? fuse.search(search).map((a) => a.item) : data;
-    console.log(this.state);
+    const filteredData = search
+      ? fuse.search(search).map((a) => a.item)
+      : tickets;
+
+    let tableDisplay = <Message info>Please select a show night</Message>;
+
+    if (
+      filteredData &&
+      filteredData.length &&
+      loadingState === LoadStates.LOADED
+    ) {
+      /* TODO: make sortable */
+      tableDisplay = <MyTable data={filteredData} columns={columns} />;
+    } else if (
+      this.state.showId !== undefined &&
+      loadingState === LoadStates.LOADED
+    ) {
+      tableDisplay = <Message error>No tickets found for this night</Message>;
+    } else if (loadingState === LoadStates.LOADING) {
+      tableDisplay = <Loader>Loading tickets</Loader>;
+    }
 
     return (
-      <Container style={{ marginTop: '7em' }}>
+      <Container style={{ marginTop: '7rem' }}>
         <Header as="h1">All Bookings</Header>
 
-        <p>Select show:</p>
-        <div style={{ marginBottom: '1em' }}>
-          <Dropdown
-            placeholder="Select show night"
-            selection
-            options={nights}
-            value={this.state.showId}
-            onChange={this.onShowNightChange}
-          />
-        </div>
+        {ShowNightSelectorElement}
 
         <p>Find by:</p>
         <Form>
@@ -377,27 +375,8 @@ class FindBooking extends React.Component {
             onChange={this.searchChange}
           />
         </Form>
-
-        {/* TODO: make sortable */}
-        <MyTable
-          data={
-            filteredData.length
-              ? filteredData
-              : [
-                  {
-                    name:
-                      this.state.showId === undefined
-                        ? 'Please select a show night'
-                        : 'No tickets found for this night',
-                    subtotalPrice: 0,
-                  },
-                ]
-          }
-          columns={columns}
-        />
+        {tableDisplay}
       </Container>
     );
   }
 }
-
-export default FindBooking;
