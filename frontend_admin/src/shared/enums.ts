@@ -37,3 +37,9 @@ export enum LoadStates {
   LOADING = 'LOADING',
   LOADED = 'LOADED',
 }
+
+export enum SearchByType {
+  NAME = 'name',
+  EMAIL = 'email',
+  PHONE = 'phone',
+}

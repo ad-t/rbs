@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import * as React from 'react';
 import { Dropdown, DropdownProps } from 'semantic-ui-react';
 import { Show } from 'src/shared/types';
@@ -7,7 +8,7 @@ interface ShowNightSelectorProps {
     event: React.SyntheticEvent<HTMLElement, Event>,
     data: DropdownProps
   ) => void;
-  showId: string;
+  showId: number | null;
   shows: Show[];
 }
 
@@ -20,7 +21,9 @@ export function ShowNightSelector({
     () =>
       shows.map((show, index) => ({
         key: show.id,
-        text: `Night ${index + 1} - ${new Date(show.time).toLocaleString()}`,
+        text: `Night ${index + 1} - ${dayjs(show.time).format(
+          'dddd DD/MM/YYYY'
+        )}`,
         value: show.id,
       })),
     [shows]
@@ -34,7 +37,7 @@ export function ShowNightSelector({
           placeholder="Select show night"
           selection
           options={nights}
-          value={showId}
+          value={showId ?? -1}
           onChange={onChange}
         />
       </div>
