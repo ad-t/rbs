@@ -1,0 +1,48 @@
+# This is a basic workflow to help you get started with Actions
+
+name: CI Testing
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "test"
+  test:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    env:
+      MYSQL_DATABASE: test_ci_rbs
+      MYSQL_USER: root
+      MYSQL_PASSWD: root
+      NODE_ENV: test
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Set up Node 16
+        uses: actions/setup-node@v2
+        with:
+          node-version: "16"
+
+      # Runs a single command using the runners shell
+      - name: Set up database
+        run: |
+          sudo systemctl start mysql.service
+          mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'root';" -uroot -proot
+          mysql -e 'CREATE DATABASE IF NOT EXISTS ${{ env.MYSQL_DATABASE }};' -uroot -proot
+
+      # Runs a set of commands using the runners shell
+      - name: Run tests
+        run: ./travis/test.sh
